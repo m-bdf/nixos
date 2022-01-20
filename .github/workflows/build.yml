@@ -10,18 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: rm --recursive .git
+
       - uses: cachix/install-nix-action@v16
+      - uses: cachix/cachix-action@v10
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix shell nixpkgs#nixos-install-tools --command
           nixos-generate-config --no-filesystems --dir .
       - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
-
-      - run: |
-          broken=( $(find -L result -type l) )
-          tar --create --dereference ${broken[@]/#/--exclude=} result --file=result.tar
-          tar --append ${broken[@]} --file=result.tar
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: system
-          path: result.tar
