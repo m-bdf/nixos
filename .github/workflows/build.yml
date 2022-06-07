@@ -19,3 +19,11 @@ jobs:
 
       - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
           --option allowed-impure-host-deps /sys --print-build-logs --show-trace
+
+  delete-old-builds:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 0
