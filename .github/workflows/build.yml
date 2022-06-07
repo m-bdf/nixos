@@ -3,6 +3,7 @@ on:
   push:
   schedule:
     - cron: 42 23 * * *
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,3 +21,12 @@ jobs:
       - run: nix shell nixpkgs#nixos-install-tools --command
           nixos-generate-config --no-filesystems --dir .
       - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
+          --print-build-logs --show-trace
+
+  delete-old-builds:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 0
