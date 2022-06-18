@@ -1,0 +1,13 @@
+name: debug
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: rm --recursive .git
+
+      - uses: cachix/install-nix-action@v17
+      - uses: mxschmitt/action-tmate@v3
