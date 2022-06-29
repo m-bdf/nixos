@@ -1,4 +1,6 @@
 {
+    inputs.nixpkgs.url = "github:m-bdf/nixpkgs/patch-1";
+
     outputs = { self, nixpkgs }: {
         nixosConfigurations.mae = nixpkgs.lib.nixosSystem rec {
             system = "x86_64-linux";
