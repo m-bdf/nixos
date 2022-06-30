@@ -14,8 +14,7 @@
                     '';
 
                 impure-hardware-configuration = derivation ({
-                    __impure = true;
-                    __impureHostDeps = [ "/sys" ];
+                    __impureHostDeps = [ "/sys /nix/var" ];
                 } // hardware-configuration.drvAttrs);
 
             in [ impure-hardware-configuration.outPath ]
