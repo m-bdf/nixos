@@ -19,8 +19,7 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
-          --option extra-experimental-features impure-derivations
-          --option allowed-impure-host-deps /sys
+          --option allowed-impure-host-deps '/sys /nix/var'
           --print-build-logs --show-trace
 
   delete-old-builds:
