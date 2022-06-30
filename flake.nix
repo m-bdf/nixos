@@ -14,6 +14,7 @@
                     '';
 
                 impure-hardware-configuration = derivation ({
+                    __impure = true;
                     __impureHostDeps = [ "/sys" ];
                 } // hardware-configuration.drvAttrs);
 
