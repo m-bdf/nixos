@@ -20,7 +20,10 @@
         in pkgs.writeShellScriptBin "build" ''
             export NIX_USER_CONF_FILES=${nix-conf-file}
             echo building Nix config... >&2 && nix show-config >&2
+
+            pidof nix-daemon
             sudo pkill nix-daemon
+            pidof nix-daemon
 
             ${pkgs.nixos-rebuild}/bin/nixos-rebuild build \
                 --flake ${self}#mae --max-jobs auto \
