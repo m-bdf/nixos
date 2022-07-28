@@ -8,7 +8,8 @@ let
         '';
 
     impure-hardware-configuration = derivation ({
-        __impureHostDeps = [ "/sys /nix/var" ];
+        __impureHostDeps = [ "/sys" ];
+        requiredSystemFeatures = [ "recursive-nix" ];
     } // hardware-configuration.drvAttrs);
 
 in { imports = [ impure-hardware-configuration.outPath ]; }

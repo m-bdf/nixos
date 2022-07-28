@@ -2,7 +2,7 @@
 
 {
     nix.settings = {
-        allowed-impure-host-deps = [ "/sys" "/nix/var" ];
+        allowed-impure-host-deps = [ "/sys" ];
         narinfo-cache-negative-ttl = 0;
         auto-optimise-store = true;
         #repeat = 2;
