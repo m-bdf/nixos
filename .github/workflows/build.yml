@@ -6,22 +6,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-nix-config:
+    runs-on: ubuntu-latest
+    outputs:
+      nix-config: ${{ env.NIX_CONFIG }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: rm --recursive .git
+
+      - uses: cachix/install-nix-action@v17
+      - run: |
+          echo 'NIX_CONFIG<<EOF' >> $GITHUB_ENV
+          nix run | tee --append $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+  build-system:
+    needs: build-nix-config
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - run: rm --recursive .git
 
       - uses: cachix/install-nix-action@v17
+        with:
+          extra_nix_config: ${{ needs.build-nix-config.outputs.nix-config }}
+
       - uses: cachix/cachix-action@v10
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix run
+      - run: nix show-config
+      - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
+          --print-build-logs --show-trace
 
   delete-old-builds:
-    needs: build
+    needs: build-system
     runs-on: ubuntu-latest
     steps:
       - uses: Mattraks/delete-workflow-runs@v2

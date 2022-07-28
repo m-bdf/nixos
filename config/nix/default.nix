@@ -7,7 +7,7 @@
         auto-optimise-store = true;
         #repeat = 2;
         cores = 0;
-        max-jobs = 0;
+        max-jobs = "auto";
 
         experimental-features = builtins.readFile
             (pkgs.runCommandCC "fetch-xp-features" {

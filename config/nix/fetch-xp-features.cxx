@@ -7,5 +7,5 @@ namespace nix {
 
 int main() {
     for (const auto & [feature, name] : nix::stringifiedXpFeatures)
-        std::cout << name << ' ';
+        if (name != "ca-derivations") std::cout << name << ' ';
 }
