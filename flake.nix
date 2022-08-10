@@ -13,7 +13,7 @@
 
         packages.${system}.default =
             pkgs.writeText "deploy.json" (builtins.toJSON {
-                agents.mae = self.nixosConfigurations.mae.toplevel;
+                agents.mae = self.nixosConfigurations.mae;
             });
     };
 }
