@@ -20,8 +20,12 @@ jobs:
 
       - run: nix shell nixpkgs#nixos-install-tools --command
           nixos-generate-config --no-filesystems --dir .
-      - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
-          --print-build-logs --show-trace
+      - run: nix build --print-build-logs --show-trace
+
+      - #if: github.ref == 'refs/heads/main'
+        run: cachix deploy activate result
+        env:
+          CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
 
   delete-old-builds:
     needs: build
