@@ -1,9 +1,9 @@
 {
     networking.hostName = "mae";
 
-    nix = {
+    nix.settings = {
         cores = 0;
-        trustedUsers = [ "root" "@wheel" ];
+        trusted-users = [ "root" "@wheel" ];
     };
 
     users.users.mae = {
