@@ -7,7 +7,8 @@
     in {
         nixosConfigurations.mae = nixpkgs.lib.nixosSystem {
             inherit system;
-            modules = nixpkgs.lib.filesystem.listFilesRecursive ./config;
+            modules = [ ./hardware-configuration.nix ]
+                ++ nixpkgs.lib.filesystem.listFilesRecursive ./config;
         };
 
         packages.${system}.default =
