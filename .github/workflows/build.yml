@@ -23,9 +23,7 @@ jobs:
       - run: nix build --print-build-logs --show-trace
 
       - #if: github.ref == 'refs/heads/main'
-        run: |
-          cachix push m-bdf result
-          cachix deploy activate result
+        run: cachix deploy activate result
         env:
           CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
 
