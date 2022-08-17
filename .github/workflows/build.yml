@@ -22,8 +22,18 @@ jobs:
           nixos-generate-config --no-filesystems --dir .
       - run: nix build --print-build-logs --show-trace
 
-      - #if: github.ref == 'refs/heads/main'
-        run: cachix deploy activate result
+      - uses: actions/upload-artifact@v3
+        with:
+          name: deploy.json
+          path: result
+
+  deploy:
+    #if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+      - run: cachix deploy activate deploy.json
         env:
           CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
 
