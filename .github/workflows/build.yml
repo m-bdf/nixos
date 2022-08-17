@@ -24,7 +24,6 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: deploy.json
           path: result
 
   deploy:
@@ -38,7 +37,7 @@ jobs:
           name: m-bdf
 
       - uses: actions/download-artifact@v3
-      - run: cachix deploy activate deploy.json
+      - run: cachix deploy activate artifact/result
         env:
           CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
 
