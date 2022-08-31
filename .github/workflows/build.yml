@@ -18,8 +18,6 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix shell nixpkgs#nixos-install-tools --command
-          nixos-generate-config --no-filesystems --dir .
       - run: nix run -- nixpkgs#nixos-rebuild build --flake .#mae
           --print-build-logs --show-trace
 
