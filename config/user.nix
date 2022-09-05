@@ -1,12 +1,13 @@
-{ lib, hostname, password ? "" }:
+{ lib, const, ... }:
 
 {
     users = {
         mutableUsers = false;
 
-        ${hostname} = {
+        users.${const.hostname} = {
             isNormalUser = true;
-            inherit password;
+            group = "wheel";
+            password = const.password or "";
             home = "/home";
         };
     };
