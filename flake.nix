@@ -1,14 +1,14 @@
 {
     inputs.secrets.url = "templates";
 
-    outputs = { self, nixpkgs, secrets ? {} }:
-    let const = import ./constants.nix // nixpkgs.lib.traceVal secrets;
-    in {
-        nixosConfigurations.${const.hostname} = nixpkgs.lib.nixosSystem {
+    outputs = { self, nixpkgs, secrets }:
+    let
+        system = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
-            specialArgs = { inherit const; };
+            specialArgs = { inherit secrets; };
             modules = [ ./hardware-configuration.nix ]
                 ++ nixpkgs.lib.filesystem.listFilesRecursive ./config;
         };
-    };
+
+    in { nixosConfigurations.${system.config.system.name} = system; };
 }

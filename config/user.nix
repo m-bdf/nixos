@@ -1,13 +1,13 @@
-{ lib, const, ... }:
+{ lib, config, secrets, ... }:
 
 {
     users = {
         mutableUsers = false;
 
-        users.${const.hostname} = {
+        users.${config.system.name} = {
             isNormalUser = true;
             group = "wheel";
-            password = const.password or "";
+            password = secrets.password or "";
             home = "/home";
         };
     };
