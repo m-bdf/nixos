@@ -1,10 +1,10 @@
-{ lib, config, secrets, ... }:
+{ lib, secrets, ... }:
 
 {
     users = {
         mutableUsers = false;
 
-        users.${config.system.name} = {
+        users.mae = {
             isNormalUser = true;
             group = "wheel";
             password = secrets.password or "";
