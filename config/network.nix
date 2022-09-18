@@ -21,4 +21,6 @@
         targets.network-online.wantedBy = lib.mkForce []; #86273
         network.wait-online.anyInterface = true;
     };
+
+    environment.persistence."/nix".directories = [ "/var/lib/iwd" ];
 }

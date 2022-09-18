@@ -2,7 +2,10 @@
     fileSystems = {
         "/".fsType = "tmpfs";
         "/boot".label = "BOOT";
-        "/nix".label = "nixos";
+        "/nix" = {
+            label = "nixos";
+            neededForBoot = true;
+        };
     };
 
     swapDevices = [{ label = "swap"; }];
