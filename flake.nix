@@ -1,19 +1,28 @@
 {
     inputs.impermanence.url = "github:nix-community/impermanence";
 
-    outputs = { self, nixpkgs, impermanence }:
+    outputs = { self, nixpkgs, nixos-hardware, impermanence }:
     let
         listDir = dir: map (entry: dir + "/${entry}")
             (builtins.attrNames (builtins.readDir dir));
 
-        system = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
+        modules = listDir ./config ++ [ impermanence.nixosModule ];
 
-            modules = listDir ./config ++ [
-                impermanence.nixosModule
-                ./hardware-configuration.nix
-            ];
+    in {
+        nixosConfigurations = {
+            vbox = nixpkgs.lib.nixosSystem {
+                modules = modules ++ [ ./hardware/vbox.nix ];
+            };
+
+            t480 = nixpkgs.lib.nixosSystem {
+                modules = modules ++ [ ./hardware/t480.nix ] ++ (
+                    with nixos-hardware.nixosModules; [
+                        lenovo-thinkpad-t480
+                        common-gpu-nvidia-disable
+                        common-pc-ssd
+                    ]
+                );
+            };
         };
-
-    in { nixosConfigurations.${system.config.system.name} = system; };
+    };
 }

@@ -5,10 +5,17 @@
         "/nix" = {
             label = "nixos";
             neededForBoot = true;
+            options = [ "noatime" ];
         };
     };
 
     swapDevices = [{ label = "swap"; }];
 
-    boot.loader.systemd-boot.enable = true;
+    boot = {
+        loader = {
+            systemd-boot.enable = true;
+            efi.canTouchEfiVariables = true;
+        };
+        initrd.includeDefaultModules = false;
+    };
 }

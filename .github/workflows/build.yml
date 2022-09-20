@@ -18,7 +18,9 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix run -- nixpkgs#nixos-rebuild build --flake .#nixos
+      - run: nix run -- nixpkgs#nixos-rebuild build --flake .#t480
+          --print-build-logs --show-trace
+      - run: nix run -- nixpkgs#nixos-rebuild build --flake .#vbox
           --print-build-logs --show-trace
 
   delete-old-builds:
