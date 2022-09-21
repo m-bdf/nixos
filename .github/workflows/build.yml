@@ -12,6 +12,9 @@ jobs:
       - uses: actions/checkout@v3
       - run: rm --recursive .git
 
+      - name: Enforce LF line breaks
+        run: "! grep --recursive \r"
+
       - uses: cachix/install-nix-action@v17
       - uses: cachix/cachix-action@v10
         with:
