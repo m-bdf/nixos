@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   update = pkgs.writeShellScriptBin "update" ''
@@ -7,7 +7,18 @@ let
 in
 
 {
-  environment = {
+  options.environment = with lib.types; {
+    defaultTerminal = lib.mkOption {
+      default = "";
+      type = str;
+    };
+    defaultBrowser = lib.mkOption {
+      default = "";
+      type = str;
+    };
+  };
+
+  config.environment = {
     defaultPackages = [];
     systemPackages = [ update ];
 

@@ -1,23 +1,27 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   riverNoX = pkgs.river.override { xwaylandSupport = false; };
 
-  init = pkgs.writeShellScript "init" ''
-    target=wayland-instance@$WAYLAND_DISPLAY.target
-    trap "systemctl --user stop $target" TERM
-    systemctl --user start $target
+  init =
+  let
+    inherit (config.environment) defaultTerminal defaultBrowser;
+  in
+    pkgs.writeShellScript "init" ''
+      target=wayland-instance@$WAYLAND_DISPLAY.target
+      trap "systemctl --user stop $target" TERM
+      systemctl --user start $target
 
-    riverctl map normal Alt Return spawn footclient
-    riverctl map normal Super Return spawn brave
+      riverctl map normal Alt Return spawn "${defaultTerminal}"
+      riverctl map normal Super Return spawn "${defaultBrowser}"
 
-    riverctl map normal Alt Tab zoom
-    riverctl map normal Alt Backspace close
-    riverctl map normal Super Escape exit
+      riverctl map normal Alt Tab zoom
+      riverctl map normal Alt Backspace close
+      riverctl map normal Super Escape exit
 
-    riverctl default-layout rivertile
-    rivertile
-  '';
+      riverctl default-layout rivertile
+      rivertile
+    '';
 in
 
 {

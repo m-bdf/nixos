@@ -10,6 +10,8 @@ in
 {
   environment = {
     systemPackages = [ pkgs.foot ];
+    defaultTerminal = "footclient";
+
     etc."foot/foot.ini".text =
       lib.generators.toINIWithGlobalSection {} config;
   };
