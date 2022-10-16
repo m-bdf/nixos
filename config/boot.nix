@@ -1,21 +1,27 @@
+{ pkgs, ... }:
+
 {
-    fileSystems = {
-        "/".fsType = "tmpfs";
-        "/boot".label = "BOOT";
-        "/nix" = {
-            label = "nixos";
-            neededForBoot = true;
-            options = [ "noatime" ];
-        };
-    };
-
-    swapDevices = [{ label = "swap"; }];
-
     boot = {
         loader = {
-            systemd-boot.enable = true;
             efi.canTouchEfiVariables = true;
+
+            systemd-boot = {
+                enable = true;
+                editor = false;
+            };
+            timeout = null;
         };
-        initrd.includeDefaultModules = false;
+
+        initrd = {
+            systemd = {
+                enable = true;
+                emergencyAccess = true;
+            };
+            includeDefaultModules = false;
+        };
+
+        kernelPackages = pkgs.linuxPackages_zen;
     };
+
+    services.dbus.implementation = "broker";
 }
