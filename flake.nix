@@ -9,6 +9,21 @@
         modules = listDir ./config ++ [ impermanence.nixosModule ];
 
     in {
+        checks.x86_64-linux = with nixpkgs.lib;
+        let
+            makeTest = script:
+            let
+                name = removeSuffix ".py" (baseNameOf script);
+
+            in nameValuePair name (nixos.runTest {
+                inherit name;
+                hostPkgs = nixpkgs.legacyPackages.x86_64-linux;
+                nodes.machine.imports = modules;
+                testScript = readFile script;
+            });
+
+        in listToAttrs (map makeTest (listDir ./tests));
+
         nixosConfigurations = {
             vbox = nixpkgs.lib.nixosSystem {
                 modules = modules ++ [ ./hardware/vbox.nix ];
