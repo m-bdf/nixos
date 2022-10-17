@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   riverNoX = pkgs.river.override { xwaylandSupport = false; };
@@ -8,7 +8,7 @@ let
     inherit (config.environment) defaultTerminal defaultBrowser;
   in
     pkgs.writeShellScript "init" ''
-      target=wayland-instance@$WAYLAND_DISPLAY.target
+      target="wayland-instance@$WAYLAND_DISPLAY.target"
       trap "systemctl --user stop $target" TERM
       systemctl --user start $target
 
@@ -30,15 +30,34 @@ in
     etc."river/init".source = init;
   };
 
-  security.polkit.enable = true;
   hardware.opengl.enable = true;
+  security.rtkit.enable = true;
 
-  systemd.user.targets."wayland-instance@" = {
-    description = "Wayland instance for WAYLAND_DISPLAY=%i";
-    documentation = [ "man:systemd.special(7)" ];
+  services.pipewire = {
+    enable = true;
+    #pulse.enable = true;
+  };
 
-    bindsTo = [ "graphical-session.target" ];
-    wants = [ "graphical-session-pre.target" ];
-    after = [ "graphical-session-pre.target" ];
+  xdg.portal = {
+    wlr.enable = true;
+    #gtkUsePortal = true;
+  };
+
+  services = {
+    localtimed.enable = true;
+  };
+  location.provider = "geoclue2";
+
+  systemd.user.targets = {
+    graphical-session = lib.mkForce {}; #26094
+
+    "wayland-instance@" = {
+      description = "Wayland instance for WAYLAND_DISPLAY=%i";
+      documentation = [ "man:systemd.special(7)" ];
+
+      bindsTo = [ "graphical-session.target" ];
+      wants = [ "graphical-session-pre.target" ];
+      after = [ "graphical-session-pre.target" ];
+    };
   };
 }
