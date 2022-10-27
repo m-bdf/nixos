@@ -22,7 +22,11 @@
                 testScript = readFile script;
             });
 
-        in listToAttrs (map makeTest (listDir ./tests));
+        in mapAttrs (name: { config, ... }:
+            assert config.warnings == [];
+            config.system.build.toplevel
+        ) self.nixosConfigurations //
+            listToAttrs (map makeTest (listDir ./tests));
 
         nixosConfigurations = {
             vbox = nixpkgs.lib.nixosSystem {
