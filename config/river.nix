@@ -16,6 +16,13 @@ let
       riverctl map normal Super Return spawn "${defaultBrowser}"
 
       riverctl map normal Alt Tab zoom
+
+      for i in $(seq 1 9); do
+        tags=$((1 << ($i - 1)))
+        riverctl map normal Alt $i set-focused-tags $tags
+        riverctl map normal Super $i set-view-tags $tags
+      done
+
       riverctl map normal Alt Backspace close
       riverctl map normal Super Escape exit
 

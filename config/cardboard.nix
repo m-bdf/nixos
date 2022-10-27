@@ -18,6 +18,12 @@ let
       cutter bind super+Left move -10 0
       cutter bind super+Right move 10 0
 
+      for i in $(seq 1 9); do
+        workspace=$((i - 1))
+        cutter bind alt+$i workspace switch $workspace
+        cutter bind super+$i workspace move $workspace
+      done
+
       cutter bind alt+Backspace close
       cutter bind super+Escape quit
     '';
