@@ -1,4 +1,9 @@
 {
+  nixConfig = {
+    extra-substituters = "https://m-bdf.cachix.org";
+    extra-trusted-public-keys = "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s=";
+  };
+
   inputs = {
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
