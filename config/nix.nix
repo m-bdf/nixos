@@ -1,5 +1,5 @@
 { lib, ... }:
 
 {
-    system.stateVersion = lib.trivial.release;
+  system.stateVersion = lib.trivial.release;
 }
