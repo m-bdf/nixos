@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   rc =
@@ -6,12 +6,18 @@ let
     inherit (config.environment) defaultTerminal defaultBrowser;
   in
     pkgs.writeShellScript "cardboardrc" ''
-      target="wayland-instance@$WAYLAND_DISPLAY.target"
-      #trap "systemctl --user stop $target" TERM
-      systemctl --user start $target
+      export PATH+=:${pkgs.cardboard}/bin XDG_CURRENT_DESKTOP=cardboard
+      variables="WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
+      systemctl --user is-active graphical-session.target && cutter quit
+      trap "
+        systemctl --user unset-environment $variables
+        systemctl --user stop graphical-session.target
+      " EXIT
+      systemctl --user import-environment $variables
+      systemctl --user start graphical-session.target
 
-      cutter bind alt+Return exec "${defaultTerminal}"
-      cutter bind super+Return exec "${defaultBrowser}"
+      cutter bind alt+Return exec ${defaultTerminal}
+      cutter bind super+Return exec ${defaultBrowser}
 
       cutter bind alt+Left focus left
       cutter bind alt+Right focus right
@@ -26,12 +32,15 @@ let
 
       cutter bind alt+Backspace close
       cutter bind super+Escape quit
+
+      sleep infinity
     '';
 in
 
 {
   environment = {
     systemPackages = [ pkgs.cardboard ];
+    shellAliases.cardboard = "session-run cardboard";
     etc."cardboard/cardboardrc".source = rc;
   };
 }

@@ -10,19 +10,26 @@ in
 {
   environment = {
     systemPackages = [ pkgs.foot ];
-    defaultTerminal = "footclient";
-
+    defaultTerminal =
+      "env --unset=WAYLAND_DISPLAY ${pkgs.foot}/bin/footclient";
     etc."foot/foot.ini".text =
       lib.generators.toINIWithGlobalSection {} config;
   };
 
-  systemd = {
-    packages = [ pkgs.foot ];
+  systemd.user = {
+    services.foot-server = {
+      description = "Foot terminal server";
+      documentation = [ "man:foot(1)" ];
+      serviceConfig.ExecStart = "${pkgs.foot}/bin/foot --server=3";
+      requires = [ "%N.socket" ];
+    };
 
-    user.sockets."foot-server@" = {
-      wantedBy = [ "wayland-instance@.target" ]; #81138
-      partOf = [ "wayland-instance@.target" ];
-      after = [ "wayland-instance@.target" ];
+    sockets.foot-server = {
+      listenStreams = [ "%t/foot.sock" ];
+      unitConfig.DefaultDependencies = false;
+      wantedBy = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
     };
   };
 }

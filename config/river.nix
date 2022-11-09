@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   riverNoX = pkgs.river.override { xwaylandSupport = false; };
@@ -8,9 +8,15 @@ let
     inherit (config.environment) defaultTerminal defaultBrowser;
   in
     pkgs.writeShellScript "init" ''
-      target="wayland-instance@$WAYLAND_DISPLAY.target"
-      trap "systemctl --user stop $target" TERM
-      systemctl --user start $target
+      export PATH+=:${riverNoX}/bin XDG_CURRENT_DESKTOP=river
+      variables="WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
+      systemctl --user is-active graphical-session.target && riverctl exit
+      trap "
+        systemctl --user unset-environment $variables
+        systemctl --user stop graphical-session.target
+      " EXIT
+      systemctl --user import-environment $variables
+      systemctl --user start graphical-session.target
 
       riverctl map normal Alt Return spawn "${defaultTerminal}"
       riverctl map normal Super Return spawn "${defaultBrowser}"
@@ -34,6 +40,7 @@ in
 {
   environment = {
     systemPackages = [ riverNoX ];
+    shellAliases.river = "session-run river";
     etc."river/init".source = init;
   };
 
@@ -54,17 +61,4 @@ in
     localtimed.enable = true;
   };
   location.provider = "geoclue2";
-
-  systemd.user.targets = {
-    graphical-session = lib.mkForce {}; #26094
-
-    "wayland-instance@" = {
-      description = "Wayland instance for WAYLAND_DISPLAY=%i";
-      documentation = [ "man:systemd.special(7)" ];
-
-      bindsTo = [ "graphical-session.target" ];
-      wants = [ "graphical-session-pre.target" ];
-      after = [ "graphical-session-pre.target" ];
-    };
-  };
 }
