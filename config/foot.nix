@@ -12,8 +12,13 @@ in
     systemPackages = [ pkgs.foot ];
     defaultTerminal =
       "env --unset=WAYLAND_DISPLAY ${pkgs.foot}/bin/footclient";
-    etc."foot/foot.ini".text =
-      lib.generators.toINIWithGlobalSection {} config;
+
+    etc."foot/foot.ini".source = pkgs.writeTextFile {
+      name = "foot/foot.ini";
+      text = lib.generators.toINIWithGlobalSection {} config;
+      checkPhase =
+        "${pkgs.foot}/bin/foot --config=$target --check-config";
+    };
   };
 
   systemd.user = {
