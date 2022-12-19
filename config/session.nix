@@ -2,19 +2,28 @@
 
 let
   session-run = pkgs.writeShellScriptBin "session-run" ''
-    XDG_RUNTIME_DIR+=/session-$$
+    unit=session-''${XDG_SESSION_ID:?
+      "Can't create a session inside another session"}
+
+    XDG_RUNTIME_DIR+=/$unit
     trap "rm --recursive --force $XDG_RUNTIME_DIR" EXIT
-    mkdir --parents $XDG_RUNTIME_DIR
+    mkdir --mode=0700 --parents $XDG_RUNTIME_DIR
 
-    printf '%q ' "$@" > $XDG_RUNTIME_DIR/cmd
+    printf '%s ' "$@" > $XDG_RUNTIME_DIR/.cmd
     vars=XDG_RUNTIME_DIR,DBUS_SESSION_BUS_ADDRESS
-    eval env --unset={$vars} > $XDG_RUNTIME_DIR/env
+    env > $XDG_RUNTIME_DIR/.env
 
-    eval systemd-run --user --unit=session-$$ --collect \
+    cmd='
+      echo $INVOCATION_ID > $XDG_RUNTIME_DIR/.iid
+      init --user --unit=session.service --log-target=journal
+    '
+    eval systemd-run --user --unit=$unit --pty --pipe \
       --setenv={$vars=unix:path=$XDG_RUNTIME_DIR/bus} \
-      --pty init --user --unit=session.service
+      --service-type=notify --wait --collect sh -c '"$cmd"'
 
-    journalctl --user-unit=session-$$ --boot
+    status=$?
+    journalctl _SYSTEMD_INVOCATION_ID=$(<$XDG_RUNTIME_DIR/.iid)
+    exit $status
   '';
 in
 
@@ -23,8 +32,8 @@ in
 
   systemd.user.services.session = {
     serviceConfig = {
-      EnvironmentFile = "%t/env";
-      ExecStart = "/bin/sh %t/cmd";
+      EnvironmentFile = "%t/.env";
+      ExecStart = "/bin/sh %t/.cmd";
     };
     unitConfig = {
       SuccessAction = "exit";
