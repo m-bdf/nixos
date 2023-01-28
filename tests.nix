@@ -3,10 +3,10 @@
 with lib;
 
 let
-  mkTest = script:
+  mkTest = name: script:
   let
     test = nixos.runTest {
-      name = head (splitString "." script);
+      inherit name;
       hostPkgs = pkgs;
 
       nodes.machine = {
@@ -23,4 +23,4 @@ let
     nameValuePair test.name test;
 in
 
-listToAttrs (map mkTest (listDir ./tests))
+mapAttrs' mkTest (listDir ./tests)
