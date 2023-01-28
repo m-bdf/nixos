@@ -9,24 +9,22 @@
     modules = listDir ./config ++ [ impermanence.nixosModule ];
   in
   {
-    checks.x86_64-linux = with nixpkgs.lib;
+    checks = with nixpkgs.lib;
     let
-      makeTest = script:
-      let
-        name = removeSuffix ".py" (baseNameOf script);
-      in
-        nameValuePair name (nixos.runTest {
-          inherit name;
-          hostPkgs = nixpkgs.legacyPackages.x86_64-linux;
-          nodes.machine.imports = modules;
-          testScript = readFile script;
+      configTests = foldl' recursiveUpdate {}
+        (mapAttrsToList (name: { config, pkgs, ... }:
+          assert config.warnings == [];
+          setAttrByPath [ pkgs.system name ] config.system.build.toplevel
+        ) self.nixosConfigurations);
+
+      vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
+        (platform: import ./tests.nix {
+          lib = nixpkgs.lib // { inherit listDir; };
+          pkgs = nixpkgs.legacyPackages.${platform};
+          inherit modules;
         });
     in
-      mapAttrs (name: { config, ... }:
-        assert config.warnings == [];
-        config.system.build.toplevel
-      ) self.nixosConfigurations //
-        listToAttrs (map makeTest (listDir ./tests));
+      recursiveUpdate configTests vmTests;
 
     nixosConfigurations = {
       vbox = nixpkgs.lib.nixosSystem {
