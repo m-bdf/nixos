@@ -15,7 +15,7 @@ jobs:
       - name: Enforce LF line breaks
         run: "! grep --recursive \r"
 
-      - uses: cachix/install-nix-action@v18
+      - uses: cachix/install-nix-action@v20
         with:
           extra_nix_config: system-features = nixos-test kvm
 
