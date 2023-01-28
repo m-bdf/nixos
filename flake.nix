@@ -25,8 +25,8 @@
           mkAliasOptionModule = mkRenamedOptionModule;
           mkAliasOptionModuleMD = mkRenamedOptionModule; #208407
         });
-        modules = attrValues self.nixosModules ++
-          imports ++ modules ++ [ ./hardware/${name}.nix ];
+        modules = attrValues self.nixosModules;
+        extraModules = imports ++ modules ++ [ ./hardware/${name}.nix ];
       };
     in
       mapAttrs mkSystem {
@@ -43,10 +43,12 @@
     checks =
     let
       configTests = foldl' recursiveUpdate {}
-        (mapAttrsToList (name: { config, pkgs, ... }:
-          assert config.warnings == [];
-          setAttrByPath [ pkgs.system name ] config.system.build.toplevel
-        ) self.nixosConfigurations);
+        (mapAttrsToList (name: system: {
+          ${system.pkgs.system}.${name} =
+            (system.extendModules {
+              modules = [ ./asserts.nix ];
+            }).config.system.build.toplevel;
+        }) self.nixosConfigurations);
 
       vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
         (platform: import ./tests.nix {
