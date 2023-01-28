@@ -2,14 +2,45 @@
   inputs.impermanence.url = "github:nix-community/impermanence";
 
   outputs = { self, nixpkgs, nixos-hardware, impermanence }:
-  let
-    listDir = dir: map (entry: dir + "/${entry}")
-      (builtins.attrNames (builtins.readDir dir));
 
-    modules = listDir ./config ++ [ impermanence.nixosModule ];
+  with nixpkgs.lib;
+
+  let
+    imports = [ impermanence.nixosModule ];
+
+    listDir = dir: mapAttrs' (entry: type:
+      nameValuePair (head (splitString "." entry)) /${dir}/${entry}
+    ) (builtins.readDir dir);
   in
+
   {
-    checks = with nixpkgs.lib;
+    nixosModules = mapAttrs (name: path:
+      setDefaultModuleLocation path path
+    ) (listDir ./config);
+
+    nixosConfigurations =
+    let
+      mkSystem = name: modules: nixosSystem {
+        lib = extend (final: prev: {
+          mkAliasOptionModule = mkRenamedOptionModule;
+          mkAliasOptionModuleMD = mkRenamedOptionModule; #208407
+        });
+        modules = attrValues self.nixosModules ++
+          imports ++ modules ++ [ ./hardware/${name}.nix ];
+      };
+    in
+      mapAttrs mkSystem {
+        vbox = [];
+        qemu = [];
+
+        t480 = with nixos-hardware.nixosModules; [
+          lenovo-thinkpad-t480
+          common-gpu-nvidia-disable
+          common-pc-ssd
+        ];
+      };
+
+    checks =
     let
       configTests = foldl' recursiveUpdate {}
         (mapAttrsToList (name: { config, pkgs, ... }:
@@ -21,25 +52,9 @@
         (platform: import ./tests.nix {
           lib = nixpkgs.lib // { inherit listDir; };
           pkgs = nixpkgs.legacyPackages.${platform};
-          inherit modules;
+          modules = attrValues self.nixosModules ++ imports;
         });
     in
       recursiveUpdate configTests vmTests;
-
-    nixosConfigurations = {
-      vbox = nixpkgs.lib.nixosSystem {
-        modules = modules ++ [ ./hardware/vbox.nix ];
-      };
-
-      t480 = nixpkgs.lib.nixosSystem {
-        modules = modules ++ [ ./hardware/t480.nix ] ++ (
-          with nixos-hardware.nixosModules; [
-            lenovo-thinkpad-t480
-            common-gpu-nvidia-disable
-            common-pc-ssd
-          ]
-        );
-      };
-    };
   };
 }
