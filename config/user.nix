@@ -2,9 +2,10 @@
   users = {
     mutableUsers = false;
 
-    users.mae = {
+    users.user = {
+      name = "mae";
       isNormalUser = true;
-      group = "wheel";
+      extraGroups = [ "wheel" ];
       home = "/home";
       password = "";
     };
