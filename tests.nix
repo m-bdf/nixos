@@ -1,16 +1,25 @@
-{ lib, pkgs, modules }:
+{ self, nixpkgs, ... }@ inputs:
 
-with lib;
+with nixpkgs.lib;
 
 let
-  mkTest = name: script:
+  configTests =
+    mapAttrsToList (name: system: {
+      ${system.pkgs.stdenv.system}.${name} =
+        (system.extendModules {
+          modules = [ ./asserts.nix ];
+        }).config.system.build.toplevel;
+    }) self.nixosConfigurations;
+
+  mkVmTest = platform: name: script:
   let
     test = nixos.runTest {
       inherit name;
-      hostPkgs = pkgs;
+      node.specialArgs = inputs;
+      hostPkgs = nixpkgs.legacyPackages.${platform};
 
       nodes.machine = {
-        imports = modules;
+        imports = attrValues self.nixosModules;
         virtualisation.writableStore = false;
       };
 
@@ -21,6 +30,9 @@ let
     };
   in
     nameValuePair test.name test;
+
+  vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
+    (platform: mapAttrs' (mkVmTest platform) (self.lib.listDir ./tests));
 in
 
-mapAttrs' mkTest (listDir ./tests)
+foldl' recursiveUpdate {} (configTests ++ [vmTests])

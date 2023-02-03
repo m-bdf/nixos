@@ -1,32 +1,30 @@
 {
   inputs.impermanence.url = "github:nix-community/impermanence";
 
-  outputs = { self, nixpkgs, nixos-hardware, impermanence }:
+  outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
 
   with nixpkgs.lib;
 
-  let
-    imports = [ impermanence.nixosModule ];
-
-    listDir = dir: mapAttrs' (entry: type:
-      nameValuePair (head (splitString "." entry)) /${dir}/${entry}
-    ) (builtins.readDir dir);
-  in
-
   {
+    lib = extend (final: prev: {
+      mkAliasOptionModule = mkRenamedOptionModule;
+      mkAliasOptionModuleMD = mkRenamedOptionModule; #208407
+
+      listDir = dir: mapAttrs' (entry: type:
+        nameValuePair (head (splitString "." entry)) /${dir}/${entry}
+      ) (builtins.readDir dir);
+    });
+
     nixosModules = mapAttrs (name: path:
       setDefaultModuleLocation path path
-    ) (listDir ./config);
+    ) (self.lib.listDir ./config);
 
     nixosConfigurations =
     let
       mkSystem = name: modules: nixosSystem {
-        lib = extend (final: prev: {
-          mkAliasOptionModule = mkRenamedOptionModule;
-          mkAliasOptionModuleMD = mkRenamedOptionModule; #208407
-        });
+        specialArgs = inputs // { inherit (self) lib; };
         modules = attrValues self.nixosModules;
-        extraModules = imports ++ modules ++ [ ./hardware/${name}.nix ];
+        extraModules = modules ++ [ ./hardware/${name}.nix ];
       };
     in
       mapAttrs mkSystem {
@@ -40,23 +38,6 @@
         ];
       };
 
-    checks =
-    let
-      configTests = foldl' recursiveUpdate {}
-        (mapAttrsToList (name: system: {
-          ${system.pkgs.system}.${name} =
-            (system.extendModules {
-              modules = [ ./asserts.nix ];
-            }).config.system.build.toplevel;
-        }) self.nixosConfigurations);
-
-      vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
-        (platform: import ./tests.nix {
-          lib = nixpkgs.lib // { inherit listDir; };
-          pkgs = nixpkgs.legacyPackages.${platform};
-          modules = attrValues self.nixosModules ++ imports;
-        });
-    in
-      recursiveUpdate configTests vmTests;
+    checks = import ./tests.nix inputs;
   };
 }
