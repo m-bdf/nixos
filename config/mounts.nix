@@ -1,5 +1,3 @@
-{ impermanence, ... }:
-
 {
   fileSystems =
   let
@@ -24,6 +22,4 @@
   };
 
   swapDevices = [{ label = "swap"; }];
-
-  imports = [ impermanence.nixosModules.impermanence ];
 }
