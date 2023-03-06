@@ -21,6 +21,7 @@ let
       nodes.machine = {
         imports = attrValues self.nixosModules;
         virtualisation.writableStore = false;
+        users.users.user.name = mkForce "user";
       };
 
       testScript = ''

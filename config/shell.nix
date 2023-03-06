@@ -19,4 +19,9 @@
       nix-index-unwrapped = config.programs.nix-index.package;
     })
   ];
+
+  xdg.basedirs = {
+    config.fish.create = true; # variables
+    data.fish.persist = true; # history
+  };
 }

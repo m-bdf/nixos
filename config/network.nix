@@ -21,5 +21,5 @@
     network.wait-online.anyInterface = true;
   };
 
-  environment.persistence."/nix".directories = [ "/var/lib/iwd" ];
+  xdg.basedirs.state.iwd.persist = true; # networks
 }
