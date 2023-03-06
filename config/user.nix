@@ -10,4 +10,6 @@
       password = "";
     };
   };
+
+  xdg.basedirs.state.nixos.persist = true; # UIDs GIDs
 }
