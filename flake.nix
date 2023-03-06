@@ -1,6 +1,6 @@
 {
   inputs = {
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence.url = "github:nix-community/impermanence/dir-creation-order";
 
     nix-index-database = {
       url = "github:Mic92/nix-index-database";

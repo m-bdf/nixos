@@ -22,6 +22,7 @@ let
         nixpkgs.pkgs = hostPkgs;
         imports = attrValues self.nixosModules;
         virtualisation.writableStore = false;
+        users.users.user.name = mkForce "user";
       };
 
       testScript = ''
