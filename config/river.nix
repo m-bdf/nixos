@@ -45,12 +45,6 @@ in
   };
 
   hardware.opengl.enable = true;
-  security.rtkit.enable = true;
-
-  services.pipewire = {
-    enable = true;
-    #pulse.enable = true;
-  };
 
   xdg.portal = {
     wlr.enable = true;
