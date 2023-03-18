@@ -3,13 +3,13 @@
 let
   yambarNoX = pkgs.yambar.override { x11Support = true; }; #FIXME
 
-  mkMap = with lib;
-    foldr (cond: res: {
-      map.conditions =
-        assert length (attrNames cond) == 1;
-        cond // optionalAttrs (res != null) {
-          "~(${head (attrNames cond)})" = res;
-        };
+  mkOrderedMapParticle = with lib;
+    foldl' (res: { condition, particle }: {
+      map.conditions = {
+        "${condition}" = particle;
+      } // optionalAttrs (res != null) {
+        "~(${condition})" = res;
+      };
     });
 
   config.bar = {
@@ -29,10 +29,10 @@ let
           };
         };
       in
-        mkMap null [
-          { focused = mkTag "ffffffff"; }
-          { occupied = mkTag "aaaaaaaa"; }
-          { "id < 10" = mkTag "00000000"; }
+        mkOrderedMapParticle null [
+          { condition = "focused"; particle = mkTag "ffffffff"; }
+          { condition = "occupied"; particle = mkTag "aaaaaaaa"; }
+          { condition = "id < 10"; particle = mkTag "00000000"; }
         ];
     }];
 
