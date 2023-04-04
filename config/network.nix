@@ -6,12 +6,10 @@
 
     wireless.iwd = {
       enable = true;
-      settings = {
-        General = {
-          EnableNetworkConfiguration = true;
-          AddressRandomization = "network";
-        };
-        Network.EnableIPv6 = true;
+      settings.General = {
+        EnableNetworkConfiguration = true;
+        AddressRandomization = "network";
+        DisableANQP = false;
       };
     };
   };
