@@ -1,11 +1,21 @@
-{ lib, pkgs, nixpkgs, ... }:
+{ lib, pkgs, nixpkgs, nix-monitored, ... }:
 
 {
   system.stateVersion = lib.trivial.release;
 
+  imports = [ nix-monitored.nixosModules.nix-monitored ];
+
   nix = {
-    package = pkgs.nixUnstable;
-    settings.use-xdg-base-directories = true;
+    monitored = {
+      enable = true;
+      package = pkgs.nix-monitored.override { nix = pkgs.nixUnstable; };
+    };
+
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      use-xdg-base-directories = true;
+    };
+
     registry.nixpkgs.flake = nixpkgs;
     nixPath = [ "nixpkgs=${nixpkgs}" ];
   };
