@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   boot = {
-    loader = {
+    loader = config.isWsl or {
       efi.canTouchEfiVariables = true;
 
       systemd-boot = {
