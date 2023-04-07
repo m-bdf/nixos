@@ -1,8 +1,11 @@
+{ config, ... }:
+
 {
   fileSystems =
   let
     options = [ "nosuid" "nodev" "noexec" "noatime" ];
   in
+    config.isWsl or
   {
     "/" = {
       fsType = "tmpfs";

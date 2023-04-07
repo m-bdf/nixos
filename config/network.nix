@@ -1,7 +1,7 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 {
-  networking = {
+  networking = config.isWsl or {
     useNetworkd = true;
 
     wireless.iwd = {

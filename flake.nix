@@ -1,5 +1,10 @@
 {
   inputs = {
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     impermanence.url = "github:nix-community/impermanence/dir-creation-order";
 
     nix-index-database = {
@@ -8,7 +13,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
+  outputs = { self, nixpkgs, nixos-hardware, nixos-wsl, ... }@ inputs:
 
   with nixpkgs.lib;
 
@@ -37,6 +42,20 @@
       mapAttrs mkSystem {
         vbox = [];
         qemu = [];
+
+        wsl2 = [
+          nixos-wsl.nixosModules.wsl
+          {
+            options.isWsl = mkOption {
+              default = mkMerge [];
+            };
+            config.wsl = {
+              enable = true;
+              nativeSystemd = true;
+              defaultUser = "user";
+            };
+          }
+        ];
 
         t480 = with nixos-hardware.nixosModules; [
           lenovo-thinkpad-t480
