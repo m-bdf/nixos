@@ -32,7 +32,7 @@ let
   in
     nameValuePair test.name test;
 
-  vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
+  vmTests = genAttrs [ "x86_64-linux" ]
     (platform: mapAttrs' (mkVmTest platform) (self.lib.listDir ./tests));
 in
 

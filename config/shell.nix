@@ -23,11 +23,17 @@
 
   imports = [ nix-index-database.nixosModules.nix-index ];
 
-  environment.systemPackages = [
-    (pkgs.comma.override {
-      nix-index-unwrapped = config.programs.nix-index.package;
-    })
-  ];
+  environment = {
+    systemPackages = [
+      (pkgs.comma.override {
+        nix-index-unwrapped = config.programs.nix-index.package;
+      })
+    ];
+
+    sessionVariables = {
+      STARSHIP_CACHE = "/var/cache/starship"; #starship/896
+    };
+  };
 
   fonts.fonts = [
     (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
@@ -36,5 +42,6 @@
   xdg.dirs = {
     config.fish.create = true; # variables
     data.fish.persist = true; # history
+    cache.starship.create = true; # logs
   };
 }

@@ -14,6 +14,8 @@
     };
   };
 
+  services.resolved.dnssec = "false";
+
   systemd = {
     targets.network-online.wantedBy = lib.mkForce []; #86273
     network.wait-online.anyInterface = true;

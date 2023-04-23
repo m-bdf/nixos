@@ -1,4 +1,11 @@
 {
+  nixConfig = {
+    extra-substituters = [ "https://m-bdf.cachix.org" ];
+    extra-trusted-public-keys = [
+      "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
@@ -7,6 +14,11 @@
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    cage-kiosk = {
+      url = "github:cage-kiosk/cage";
+      flake = false;
     };
   };
 

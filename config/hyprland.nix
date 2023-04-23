@@ -11,7 +11,7 @@ let
   '';
 
   wrapper = pkgs.writeShellScriptBin "Hyprland"
-    "${lib.getExe pkg} --config ${conf}";
+    "WLR_RENDERER_ALLOW_SOFTWARE=1 ${lib.getExe pkg} --config ${conf}";
 in
 
 {

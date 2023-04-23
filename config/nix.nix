@@ -3,16 +3,24 @@
 {
   system.stateVersion = lib.trivial.release;
 
-  nixpkgs.overlays = [
-    (final: prev: {
-      nix = final.nixVersions.unstable;
-    })
-  ];
+  nixpkgs = {
+    config.allowUnfree = true;
+
+    overlays = [
+      (final: prev: {
+        nix = final.nixVersions.unstable;
+      })
+    ];
+  };
 
   nix = {
     registry.nixpkgs.flake = nixpkgs;
     nixPath = [ "nixpkgs=${nixpkgs}" ];
-    settings.use-xdg-base-directories = true;
+
+    settings = {
+      experimental-features = "nix-command flakes";
+      use-xdg-base-directories = true;
+    };
   };
 
   xdg.dirs = {

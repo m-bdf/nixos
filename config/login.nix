@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, cage-kiosk, ... }:
 
 {
   boot = {
@@ -14,7 +14,7 @@
 
     logind = {
       lidSwitch = "ignore";
-      powerKey = "hybrid-sleep";
+      #powerKey = "hybrid-sleep";
     };
     upower.enable = true;
 
@@ -25,7 +25,13 @@
     enable = true;
     settings.default_session.command =
     let
-      cage = pkgs.cage.override { xwayland = null; };
+      cage =
+        (pkgs.cage.override {
+          xwayland = null;
+          wlroots = pkgs.wlroots_0_16;
+        }).overrideAttrs (old: {
+          src = cage-kiosk;
+        });
     in
       "${lib.getExe cage} -s ${lib.getExe pkgs.greetd.regreet}";
   };
