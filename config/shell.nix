@@ -1,7 +1,12 @@
 { config, lib, pkgs, nix-index-database, ... }:
 
 {
-  users.users.user.shell = pkgs.fish;
+  users.users.user.shell =
+  let
+    fish-wrapper = pkgs.writeShellScriptBin "fish-wrapper"
+      ". /etc/set-environment && exec ${lib.getExe pkgs.fish}";
+  in
+    lib.getExe fish-wrapper;
 
   programs = {
     fish = {
