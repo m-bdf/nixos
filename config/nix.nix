@@ -15,7 +15,7 @@
     settings.use-xdg-base-directories = true;
   };
 
-  xdg.basedirs = {
+  xdg.dirs = {
     cache.nix.persist = true; # tarballs
     data.nix.persist = true; # REPL history
   };
