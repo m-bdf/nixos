@@ -16,5 +16,5 @@
 
   systemd.targets.network-online.wantedBy = lib.mkForce []; #86273
 
-  xdg.basedirs.state.iwd.persist = true; # networks
+  xdg.dirs.state.iwd.persist = true; # networks
 }

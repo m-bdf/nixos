@@ -20,7 +20,7 @@
     })
   ];
 
-  xdg.basedirs = {
+  xdg.dirs = {
     config.fish.create = true; # variables
     data.fish.persist = true; # history
   };

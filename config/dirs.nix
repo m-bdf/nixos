@@ -9,12 +9,14 @@ let
     data = "/usr/share";
     state = "/var/lib";
   };
+
+  dirs = basedirs // { home = "/home"; };
 in
 
 {
   imports = [ impermanence.nixosModules.impermanence ];
 
-  options.xdg.basedirs =
+  options.xdg.dirs =
   let
     type = types.attrsOf (types.submodule {
       options = {
@@ -23,7 +25,7 @@ in
       };
     });
   in
-    mapAttrs (name: path: mkOption { inherit type; default = {}; }) basedirs;
+    mapAttrs (name: path: mkOption { inherit type; default = {}; }) dirs;
 
   config =
   let
@@ -32,9 +34,9 @@ in
         (attrNames (filterAttrs (path: cfg: cfg.${attr}) subdirs));
 
     filterMapEnabledSubdirs = attr: fn:
-      concatLists (mapAttrsToList (basedir:
-        filterMapSubdirs attr fn basedirs.${basedir}
-      ) config.xdg.basedirs);
+      concatLists (mapAttrsToList (dir:
+        filterMapSubdirs attr fn dirs.${dir}
+      ) config.xdg.dirs);
 
     inherit (config.users.users) user;
   in
