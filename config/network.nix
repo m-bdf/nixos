@@ -19,5 +19,5 @@
     network.wait-online.anyInterface = true;
   };
 
-  xdg.basedirs.state.iwd.persist = true; # networks
+  xdg.dirs.state.iwd.persist = true; # networks
 }
