@@ -23,5 +23,12 @@
     kernelPackages = pkgs.linuxPackages_zen;
   };
 
-  services.dbus.implementation = "broker";
+  services = {
+    kmscon = {
+      enable = true;
+      hwRender = true;
+    };
+
+    dbus.implementation = "broker";
+  };
 }
