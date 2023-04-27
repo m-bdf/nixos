@@ -1,4 +1,4 @@
-{ config, pkgs, nix-index-database, ... }:
+{ config, lib, pkgs, nix-index-database, ... }:
 
 {
   users.users.user.shell = pkgs.fish;
@@ -8,8 +8,17 @@
       enable = true;
       useBabelfish = true;
     };
-    starship.enable = true;
     command-not-found.enable = false;
+
+    starship = {
+      enable = true;
+      settings =
+      let
+        preset = pkgs.runCommandLocal "starship-nerd-font-preset" {}
+          "${lib.getExe pkgs.starship} preset nerd-font-symbols > $out";
+      in
+        lib.importTOML preset;
+    };
   };
 
   imports = [ nix-index-database.nixosModules.nix-index ];
@@ -18,6 +27,10 @@
     (pkgs.comma.override {
       nix-index-unwrapped = config.programs.nix-index.package;
     })
+  ];
+
+  fonts.fonts = [
+    (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
   ];
 
   xdg.dirs = {
