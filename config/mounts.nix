@@ -21,5 +21,7 @@
     };
   };
 
+  boot.tmp.useTmpfs = true;
+
   swapDevices = [{ label = "swap"; }];
 }
