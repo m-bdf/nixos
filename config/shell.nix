@@ -35,10 +35,6 @@
     };
   };
 
-  fonts.fonts = [
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
-  ];
-
   xdg.dirs = {
     config.fish.create = true; # variables
     data.fish.persist = true; # history
