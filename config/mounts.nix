@@ -16,6 +16,7 @@
 
     "/nix" = {
       label = "nixos";
+      fsType = "ext4";
       neededForBoot = true;
       options = options ++ [ "exec" ];
     };
