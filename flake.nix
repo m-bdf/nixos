@@ -24,6 +24,14 @@
       url = "github:dracula/kitty";
       flake = false;
     };
+
+    systemd-boot.url = "github:m-bdf/nixpkgs/sdboot-infinite-timeout";
+    kmscon.url = "github:m-bdf/nixpkgs/kmscon-use-upstream-service-file";
+    river.url = "github:m-bdf/nixpkgs/hyprland-wayland-session";
+    waybar.url = "github:m-bdf/nixpkgs/waybar-use-upstream-service-file";
+    playerctld.url = "github:aacebedo/nixpkgs/aacebedo/playerctld";
+    github-desktop.url = "github:m-bdf/nixpkgs/fix-github-desktop-on-wayland";
+    sonic-pi.url = "github:m-bdf/nixpkgs/sonic-pi-add-pipewire-jack";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
@@ -62,6 +70,7 @@
         fw13 = with nixos-hardware.nixosModules; [
           framework-13-7040-amd {
             hardware.framework.amd-7040.preventWakeOnAC = true;
+            boot.resumeDevice = "/dev/disk/by-label/swap";
           }
         ];
       };
