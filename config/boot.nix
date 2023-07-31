@@ -7,6 +7,7 @@
 
       systemd-boot = {
         enable = true;
+        configurationLimit = 3;
         bootCounting.enable = true;
         editor = false;
       };
