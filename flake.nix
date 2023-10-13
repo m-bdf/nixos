@@ -1,4 +1,10 @@
 {
+  nixConfig = {
+    extra-substituters = [ "https://m-bdf.cachix.org" ];
+    extra-trusted-public-keys =
+      [ "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s=" ];
+  };
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
@@ -17,7 +23,6 @@
   {
     lib = extend (final: prev: {
       mkAliasOptionModule = mkRenamedOptionModule;
-      mkAliasOptionModuleMD = mkRenamedOptionModule; #208407
 
       listDir = dir: mapAttrs' (entry: type:
         nameValuePair (head (splitString "." entry)) /${dir}/${entry}
