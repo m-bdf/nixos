@@ -36,7 +36,7 @@ let
   mkRedundantOptionsWarnings = module:
   let
     getOptionsPaths = val:
-      if !(builtins.tryEval (isAttrs val)).value || val ? outPath then [[]]
+      if (builtins.tryEval (isAttrs val)).value -> val ? outPath then [[]]
       else if !(val ? _type) then concatLists
         (mapAttrsToList (k: v: map (p: [k] ++ p) (getOptionsPaths v)) val)
       else concatMap getOptionsPaths val.contents or
@@ -48,7 +48,7 @@ let
     concatMap (mkRedundantOptionWarning module optionsPaths) optionsPaths;
 
   userModules =
-    filter (m: elem /${m.key} (catAttrs "_file" modules))
+    filter (m: elem m.key (map toString (catAttrs "_file" modules)))
       (lib.modules.collectModules "" modules (inputs // {
         pkgs = throw "Unhandled access to `pkgs' input in `${__curPos.file}'";
       }));
