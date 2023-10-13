@@ -9,13 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rm --recursive .git
 
       - name: Enforce LF line breaks
         run: "! grep --recursive \r"
 
-      - uses: cachix/install-nix-action@v20
+      - uses: cachix/install-nix-action@v23
         with:
           extra_nix_config: system-features = nixos-test kvm
 
