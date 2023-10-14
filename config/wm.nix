@@ -38,6 +38,11 @@
       riverctl map normal Super Backspace close
       riverctl map normal Super Escape exit
 
+      ${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
+        url = "weasyl.com/~melynx/submissions/1182575/melynx-sylveon-garden.png";
+        sha256 = "0dgxkksv6cr5s3pyh9j8apd2xbjksix8km8zs4n278jpdfhlrgm5";
+      }} --mode fill &
+
       riverctl default-layout rivertile
       rivertile
     '';
