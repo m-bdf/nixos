@@ -33,10 +33,6 @@
     sessionVariables.STARSHIP_CACHE = "/var/cache/starship"; #starship/896
   };
 
-  fonts.fonts = [
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
-  ];
-
   xdg.dirs = {
     config.fish.create = true; # variables
     data.fish.persist = true; # history
