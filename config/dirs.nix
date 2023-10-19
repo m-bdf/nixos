@@ -4,10 +4,10 @@ with lib;
 
 let
   basedirs = {
-    config = "/etc";
-    cache = "/var/cache";
     data = "/usr/share";
+    config = "/etc/xdg";
     state = "/var/lib";
+    cache = "/var/cache";
   };
 
   dirs = basedirs // { home = "/home"; };
@@ -46,7 +46,7 @@ in
         nameValuePair "XDG_${toUpper name}_HOME" path
       ) basedirs;
 
-      persistence."/nix".directories = filterMapEnabledSubdirs "persist"
+      persistence.storage.directories = filterMapEnabledSubdirs "persist"
         (path: { directory = path; user = user.name; group = user.group; });
     };
 

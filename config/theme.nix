@@ -6,9 +6,9 @@
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
-      fuzzel.source = dracula-fuzzel;
-      "kitty/kitty.conf".text = "include ${dracula-kitty}/dracula.conf";
-      "helix/config.toml".text = "theme = \"github_dark\"";
+      "xdg/fuzzel".source = dracula-fuzzel;
+      "xdg/kitty/kitty.conf".text = "include ${dracula-kitty}/dracula.conf";
+      "xdg/helix/config.toml".text = "theme = \"github_dark\"";
     };
   };
 
