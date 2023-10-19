@@ -7,7 +7,7 @@
     extraPackages = [];
   };
 
-  environment.etc."river/init".source =
+  environment.etc."xdg/river/init".source =
     pkgs.writeShellScript "river.init" ''
       systemctl --user is-active graphical-session.target && exit
       trap "
