@@ -34,8 +34,8 @@
   };
 
   xdg.dirs = {
-    config.fish.create = true; # variables
     data.fish.persist = true; # history
+    config.fish.create = true; # variables
     cache.starship.create = true; # logs
   };
 }

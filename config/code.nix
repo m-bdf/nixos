@@ -2,7 +2,7 @@
 
 {
   environment = {
-    systemPackages = with pkgs; [ github-desktop vscode nixd ];
+    systemPackages = with pkgs; [ vscode nixd github-desktop ];
     sessionVariables.VSCODE_PORTABLE = "/usr/share/vscode"; #vscode/3884
   };
 
@@ -20,10 +20,10 @@
   services.gnome.gnome-keyring.enable = true;
 
   xdg.dirs = {
-    config."GitHub Desktop".persist = true;
     data = {
       vscode.persist = true;
       keyrings.persist = true;
     };
+    config."GitHub Desktop".persist = true;
   };
 }

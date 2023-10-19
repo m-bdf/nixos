@@ -32,7 +32,7 @@
   };
 
   xdg.dirs = {
-    cache.nix.persist = true; # tarballs
     data.nix.persist = true; # REPL history
+    cache.nix.persist = true; # tarballs
   };
 }
