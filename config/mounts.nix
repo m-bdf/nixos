@@ -21,6 +21,8 @@
     };
   };
 
+  environment.persistence.storage.persistentStoragePath = "/nix";
+
   boot.tmp.useTmpfs = true;
 
   swapDevices = [{ label = "swap"; }];
