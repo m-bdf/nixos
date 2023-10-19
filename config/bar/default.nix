@@ -22,9 +22,9 @@
   };
 
   environment.etc = {
-    "waybar/config".text = builtins.toJSON (import ./config.nix inputs);
+    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix inputs);
 
-    "waybar/style.css".text = ''
+    "xdg/waybar/style.css".text = ''
       label { font-family: monospace }
 
       window { border-radius: 0 }

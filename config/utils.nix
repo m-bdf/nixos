@@ -9,7 +9,7 @@
     in
       [ coreutils fd ripgrep helix xdg-utils kitty brave ];
 
-    etc."kitty/kitty.conf".text = ''
+    etc."xdg/kitty/kitty.conf".text = ''
       shell_integration enabled
       enable_audio_bell no
       confirm_os_window_close 0
