@@ -22,7 +22,10 @@
   };
 
   xdg.dirs = {
-    config."BraveSoftware/Brave-Browser".persist = true;
+    config = {
+      dconf.persist = true;
+      "BraveSoftware/Brave-Browser".persist = true;
+    };
     cache = {
       helix.create = true;
       kitty.create = true;
