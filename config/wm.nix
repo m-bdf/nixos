@@ -4,7 +4,7 @@
   programs.river = {
     enable = true;
     #xwayland.enable = false;
-    extraPackages = [];
+    extraPackages = [ pkgs.qt5.qtwayland ];
   };
 
   environment.etc."xdg/river/init".source =
