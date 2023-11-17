@@ -18,7 +18,11 @@
       executable = "/bin/gammastep";
     };
 
-    localtimed.enable = true;
+    automatic-timezoned.enable = true;
+    geoclue2.geoProviderUrl =
+      "https://www.googleapis.com/geolocation/v1/geolocate?key="
+        + "AIzaSyDwr302FpOSkGRpLlUpPThNTDPbXcIn_FM"; # Arch Linux key
   };
   location.provider = "geoclue2";
+  environment.etc.localtime.source = "/etc/zoneinfo/UTC";
 }
