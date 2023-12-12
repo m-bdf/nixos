@@ -1,10 +1,15 @@
-{ lib, pkgs, musnix, ... }:
+{ lib, pkgs, musnix, ... }@ inputs:
 
 {
   imports = [ musnix.nixosModules.musnix ];
 
   environment = {
-    systemPackages = with pkgs; [ vcv-rack sonic-pi zrythm ];
+    systemPackages = with pkgs;
+    let
+      zrythm = import ./zrythm.nix inputs;
+    in
+      [ vcv-rack sonic-pi zrythm ];
+
     sessionVariables = {
       RACK_USER_DIR = "/usr/share/Rack2";
       SONIC_PI_HOME = "/usr/share/SonicPi";
