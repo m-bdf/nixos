@@ -58,7 +58,12 @@
         t480 = with nixos-hardware.nixosModules; [
           lenovo-thinkpad-t480
           common-gpu-nvidia-disable
-          common-pc-ssd
+        ];
+
+        fw13 = with nixos-hardware.nixosModules; [
+          framework-13-7040-amd {
+            hardware.framework.amd-7040.preventWakeOnAC = true;
+          }
         ];
       };
 

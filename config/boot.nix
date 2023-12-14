@@ -22,4 +22,6 @@
 
     kernelPackages = pkgs.linuxPackages_zen;
   };
+
+  services.fwupd.enable = true;
 }

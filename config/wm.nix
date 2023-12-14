@@ -18,7 +18,7 @@
       systemctl --user set-environment XDG_CURRENT_DESKTOP=river
       systemctl --user start nixos-fake-graphical-session.target
 
-      for name in $(riverctl list-inputs | grep Synaptics); do
+      for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
         riverctl input $name natural-scroll enabled
         riverctl input $name tap enabled
       done
