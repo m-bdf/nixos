@@ -11,10 +11,7 @@
     };
   };
 
-  security = {
-    sudo.enable = false;
-    sudo-rs.enable = true;
-  };
+  security.sudo-rs.enable = true;
 
   xdg.dirs = {
     state.nixos.persist = true; # UIDs GIDs
