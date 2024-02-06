@@ -52,7 +52,6 @@
       };
     in
       mapAttrs mkSystem {
-        vbox = [];
         qemu = [];
 
         t480 = with nixos-hardware.nixosModules; [
