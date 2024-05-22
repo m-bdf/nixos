@@ -1,4 +1,4 @@
-{ lib, pkgs, nixpkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   system.stateVersion = lib.trivial.release;
@@ -16,19 +16,14 @@
     ];
   };
 
-  nix = {
-    registry.nixpkgs.flake = nixpkgs;
-    nixPath = [ "nixpkgs=${nixpkgs}" ];
-
-    settings = {
-      use-xdg-base-directories = true;
-      experimental-features =
-      let
-        xp-features = pkgs.runCommandLocal "dump-xp-features" {}
-          "${lib.getExe pkgs.nix} __dump-xp-features > $out";
-      in
-        lib.attrNames (lib.importJSON xp-features);
-    };
+  nix.settings = {
+    use-xdg-base-directories = true;
+    experimental-features =
+    let
+      xp-features = pkgs.runCommandLocal "dump-xp-features" {}
+        "${lib.getExe pkgs.nix} __dump-xp-features > $out";
+    in
+      lib.attrNames (lib.importJSON xp-features);
   };
 
   xdg.dirs = {
