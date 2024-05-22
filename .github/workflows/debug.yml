@@ -9,5 +9,5 @@ jobs:
       - uses: actions/checkout@v4
       - run: rm --recursive .git
 
-      - uses: cachix/install-nix-action@v25
+      - uses: cachix/install-nix-action@v27
       - uses: mxschmitt/action-tmate@v3

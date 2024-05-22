@@ -48,7 +48,7 @@ let
     concatMap (mkRedundantOptionWarning module optionsPaths) optionsPaths;
 
   userModules =
-    filter (m: elem m.key (map toString (catAttrs "_file" modules)))
+    filter (m: elem m.key (map (m: toString m._file or null) modules))
       (lib.modules.collectModules "" modules (inputs // {
         pkgs = throw "Unhandled access to `pkgs' input in `${__curPos.file}'";
       }));
