@@ -1,4 +1,6 @@
 {
+  imports = [ ./binds.nix ];
+
   services = {
     pipewire = {
       enable = true;
@@ -6,11 +8,6 @@
     };
 
     playerctld.enable = true;
-  };
-
-  sound = {
-    enable = true;
-    mediaKeys.enable = true;
   };
 
   hardware.bluetooth.enable = true;
