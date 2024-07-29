@@ -2,7 +2,7 @@
 
 {
   environment = {
-    systemPackages = with pkgs; [ dracula-theme gnome.adwaita-icon-theme ];
+    systemPackages = with pkgs; [ dracula-theme adwaita-icon-theme ];
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
