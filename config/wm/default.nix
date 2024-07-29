@@ -1,6 +1,8 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
+  imports = [ ./binds.nix ];
+
   programs.river = {
     enable = true;
     xwayland.enable = false;
@@ -23,20 +25,10 @@
         riverctl input $name tap enabled
       done
 
-      riverctl map normal Super+Alt Left send-to-output previous
-      riverctl map normal Super+Alt Right send-to-output next
-
-      for i in $(seq 1 9); do
-        tags=$((1 << ($i - 1)))
-        riverctl map normal Super $i set-focused-tags $tags
-        riverctl map normal Super+Alt $i set-view-tags $tags
-      done
-
-      riverctl map normal Super Return spawn ${lib.getExe pkgs.fuzzel}
-      riverctl map normal Super Tab spawn \
-        "riverctl resize horizontal 0 && riverctl toggle-float && riverctl zoom"
-      riverctl map normal Super Backspace close
-      riverctl map normal Super Escape exit
+      ${lib.concatMapStringsSep "\n" ({ mod, key, cmd, rep }: ''
+        riverctl map ${lib.optionalString rep "-repeat"} \
+          normal ${lib.defaultTo "None" mod} ${key} spawn '${cmd}'
+      '') config.programs.river.bindings}
 
       ${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
         url = "weasyl.com/~melynx/submissions/1182575/melynx-sylveon-garden.png";
