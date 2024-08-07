@@ -1,5 +1,3 @@
-{ lib, pkgs, ... }:
-
 {
   boot = {
     plymouth.enable = true;
@@ -7,26 +5,32 @@
   };
 
   services = {
-    kmscon = {
-      enable = true;
-      hwRender = true;
-    };
-
     logind = {
       lidSwitch = "ignore";
       powerKey = "hybrid-sleep";
     };
     upower.enable = true;
 
-    dbus.implementation = "broker";
+    kmscon = {
+      enable = true;
+      hwRender = true;
+    };
 
-    greetd.settings.default_session.command =
-    let
-      cage = pkgs.cage.override { xwayland = null; };
-    in
-      "${lib.getExe cage} -sdm last ${lib.getExe pkgs.greetd.regreet}";
+    displayManager.enable = true;
   };
 
-  programs.regreet.enable = true;
-  xdg.dirs.cache.regreet.persist = true;
+  programs.uwsm = {
+    enable = true;
+    waylandCompositors = {};
+  };
+
+  environment.interactiveShellInit = ''
+    systemctl --user import-environment PATH
+
+    if uwsm check may-start && uwsm select; then
+      exec systemd-cat -t uwsm_start uwsm start default
+    fi
+  '';
+
+  xdg.dirs.config.uwsm.persist = true;
 }
