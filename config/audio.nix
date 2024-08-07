@@ -1,4 +1,7 @@
 {
+  hardware.bluetooth.enable = true;
+  services.playerctld.enable = true;
+
   programs.river.bindings = [
     {
       key = "XF86AudioMute";
@@ -31,4 +34,9 @@
       cmd = "playerctl next";
     }
   ];
+
+  xdg.dirs.state = {
+    wireplumber.create = true;
+    bluetooth.persist = true;
+  };
 }
