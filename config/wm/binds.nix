@@ -54,7 +54,7 @@ with lib;
     {
       mod = "Super";
       key = "Escape";
-      cmd = "riverctl exit";
+      cmd = "${getExe pkgs.uwsm} stop";
     }
   ];
 }

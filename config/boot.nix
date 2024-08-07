@@ -7,6 +7,7 @@
 
       systemd-boot = {
         enable = true;
+        bootCounting.enable = true;
         editor = false;
       };
       timeout = null;

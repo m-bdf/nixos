@@ -20,13 +20,15 @@
 
     dbus.implementation = "broker";
 
-    greetd.settings.default_session.command =
-    let
-      cage = pkgs.cage.override { xwayland = null; };
-    in
-      "${lib.getExe cage} -sdm last ${lib.getExe pkgs.greetd.regreet}";
+    displayManager.enable = true;
   };
 
-  programs.regreet.enable = true;
-  xdg.dirs.cache.regreet.persist = true;
+  environment.loginShellInit = ''
+    systemctl --user import-environment PATH
+    uwsm=${lib.getExe pkgs.uwsm}
+
+    if $uwsm check may-start && env XDG_CONFIG_HOME=/tmp $uwsm select; then
+      exec systemd-cat -t uwsm_start env XDG_CONFIG_HOME=/tmp $uwsm start default
+    fi
+  '';
 }
