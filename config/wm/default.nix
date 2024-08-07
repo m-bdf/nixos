@@ -11,14 +11,7 @@
 
   environment.etc."xdg/river/init".source =
     pkgs.writeShellScript "river.init" ''
-      systemctl --user is-active graphical-session.target && exit
-      trap "
-        systemctl --user unset-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-        systemctl --user stop nixos-fake-graphical-session.target
-      " EXIT
-      systemctl --user import-environment WAYLAND_DISPLAY
-      systemctl --user set-environment XDG_CURRENT_DESKTOP=river
-      systemctl --user start nixos-fake-graphical-session.target
+      uwsm finalize
 
       for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
         riverctl input $name natural-scroll enabled
