@@ -6,6 +6,8 @@
   };
 
   inputs = {
+    systems.url = "github:nix-systems/default-linux";
+
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
     impermanence.url = "github:nix-community/impermanence";
