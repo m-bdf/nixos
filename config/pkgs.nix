@@ -17,8 +17,8 @@
     structuredAttrsByDefault = true;
     enableParallelBuildingByDefault = true;
     configurePlatformsByDefault = true;
-    contentAddressedByDefault = true;
+    # contentAddressedByDefault = true;
 
-    replaceStdenv = { pkgs }: pkgs.zigStdenv;
+    # replaceStdenv = { pkgs }: pkgs.zigStdenv;
   };
 }

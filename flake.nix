@@ -10,7 +10,7 @@
 
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence.url = "github:Mic92/impermanence/userborn-support";
 
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
@@ -26,6 +26,9 @@
       url = "github:dracula/kitty";
       flake = false;
     };
+
+    zig.url = "github:ExpidusOS/nixpkgs/feat/zig-bootstrap";
+    kmscon.url = "github:m-bdf/nixpkgs/kmscon-login-session-tracking";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
