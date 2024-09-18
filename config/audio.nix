@@ -1,4 +1,11 @@
+{ pkgs, ... }:
+
 {
+  environment = {
+    systemPackages = with pkgs; [ sonic-pi ];
+    sessionVariables.SONIC_PI_HOME = "/usr/share/SonicPi";
+  };
+
   hardware.bluetooth.enable = true;
   services.playerctld.enable = true;
 
@@ -35,8 +42,11 @@
     }
   ];
 
-  xdg.dirs.state = {
-    wireplumber.create = true;
-    bluetooth.persist = true;
+  xdg.dirs = {
+    data.SonicPi.persist = true;
+    state = {
+      wireplumber.create = true;
+      bluetooth.persist = true;
+    };
   };
 }
