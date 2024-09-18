@@ -12,10 +12,42 @@
     allowUnfree = true;
     checkMeta = true;
 
-    replaceStdenv = { pkgs }: pkgs.zigStdenv.override (prev: {
-      config = lib.mapAttrs (name: value:
-        if lib.hasSuffix "ByDefault" name then true else value
-      ) prev.config;
+    replaceStdenv = { pkgs }: pkgs.stdenv.override (prev: {
+      mkDerivationFromStdenv =
+        with builtins;
+        with lib;
+      let
+        defaultMkDerivationFromStdenv = stdenv:
+          (import /${pkgs.path}/pkgs/stdenv/generic/make-derivation.nix {
+            inherit (pkgs) lib config;
+          } stdenv).mkDerivation;
+
+        extendMkDerivationArgs = prev: f: stdenv: args:
+          (prev.mkDerivationFromStdenv or defaultMkDerivationFromStdenv
+            stdenv args).overrideAttrs f;
+
+        maybeEnable = args: attr: default:
+          ifEnable (! elem args.pname or
+            (parseDrvName (unsafeDiscardStringContext args.name)).name
+            (splitString "\n" (readFile ./tmp/blacklist/${attr}.txt))
+          ) args.${attr} or default;
+
+        hasNoLegacyAttr = args:
+          mutuallyExclusive (attrNames args) [
+            "passAsFile"
+            "allowedReferences" "disallowedReferences"
+            "allowedRequisites" "disallowedRequisites"
+          ];
+      in #350350
+        /*pkgs'.*/extendMkDerivationArgs prev
+          (args: mapAttrs (maybeEnable args) {
+            doCheck = true;
+            doInstallCheck = true;
+            strictDeps = true;
+            __structuredAttrs = hasNoLegacyAttr args;
+            enableParallelBuilding = true;
+            configurePlatforms = [ "build" "host" ];
+          });
     });
   };
 }

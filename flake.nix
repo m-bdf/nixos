@@ -10,7 +10,7 @@
 
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence.url = "github:Mic92/impermanence/userborn-support";
 
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
@@ -21,6 +21,9 @@
       url = "github:dracula/fuzzel";
       flake = false;
     };
+
+    zig.url = "github:ExpidusOS/nixpkgs/feat/zig-bootstrap";
+    kmscon.url = "github:m-bdf/nixpkgs/kmscon-login-session-tracking";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
@@ -58,7 +61,7 @@
 
         fw13 = with nixos-hardware.nixosModules; [
           framework-13-7040-amd {
-            hardware.framework.amd-7040.preventWakeOnAC = true;
+            hardware.graphics.enable32Bit = false;
           }
         ];
       };
