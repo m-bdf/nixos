@@ -26,6 +26,8 @@
       url = "github:dracula/kitty";
       flake = false;
     };
+
+    kmscon.url = "github:m-bdf/nixpkgs/kmscon-login-session-tracking";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
@@ -64,6 +66,7 @@
         fw13 = with nixos-hardware.nixosModules; [
           framework-13-7040-amd {
             hardware.framework.amd-7040.preventWakeOnAC = true;
+            boot.resumeDevice = "/dev/disk/by-label/swap";
           }
         ];
       };
