@@ -1,6 +1,8 @@
-{ config, lib, pkgs, nix-index-database, ... }:
+{ lib, pkgs, nix-index-database, ... }:
 
 {
+  imports = [ nix-index-database.nixosModules.nix-index ];
+
   users.users.user.shell = pkgs.fish;
 
   programs = {
@@ -8,7 +10,8 @@
       enable = true;
       useBabelfish = true;
     };
-    command-not-found.enable = false;
+
+    nix-index-database.comma.enable = true;
 
     starship = {
       enable = true;
@@ -21,17 +24,7 @@
     };
   };
 
-  imports = [ nix-index-database.nixosModules.nix-index ];
-
-  environment = {
-    systemPackages = [
-      (pkgs.comma.override {
-        nix-index-unwrapped = config.programs.nix-index.package;
-      })
-    ];
-
-    sessionVariables.STARSHIP_CACHE = "/var/cache/starship"; #starship/896
-  };
+  environment.sessionVariables.STARSHIP_CACHE = "/var/cache/starship"; #starship/896
 
   xdg.dirs = {
     data.fish.persist = true; # history
