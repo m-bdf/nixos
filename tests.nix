@@ -1,4 +1,4 @@
-{ self, nixpkgs, ... }@ inputs:
+{ self, systems, nixpkgs, ... }@ inputs:
 
 with nixpkgs.lib;
 
@@ -32,7 +32,7 @@ let
   in
     nameValuePair test.name test;
 
-  vmTests = genAttrs [ "x86_64-linux" "aarch64-linux" ]
+  vmTests = genAttrs (import systems)
     (platform: mapAttrs' (mkVmTest platform) (self.lib.listDir ./tests));
 in
 
