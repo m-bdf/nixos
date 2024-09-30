@@ -2,7 +2,6 @@
 
 {
   environment = {
-    defaultPackages = [];
     systemPackages = with pkgs;
       [ uutils-coreutils-noprefix fd ripgrep helix xdg-utils kitty brave ];
 
