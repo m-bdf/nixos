@@ -1,7 +1,12 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, modulesPath, ... }:
 
 {
-  system.stateVersion = lib.trivial.release;
+  imports = [ /${modulesPath}/profiles/perlless.nix ];
+
+  system = {
+    forbiddenDependenciesRegexes = lib.mkForce [];
+    stateVersion = lib.trivial.release;
+  };
 
   nixpkgs = {
     config = {

@@ -13,10 +13,7 @@
     };
 
     initrd = {
-      systemd = {
-        enable = true;
-        emergencyAccess = true;
-      };
+      systemd.emergencyAccess = true;
       includeDefaultModules = false;
     };
 
