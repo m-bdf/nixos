@@ -23,6 +23,7 @@
 
   environment.persistence.storage.persistentStoragePath = "/nix";
 
+  system.etc.overlay.mutable = false;
   boot.tmp.useTmpfs = true;
 
   swapDevices = [{ label = "swap"; }];
