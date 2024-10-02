@@ -3,14 +3,22 @@
 {
   imports = [ ./binds.nix ];
 
+  nixpkgs.overlays = [
+    (final: prev: {
+      xwayland = null;
+      wlroots_0_17 = prev.wlroots_0_17.override { enableXWayland = false; };
+      wlroots_0_18 = prev.wlroots_0_18.override { enableXWayland = false; };
+    })
+  ];
+
   programs.river = {
     enable = true;
     xwayland.enable = false;
     extraPackages = [ pkgs.qt5.qtwayland ];
   };
 
-  environment.etc."xdg/river/init".source =
-    pkgs.writeShellScript "river.init" ''
+  environment = {
+    etc."xdg/river/init".source = pkgs.writeShellScript "river.init" ''
       uwsm finalize
 
       for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
@@ -31,4 +39,7 @@
       riverctl default-layout rivertile
       rivertile
     '';
+
+    variables.NIXOS_OZONE_WL = "1";
+  };
 }
