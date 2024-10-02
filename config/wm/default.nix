@@ -3,6 +3,14 @@
 {
   imports = [ ./binds.nix ];
 
+  nixpkgs.overlays = [
+    (final: prev: {
+      xwayland = null;
+      wlroots_0_17 = prev.wlroots_0_17.override { enableXWayland = false; };
+      wlroots_0_18 = prev.wlroots_0_18.override { enableXWayland = false; };
+    })
+  ];
+
   programs.river = {
     enable = true;
     xwayland.enable = false;
