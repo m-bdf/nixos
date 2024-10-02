@@ -9,8 +9,8 @@
     extraPackages = [ pkgs.qt5.qtwayland ];
   };
 
-  environment.etc."xdg/river/init".source =
-    pkgs.writeShellScript "river.init" ''
+  environment = {
+    etc."xdg/river/init".source = pkgs.writeShellScript "river.init" ''
       uwsm finalize
 
       for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
@@ -31,4 +31,7 @@
       riverctl default-layout rivertile
       rivertile
     '';
+
+    variables.NIXOS_OZONE_WL = "1";
+  };
 }
