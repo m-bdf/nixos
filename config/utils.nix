@@ -11,10 +11,7 @@
       confirm_os_window_close 0
     '';
 
-    variables = {
-      EDITOR = "hx";
-      NIXOS_OZONE_WL = "1";
-    };
+    variables.EDITOR = "hx";
   };
 
   xdg.dirs = {
