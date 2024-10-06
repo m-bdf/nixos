@@ -12,6 +12,9 @@
       timeout = null;
     };
 
+    plymouth.enable = true;
+    kernelParams = [ "quiet" ];
+
     initrd = {
       systemd.emergencyAccess = true;
       includeDefaultModules = false;
