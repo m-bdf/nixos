@@ -1,18 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  boot = {
-    plymouth.enable = true;
-    kernelParams = [ "quiet" ];
-  };
-
   services = {
-    logind = {
-      lidSwitch = "ignore";
-      powerKey = "hybrid-sleep";
-    };
-    upower.enable = true;
-
     kmscon = {
       enable = true;
       hwRender = true;
@@ -29,9 +18,17 @@
     lib.concatMapStrings (session: "uwsm start ${session}\n")
       config.services.displayManager.sessionData.sessionNames;
 
-  programs.uwsm = {
-    enable = true;
-    waylandCompositors = {};
+  programs = {
+    uwsm = {
+      enable = true;
+      waylandCompositors = {};
+    };
+
+    river.bindings = [{
+      mod = "Super";
+      key = "Escape";
+      cmd = "uwsm stop";
+    }];
   };
 
   systemd.user.services."wayland-wm-env@" = {

@@ -12,6 +12,8 @@
       timeout = null;
     };
 
+    plymouth.enable = true;
+
     initrd = {
       systemd.emergencyAccess = true;
       includeDefaultModules = false;
