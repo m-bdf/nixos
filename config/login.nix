@@ -1,18 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  boot = {
-    plymouth.enable = true;
-    kernelParams = [ "quiet" ];
-  };
-
   services = {
-    logind = {
-      lidSwitch = "ignore";
-      powerKey = "hybrid-sleep";
-    };
-    upower.enable = true;
-
     kmscon = {
       enable = true;
       hwRender = true;
@@ -34,8 +23,16 @@
     overrideStrategy = "asDropin";
   };
 
-  programs.uwsm = {
-    enable = true;
-    waylandCompositors = {};
+  programs = {
+    uwsm = {
+      enable = true;
+      waylandCompositors = {};
+    };
+
+    river.bindings = [{
+      mod = "Super";
+      key = "Escape";
+      cmd = "uwsm stop";
+    }];
   };
 }
