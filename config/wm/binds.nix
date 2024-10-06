@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, ... }:
 
 with lib;
 
@@ -38,11 +38,6 @@ with lib;
     }
     {
       mod = "Super";
-      key = "Return";
-      cmd = "${getExe pkgs.fuzzel}";
-    }
-    {
-      mod = "Super";
       key = "Tab";
       cmd = "riverctl resize horizontal 0 && riverctl toggle-float && riverctl zoom";
     }
@@ -50,11 +45,6 @@ with lib;
       mod = "Super";
       key = "Backspace";
       cmd = "riverctl close";
-    }
-    {
-      mod = "Super";
-      key = "Escape";
-      cmd = "uwsm stop";
     }
   ];
 }
