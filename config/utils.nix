@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   environment = {
@@ -13,6 +13,12 @@
 
     variables.EDITOR = "hx";
   };
+
+  programs.river.bindings = [{
+    mod = "Super";
+    key = "Return";
+    cmd = lib.getExe pkgs.fuzzel;
+  }];
 
   xdg.dirs = {
     config."BraveSoftware/Brave-Browser".persist = true;
