@@ -17,6 +17,9 @@
       includeDefaultModules = false;
     };
 
+    plymouth.enable = true;
+    kernelParams = [ "quiet" ];
+
     kernelPackages = pkgs.linuxPackages_zen;
   };
 

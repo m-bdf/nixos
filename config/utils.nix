@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   environment = {
@@ -16,6 +16,12 @@
       NIXOS_OZONE_WL = "1";
     };
   };
+
+  programs.river.bindings = [{
+    mod = "Super";
+    key = "Return";
+    cmd = lib.getExe pkgs.fuzzel;
+  }];
 
   xdg.dirs = {
     config."BraveSoftware/Brave-Browser".persist = true;
