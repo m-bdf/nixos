@@ -6,19 +6,30 @@
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
-      "xdg/fuzzel".source = dracula-fuzzel;
-      "xdg/kitty/kitty.conf".text = "include ${dracula-kitty}/dracula.conf";
-      "xdg/helix/config.toml".text = "theme = \"github_dark\"";
+      "xdg/fuzzel/fuzzel.ini".text = ''
+        include = ${dracula-fuzzel}/fuzzel.ini
+        font = sans
+        dpi-aware = no
+      '';
+
+      "xdg/kitty/kitty.conf".text = ''
+        include ${dracula-kitty}/dracula.conf
+      '';
+
+      "xdg/helix/config.toml".text = ''
+        theme = "github_dark"
+      '';
     };
   };
 
   fonts = {
     enableDefaultPackages = false;
-    packages = with pkgs;
-    let
-      fira-code = nerdfonts.override { fonts = [ "FiraCode" ]; };
-    in
-      [ fira-code noto-fonts noto-fonts-cjk-sans noto-fonts-color-emoji ];
+    packages = with pkgs; [
+      nerd-fonts.fira-code
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-color-emoji
+    ];
 
     fontconfig.defaultFonts =
     let
