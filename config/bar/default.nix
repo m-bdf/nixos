@@ -26,8 +26,6 @@
     "xdg/waybar/config".text = builtins.toJSON (import ./config.nix inputs);
 
     "xdg/waybar/style.css".text = ''
-      label { font-family: monospace }
-
       window { border-radius: 0 }
       button { padding: 0 }
       label { padding: 5px 10px }
