@@ -11,7 +11,10 @@
     };
   };
 
-  security.sudo-rs.enable = true;
+  security.sudo-rs = {
+    enable = true;
+    execWheelOnly = true;
+  };
 
   xdg.dirs = {
     state.nixos.persist = true; # UIDs GIDs
