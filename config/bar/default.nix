@@ -1,4 +1,4 @@
-{ pkgs, ... }@ inputs:
+{ pkgs, ... }@ self:
 
 {
   programs.waybar = {
@@ -7,7 +7,6 @@
       cavaSupport = false;
       evdevSupport = false;
       experimentalPatches = false;
-      hyprlandSupport = false;
       inputSupport = false;
       jackSupport = false;
       mpdSupport = false;
@@ -15,7 +14,6 @@
       niriSupport = false;
       pulseSupport = false;
       sndioSupport = false;
-      swaySupport = false;
       traySupport = false;
       udevSupport = false;
       upowerSupport = false;
@@ -23,7 +21,7 @@
   };
 
   environment.etc = {
-    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix inputs);
+    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix self);
 
     "xdg/waybar/style.css".text = ''
       window { border-radius: 0 }

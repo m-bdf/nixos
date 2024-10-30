@@ -1,4 +1,4 @@
-{ config, lib, modules, extendModules, ... }@ inputs:
+{ config, lib, modulesPath, modules, extendModules, ... }@ self:
 
 with lib;
 
@@ -37,10 +37,9 @@ let
   let
     getOptionsPaths = val:
       if (builtins.tryEval (isAttrs val)).value -> val ? outPath then [[]]
-      else if !(val ? _type) then concatLists
-        (mapAttrsToList (k: v: map (p: [k] ++ p) (getOptionsPaths v)) val)
-      else concatMap getOptionsPaths val.contents or
-        (optional val.condition or true val.content);
+      else if val ? _type then getOptionsPaths (pushDownProperties val)
+      else concatLists
+        (mapAttrsToList (k: v: map (p: [k] ++ p) (getOptionsPaths v)) val);
 
     optionsPaths = remove [ "system" "stateVersion" ] #176295
       (getOptionsPaths module.config);
@@ -48,8 +47,8 @@ let
     concatMap (mkRedundantOptionWarning module optionsPaths) optionsPaths;
 
   userModules =
-    filter (m: elem m.key (map (m: toString m._file or null) modules))
-      (lib.modules.collectModules "" modules (inputs // {
+    filter (m: hasPrefix "${self}" m.key && m.key == m._file)
+      (lib.modules.collectModules modulesPath modules (self // {
         pkgs = throw "Unhandled access to `pkgs' input in `${__curPos.file}'";
       }));
 in

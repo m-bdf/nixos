@@ -1,4 +1,4 @@
-{ pkgs, dracula-fuzzel, dracula-kitty, ... }:
+{ inputs, pkgs, ... }:
 
 {
   environment = {
@@ -7,11 +7,11 @@
 
     etc = {
       "xdg/fuzzel/fuzzel.ini".text = ''
-        include = ${dracula-fuzzel}/fuzzel.ini
+        include = ${inputs.dracula-fuzzel}/fuzzel.ini
       '';
 
       "xdg/kitty/kitty.conf".text = ''
-        include ${dracula-kitty}/dracula.conf
+        include ${inputs.dracula-kitty}/dracula.conf
       '';
 
       "xdg/helix/config.toml".text = ''

@@ -1,4 +1,4 @@
-{ config, lib, impermanence, ... }:
+{ inputs, config, lib, ... }:
 
 with lib;
 
@@ -14,7 +14,7 @@ let
 in
 
 {
-  imports = [ impermanence.nixosModules.impermanence ];
+  imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   options.xdg.dirs =
   let

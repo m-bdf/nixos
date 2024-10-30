@@ -30,10 +30,10 @@
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
 
-  with nixpkgs.lib;
+  with self.lib;
 
   {
-    lib = extend (final: prev: {
+    lib = nixpkgs.lib.extend (final: prev: {
       mkAliasOptionModule = mkRenamedOptionModule;
 
       listDir = dir: mapAttrs' (entry: type:
@@ -43,12 +43,12 @@
 
     nixosModules = mapAttrs (name: path:
       setDefaultModuleLocation path path
-    ) (self.lib.listDir ./config);
+    ) (listDir ./config);
 
     nixosConfigurations =
     let
       mkSystem = name: modules: nixosSystem {
-        specialArgs = inputs // { inherit (self) lib; };
+        specialArgs = self;
         modules = attrValues self.nixosModules;
         extraModules = modules ++ [ ./hardware/${name}.nix ];
       };
