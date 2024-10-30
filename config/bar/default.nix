@@ -1,4 +1,4 @@
-{ pkgs, ... }@ inputs:
+{ pkgs, ... }@ args:
 
 {
   programs.waybar = {
@@ -22,7 +22,7 @@
   };
 
   environment.etc = {
-    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix inputs);
+    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix args);
 
     "xdg/waybar/style.css".text = ''
       window { border-radius: 0 }

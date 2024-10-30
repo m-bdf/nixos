@@ -1,7 +1,7 @@
-{ lib, pkgs, nix-index-database, ... }:
+{ inputs, lib, pkgs, ... }:
 
 {
-  imports = [ nix-index-database.nixosModules.nix-index ];
+  imports = [ inputs.nix-index-database.nixosModules.nix-index ];
 
   users.users.user.shell = pkgs.fish;
 
