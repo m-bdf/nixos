@@ -1,6 +1,6 @@
-{ self, systems, nixpkgs, ... }@ inputs:
+{ self, systems, nixpkgs, ... }:
 
-with nixpkgs.lib;
+with self.lib;
 
 let
   configTests =
@@ -15,8 +15,8 @@ let
   let
     test = nixos.runTest {
       inherit name;
-      node.specialArgs = inputs;
       hostPkgs = nixpkgs.legacyPackages.${platform};
+      node.specialArgs = self;
 
       nodes.machine = {
         imports = attrValues self.nixosModules;
@@ -33,7 +33,7 @@ let
     nameValuePair test.name test;
 
   vmTests = genAttrs (import systems)
-    (platform: mapAttrs' (mkVmTest platform) (self.lib.listDir ./tests));
+    (platform: mapAttrs' (mkVmTest platform) (listDir ./tests));
 in
 
-foldl' recursiveUpdate {} (configTests ++ [vmTests])
+foldl' recursiveUpdate {} (configTests ++ [ vmTests ])
