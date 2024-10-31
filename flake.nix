@@ -3,12 +3,17 @@
     extra-substituters = [ "https://m-bdf.cachix.org" ];
     extra-trusted-public-keys =
       [ "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s=" ];
+
+    sandbox = "relaxed";
+    build-users-group = "";
   };
 
   inputs = {
     systems.url = "github:nix-systems/default-linux";
 
     nixpkgs.url = "nixpkgs/nixos-unstable";
+
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
     impermanence.url = "github:Mic92/impermanence/userborn-support";
 
@@ -26,7 +31,7 @@
     kmscon.url = "github:m-bdf/nixpkgs/kmscon-login-session-tracking";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
+  outputs = { self, nixpkgs, nixos-facter-modules, ... }@ inputs:
 
   with self.lib;
 
@@ -41,30 +46,52 @@
 
     nixosModules = mapAttrs (name: path:
       setDefaultModuleLocation path path
-    ) (listDir ./config);
+    ) (listDir ./config)
+    //
+    {
+      hardware = {
+        imports = [ nixos-facter-modules.nixosModules.facter ];
 
-    nixosConfigurations =
-    let
-      mkSystem = name: modules: nixosSystem {
+        facter.reportPath =
+        let
+          pkgs = import nixpkgs {}; # impure
+        in
+          pkgs.runCommandLocal "report-${toString builtins.currentTime}.json"
+            { __noChroot = true; } # TODO: __impure and remove currentTime
+            "(${getExe pkgs.nixos-facter} --hardware all || echo {}) > $out";
+      };
+    };
+
+    nixosConfigurations = {
+      nixos = nixosSystem {
+        system = builtins.currentSystem;
         specialArgs = self;
         modules = attrValues self.nixosModules;
-        extraModules = modules ++ [ ./hardware/${name}.nix ];
       };
-    in
-      mapAttrs mkSystem {
-        qemu = [];
 
-        t480 = with nixos-hardware.nixosModules; [
-          lenovo-thinkpad-t480
-          common-gpu-nvidia-disable
-        ];
+      vm = nixosSystem {
+        specialArgs = self;
+        modules = [
+          ({ modulesPath, ... }:
 
-        fw13 = with nixos-hardware.nixosModules; [
-          framework-13-7040-amd {
-            hardware.graphics.enable32Bit = false;
-          }
+          {
+            imports = with self.nixosModules; [
+              hardware mounts dirs user
+              /${modulesPath}/virtualisation/qemu-vm.nix
+            ];
+
+            virtualisation = {
+              cores = 8;
+              memorySize = 8000;
+              diskImage = null;
+              diskSize = 8000;
+            };
+
+            environment.etc.nixos.source = ./.;
+          })
         ];
       };
+    };
 
     checks = import ./tests.nix inputs;
   };

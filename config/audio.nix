@@ -6,7 +6,6 @@
     sessionVariables.SONIC_PI_HOME = "/usr/share/SonicPi";
   };
 
-  hardware.bluetooth.enable = true;
   services.playerctld.enable = true;
 
   programs.river.bindings = [
