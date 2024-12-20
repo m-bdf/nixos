@@ -19,7 +19,12 @@
       executable = "/bin/gammastep";
     };
 
-    localtimed.enable = true;
+    automatic-timezoned.enable = true;
+    geoclue2 = {
+      geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
+      submissionUrl = "https://api.beacondb.net/v2/geosubmit";
+      submitData = true;
+    };
   };
   location.provider = "geoclue2";
 }
