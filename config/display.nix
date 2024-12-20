@@ -15,11 +15,21 @@
   services = {
     redshift = {
       enable = true;
-      package = pkgs.gammastep;
+      package = pkgs.gammastep.override {
+        withRandr = false;
+        withDrm = false;
+        withVidmode = false;
+        withAppIndicator = false;
+      };
       executable = "/bin/gammastep";
     };
 
-    localtimed.enable = true;
+    automatic-timezoned.enable = true;
+    geoclue2 = {
+      geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
+      submissionUrl = "https://api.beacondb.net/v2/geosubmit";
+      submitData = true;
+    };
   };
   location.provider = "geoclue2";
 }
