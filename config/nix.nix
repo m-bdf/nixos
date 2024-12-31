@@ -21,6 +21,7 @@
       lib.attrNames (lib.importJSON xp-features);
   };
 
+  # system.rebuild.enableNg = true; # only local
   programs.nh.enable = true;
 
   xdg.dirs = {
