@@ -12,8 +12,11 @@
         dpi-aware = no
       '';
 
-      "xdg/kitty/kitty.conf".text = ''
-        include ${inputs.dracula-kitty}/dracula.conf
+      "xdg/ghostty/config".text = ''
+        theme = Dracula
+        window-decoration = false
+        resize-overlay = never
+        # adw-toast = false
       '';
 
       "xdg/helix/config.toml".text = ''
