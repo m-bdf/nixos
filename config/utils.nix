@@ -10,15 +10,15 @@
         exec uwsm app -- $app "$@"
       '';
     in
-      [ uutils-coreutils-noprefix fd ripgrep xdg-open helix kitty brave ];
+      [ uutils-coreutils-noprefix fd ripgrep xdg-open helix ghostty brave ];
 
     variables.EDITOR = "hx";
 
     etc = {
-      "xdg/kitty/kitty.conf".text = ''
-        shell_integration enabled
-        enable_audio_bell no
-        confirm_os_window_close 0
+      "xdg/ghostty/config".text = ''
+        resize-overlay = never
+        app-notifications = false
+        confirm-close-surface = false
       '';
 
       "xdg/fuzzel/fuzzel.ini".text = ''
@@ -47,7 +47,7 @@
       config."BraveSoftware/Brave-Browser".persist = true;
       cache = {
         helix.create = true;
-        kitty.create = true;
+        ghostty.create = true;
         "BraveSoftware/Brave-Browser".create = true;
       };
     };

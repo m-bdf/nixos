@@ -10,8 +10,9 @@
         include = ${inputs.dracula-fuzzel}/fuzzel.ini
       '';
 
-      "xdg/kitty/kitty.conf".text = ''
-        include ${inputs.dracula-kitty}/dracula.conf
+      "xdg/ghostty/config".text = ''
+        theme = Dracula
+        window-decoration = none
       '';
 
       "xdg/helix/config.toml".text = ''
