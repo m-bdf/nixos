@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   imports = [ inputs.nix-index-database.nixosModules.nix-index ];
@@ -13,12 +13,8 @@
 
     starship = {
       enable = true;
-      settings =
-      let
-        preset = pkgs.runCommandLocal "starship-nerd-font-preset" {}
-          "${lib.getExe pkgs.starship} preset nerd-font-symbols > $out";
-      in
-        lib.importTOML preset // { command_timeout = 2500; };
+      presets = [ "nerd-font-symbols" ];
+      settings.command_timeout = 2500;
     };
 
     nix-index-database.comma.enable = true;

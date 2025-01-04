@@ -21,11 +21,6 @@
       url = "github:dracula/fuzzel";
       flake = false;
     };
-
-    dracula-kitty = {
-      url = "github:dracula/kitty";
-      flake = false;
-    };
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
