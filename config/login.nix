@@ -15,7 +15,7 @@
   };
 
   environment.etc."greetd/environments".text =
-    lib.concatMapStrings (session: "uwsm start ${session}.desktop\n")
+    lib.concatMapStrings (session: "uwsm start -S ${session}.desktop\n")
       config.services.displayManager.sessionData.sessionNames;
 
   systemd.user.services."wayland-wm-env@" = {
