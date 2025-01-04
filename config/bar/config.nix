@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
+
+let
+  launch = pkg:
+    "${lib.getExe config.programs.uwsm.package} app -- ${lib.getExe pkg}";
+in
 
 {
   modules-left = [ "river/tags" ];
@@ -16,22 +21,22 @@
     format-wifi = "{icon}  {essid}";
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
-    on-click = lib.getExe pkgs.iwgtk;
+    on-click = launch pkgs.iwgtk;
   };
 
   bluetooth = {
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
-    on-click = lib.getExe pkgs.overskride;
-    on-click-right = lib.getExe pkgs.blueberry;
+    on-click = launch pkgs.overskride;
+    on-click-right = launch pkgs.blueberry;
   };
 
   wireplumber = {
     format-muted = "󰝟  {volume}%";
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
-    on-click = lib.getExe pkgs.pwvucontrol;
-    on-click-right = lib.getExe pkgs.pavucontrol;
+    on-click = launch pkgs.pwvucontrol;
+    on-click-right = launch pkgs.pavucontrol;
   };
 
   battery = {
