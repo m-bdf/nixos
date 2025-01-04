@@ -9,14 +9,14 @@
           ''${WAYLAND_DISPLAY+ --cmd-prefix uwsm-app --term '-T %s'}
       '';
     in
-      [ uutils-coreutils-noprefix fd ripgrep xdg-open helix kitty brave ];
+      [ uutils-coreutils-noprefix fd ripgrep xdg-open helix ghostty brave ];
 
     variables.EDITOR = "hx";
 
-    etc."xdg/kitty/kitty.conf".text = ''
-      shell_integration enabled
-      enable_audio_bell no
-      confirm_os_window_close 0
+    etc."xdg/ghostty/config".text = ''
+      gtk-single-instance = true
+      linux-cgroup-hard-fail = true
+      confirm-close-surface = false
     '';
   };
 
@@ -38,7 +38,7 @@
       config."BraveSoftware/Brave-Browser".persist = true;
       cache = {
         helix.create = true;
-        kitty.create = true;
+        ghostty.create = true;
         "BraveSoftware/Brave-Browser".create = true;
       };
     };
