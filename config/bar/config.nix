@@ -1,5 +1,9 @@
 { lib, pkgs, ... }:
 
+let
+  getExe = pkg: "${lib.getExe pkgs.uwsm}-app ${lib.getExe pkg}";
+in
+
 {
   modules-left = [ "river/tags" ];
   modules-center = [ "clock" ];
@@ -16,22 +20,22 @@
     format-wifi = "{icon}  {essid}";
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
-    on-click = lib.getExe pkgs.iwgtk;
+    on-click = getExe pkgs.iwgtk;
   };
 
   bluetooth = {
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
-    on-click = lib.getExe pkgs.overskride;
-    on-click-right = lib.getExe pkgs.blueberry;
+    on-click = getExe pkgs.overskride;
+    on-click-right = getExe pkgs.blueberry;
   };
 
   wireplumber = {
     format-muted = "󰝟  {volume}%";
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
-    on-click = lib.getExe pkgs.pwvucontrol;
-    on-click-right = lib.getExe pkgs.pavucontrol;
+    on-click = getExe pkgs.pwvucontrol;
+    on-click-right = getExe pkgs.pavucontrol;
   };
 
   battery = {

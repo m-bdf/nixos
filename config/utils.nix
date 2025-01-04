@@ -3,29 +3,44 @@
 {
   environment = {
     systemPackages = with pkgs;
-      [ uutils-coreutils-noprefix fd ripgrep helix xdg-utils kitty brave ];
+    let
+      xdg-open = writeShellScriptBin "xdg-open" ''
+        ${lib.getExe mimeo} "$@" \
+          ''${WAYLAND_DISPLAY+ --cmd-prefix uwsm-app --term '-T %s'}
+      '';
+    in
+      [ uutils-coreutils-noprefix fd ripgrep xdg-open helix kitty brave ];
+
+    variables.EDITOR = "hx";
 
     etc."xdg/kitty/kitty.conf".text = ''
       shell_integration enabled
       enable_audio_bell no
       confirm_os_window_close 0
     '';
-
-    variables.EDITOR = "hx";
   };
 
   programs.river.bindings = [{
     mod = "Super";
     key = "Return";
-    cmd = lib.getExe pkgs.fuzzel;
+    cmd = "${lib.getExe pkgs.fuzzel} --launch-prefix uwsm-app --terminal -T";
   }];
 
-  xdg.dirs = {
-    config."BraveSoftware/Brave-Browser".persist = true;
-    cache = {
-      helix.create = true;
-      kitty.create = true;
-      "BraveSoftware/Brave-Browser".create = true;
+  xdg = {
+    terminal-exec = {
+      enable = true;
+      package = pkgs.writeShellScriptBin "xdg-terminal-exec" ''
+        uwsm-app -T -- "''${@-$SHELL}"
+      '';
+    };
+
+    dirs = {
+      config."BraveSoftware/Brave-Browser".persist = true;
+      cache = {
+        helix.create = true;
+        kitty.create = true;
+        "BraveSoftware/Brave-Browser".create = true;
+      };
     };
   };
 }
