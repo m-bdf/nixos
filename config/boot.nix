@@ -7,6 +7,7 @@
 
       systemd-boot = {
         enable = true;
+        configurationLimit = 10;
         editor = false;
       };
       timeout = null;
