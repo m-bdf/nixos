@@ -12,12 +12,14 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence.url = "github:Mic92/impermanence/userborn-support";
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    gtklock.url = "github:fugidev/nixpkgs/gtklock-module";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
@@ -54,9 +56,7 @@
         ];
 
         fw13 = with nixos-hardware.nixosModules; [
-          framework-13-7040-amd {
-            hardware.framework.amd-7040.preventWakeOnAC = true;
-          }
+          framework-13-7040-amd
         ];
       };
 

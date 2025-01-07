@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 
 {
   services = {
@@ -19,6 +19,10 @@
   environment.etc."xdg/niri/config.kdl".text = ''
     spawn-at-startup "gtklock"
   '';
+
+  imports = [
+    (inputs.gtklock + /nixos/modules/programs/wayland/gtklock.nix)
+  ];
 
   programs = {
     gtklock = {
