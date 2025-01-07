@@ -8,7 +8,9 @@
   inputs = {
     systems.url = "github:nix-systems/default-linux";
 
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:numtide/nixpkgs-unfree/nixos-unstable";
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     impermanence.url = "github:nix-community/impermanence";
 
