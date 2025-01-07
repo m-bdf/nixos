@@ -9,7 +9,7 @@
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       home = "/home";
-      password = "";
+      password = "mae";
     };
   };
 

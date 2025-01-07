@@ -6,7 +6,7 @@
   {
     "/" = {
       fsType = "tmpfs";
-      inherit options;
+      options = options ++ [ "size=1G" ];
     };
 
     "/boot" = {
@@ -16,6 +16,7 @@
 
     "/nix" = {
       label = "nixos";
+      fsType = "ext4";
       neededForBoot = true;
       options = options ++ [ "exec" ];
     };
@@ -23,8 +24,10 @@
 
   environment.persistence.storage.persistentStoragePath = "/nix";
 
-  boot.tmp.useTmpfs = true;
-  system.etc.overlay.mutable = false;
+  boot.tmp = {
+    useTmpfs = true;
+    tmpfsSize = "100%";
+  };
 
   swapDevices = [{ label = "swap"; }];
 }
