@@ -1,0 +1,45 @@
+blueprint-compiler
+# # cups-browsed
+# # cups-filters
+docbook2X
+# docbook2x
+elixir
+fontforge
+gtk+
+# gtk2
+hex
+# # libcupsfilters
+# # libppd
+libxklavier
+# parallel
+# poppler
+# # poppler_utils
+psqlodbc
+rebar
+rebar3
+river
+swig
+uwsm
+waybar
+# wayland-protocols
+xmlto
+# yodl
+
+qtbase
+qtwebchannel
+qtwebengine
+qtwebsockets
+qwt
+
+# marco
+# mate-panel
+
+auto-update
+# hspec-wai
+http-date
+http-types
+# # JuicyPixels
+# # streaming-commons
+unliftio
+word8
+# yaml

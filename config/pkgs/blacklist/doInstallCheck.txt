@@ -1,0 +1,18 @@
+bash-completion
+# docbook2X
+# # kitty
+# postgresql
+sox
+
+# # afdko
+# # hatch-fancy-pypi-readme
+# # mypy
+# # psautohint
+# # psutil
+# # pycparser
+# # python-dbusmock
+# # pytz
+# # requests
+# # scikit-build
+# # sphinx
+# # time-machine

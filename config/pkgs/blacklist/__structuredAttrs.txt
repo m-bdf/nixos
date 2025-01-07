@@ -1,0 +1,106 @@
+add-driver-runpath
+# addDriverRunpath
+bundler
+clippy
+colord
+dbus-broker
+fftw-double
+fftw-single
+fprintd
+# fwupd
+ghc-binary
+# ghc
+# # gi-docgen
+glibc-locales
+# glibcLocalesUtf8
+# # go_1_23
+# # go-md2man
+hspell
+kbd
+kmscon
+krb5
+libbpf
+libclc
+# # libtirpc
+libxmlb
+linux-zen
+# linux_zen
+lkl
+# lklWithFirewall
+# # makeModulesClosure
+mdbook-linkcheck
+nix
+openldap
+pkg-config-wrapper
+pkgconf-wrapper
+power-profiles-daemon
+python
+# python27
+remove-references-to
+# removeReferencesTo
+ronn
+# rust-bindgen
+rustc
+rustfmt-nightly
+# rustfmt
+# # rutabaga_gfx
+# substitute
+# substituteAll
+# # systemd
+# unbound
+uwsm
+x265
+
+qtbase
+qwt
+
+# # resholve
+
+# # matplotlib
+# # pkgconfig
+# # pystemmer
+
+basement
+hedgehog
+lpeg
+lua
+pcre-light
+prettyprinter
+prettyprinter-ansi-terminal
+prettyprinter-compat-ansi-wl-pprint
+# zlib
+
+# # addressable
+# ruby3.3-afm
+# ruby3.3-Ascii85
+# ruby3.3-asciidoctor
+# # asciidoctor-pdf
+# ruby3.3-coderay
+# ruby3.3-concurrent-ruby
+# # css_parser
+# ruby3.3-hashery
+# # kramdown
+# # kramdown-parser-gfm
+# ruby3.3-matrix
+# ruby3.3-mini_portile2
+# ruby3.3-mustache
+# # nokogiri
+# ruby3.3-pdf-core
+# # pdf-reader
+# ruby3.3-polyglot
+# # prawn
+# # prawn-icon
+# # prawn-svg
+# # prawn-table
+# # prawn-templates
+# ruby3.3-public_suffix
+# ruby3.3-pygments.rb
+# ruby3.3-racc
+# ruby3.3-rexml
+# # ronn-ng
+# ruby3.3-rouge
+# ruby3.3-ruby-rc4
+# ruby3.3-tilt
+# # treetop
+# ruby3.3-ttfunk
+# # zookeeper

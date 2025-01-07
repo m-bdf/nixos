@@ -1,0 +1,127 @@
+appstream
+audit
+aws-c-auth
+aws-c-http
+aws-c-io
+aws-c-s3
+aws-crt-cpp
+colord
+cracklib
+# #   cups-browsed
+doxygen
+dpkg
+efivar
+eigen
+elixir
+espeak-ng
+# espeak
+erlang
+fftw-double
+fftw-single
+fontforge
+fprintd
+geocode-glib
+getopt
+gettext
+giflib
+gjs
+glib
+gnome-bluetooth
+# gnome-bluetooth_1_0
+gnome-settings-daemon
+gnupg
+gperftools
+gtk-layer-shell
+# #   gtkmm4
+gupnp-igd
+hfst-ospell
+hspell
+hyphen
+iio-sensor-proxy
+iptables
+# #   jsoncpp
+# #   libadwaita
+libbytesize
+# #   libcacard
+libcap
+libclc
+# #   libcupsfilters
+# #   libei
+libgweather
+libhandy
+libical
+# libliftoff
+libndctl
+libnl
+# librdf_raptor2
+librist
+librsync
+libssh2
+libstartup-notification
+# libstartup_notification
+libtpms
+libvoikko
+libxml++
+# libxmlxx3
+lilv
+linux-firmware
+linux-headers
+# linuxHeaders
+logrotate
+mailcap
+modemmanager
+neon
+nix
+openconnect
+openssl
+ostree
+pkgconf
+# pkgconf-unwrapped
+python3
+# python311
+# python312
+python3-minimal
+# python3Minimal
+raptor2
+rdfind
+# river
+rust-cbindgen
+rustc
+s2n-tls
+shared-mime-info
+# #   spice
+spidermonkey
+# spidermonkey_128
+strace
+# supercollider
+tinyxxd
+# #   vte
+wireplumber
+xdg-utils
+xmlstarlet
+xorgproto
+# #   xwayland
+# #   yasm
+zvbi
+
+# # qt5 = prev.qt5.overrideScope (_: _: { qttranslations = null; });
+# # qt6 = prev.qt6.overrideScope (_: _: { qttranslations = null; });
+
+libmateweather
+
+base-compat-batteries
+blaze-builder
+# citeproc
+doclayout
+doctest
+foundation
+# haddock-library
+# hermes-json
+http-types
+memory
+# quickcheck-classes
+retry
+# typst
+unicode-collation
+unordered-containers
+# yaml
