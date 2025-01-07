@@ -1,3 +1,5 @@
+{ config, ... }:
+
 {
   users = {
     mutableUsers = false;
@@ -15,6 +17,8 @@
     enable = true;
     execWheelOnly = true;
   };
+
+  nix.settings.trusted-users = [ config.users.users.user.name ];
 
   xdg.dirs = {
     state.nixos.persist = true; # UIDs GIDs
