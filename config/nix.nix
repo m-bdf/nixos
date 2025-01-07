@@ -1,28 +1,18 @@
-{ lib, pkgs, modulesPath, ... }:
+{ lib, pkgs, ... }:
 
 {
-  imports = [ /${modulesPath}/profiles/perlless.nix ];
+  system.stateVersion = lib.trivial.release;
 
-  system = {
-    forbiddenDependenciesRegexes = lib.mkForce [];
-    stateVersion = lib.trivial.release;
-  };
-
-  nixpkgs = {
-    config = {
-      allowAliases = false;
-      allowUnfree = true;
-    };
-
-    overlays = [
-      (final: prev: {
-        nix = final.nixVersions.latest;
-      })
-    ];
-  };
+  nixpkgs.overlays = [
+    (final: prev: {
+      nix = final.nixVersions.latest;
+    })
+  ];
 
   nix.settings = {
     use-xdg-base-directories = true;
+    auto-optimise-store = true;
+
     experimental-features =
     let
       xp-features = pkgs.runCommandLocal "dump-xp-features" {}
@@ -30,6 +20,8 @@
     in
       lib.attrNames (lib.importJSON xp-features);
   };
+
+  programs.nh.enable = true;
 
   xdg.dirs = {
     data.nix.persist = true; # REPL history
