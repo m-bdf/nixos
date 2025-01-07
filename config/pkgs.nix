@@ -1,4 +1,4 @@
-{ lib, modulesPath, ... }:
+{ inputs, lib, modulesPath, ... }:
 
 {
   imports = [ /${modulesPath}/profiles/perlless.nix ];
@@ -13,8 +13,17 @@
       allowUnfree = true;
       checkMeta = true;
 
-      replaceStdenv = { pkgs }: pkgs.stdenv;
-    };
+      replaceStdenv = { pkgs }: pkgs.stdenv.override (prev: {
+        config = lib.mapAttrs (name: value:
+          if lib.hasSuffix "ByDefault" name then true else value
+        ) prev.config;
+      });
+    }
+    //
+      lib.genAttrs (lib.filter (lib.hasSuffix "ByDefault") (lib.attrNames
+        inputs.nixpkgs.htmlDocs.nixpkgsManual.x86_64-linux.optionsDoc.optionsNix
+      )) (opt: true)
+    ;
 
     overlays = [
       (final: prev:
