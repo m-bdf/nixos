@@ -2,7 +2,7 @@
 
 {
   environment = {
-    systemPackages = with pkgs; [ vscode nil github-desktop ];
+    systemPackages = with pkgs; [ vscode nixd github-desktop ];
     sessionVariables.VSCODE_PORTABLE = "/usr/share/vscode"; #vscode/3884
 
     variables.FILTER_BRANCH_SQUELCH_WARNING = "1";
