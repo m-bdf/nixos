@@ -1,6 +1,13 @@
-{ config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, ... }:
 
 {
+  nixpkgs.overlays = [
+    (final: prev: {
+      libtsm = final.callPackage (inputs.kmscon + /pkgs/by-name/li/libtsm/package.nix) {};
+      kmscon = final.callPackage (inputs.kmscon + /pkgs/by-name/km/kmscon/package.nix) {};
+    })
+  ];
+
   services = {
     kmscon = {
       enable = true;
