@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   boot = {
@@ -21,7 +21,12 @@
       includeDefaultModules = false;
     };
 
-    kernelPackages = pkgs.linuxPackages_zen;
+    kernelPackages = pkgs.linuxPackagesFor
+      (pkgs.linux_latest.override {
+        # stdenv = pkgs.clangStdenv;
+        extraMakeFlags = [ "LLVM=1" "KCFLAGS+=-O3" ];
+        structuredExtraConfig.LTO_CLANG_FULL = lib.kernel.yes;
+      });
   };
 
   services.fwupd.enable = true;
