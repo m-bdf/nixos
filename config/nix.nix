@@ -1,38 +1,51 @@
-{ lib, pkgs, modulesPath, ... }:
+{ inputs, lib, pkgs, ... }:
 
 {
-  imports = [ /${modulesPath}/profiles/perlless.nix ];
+  nix = {
+    package = inputs.nix.packages.${pkgs.stdenv.system}.nix;
 
-  system = {
-    forbiddenDependenciesRegexes = lib.mkForce [];
-    stateVersion = lib.trivial.release;
-  };
-
-  nixpkgs = {
-    config = {
-      allowAliases = false;
-      allowUnfree = true;
+    channel.enable = false;
+    settings = {
+      use-xdg-base-directories = true;
+      flake-registry = "";
+      lazy-locks = true;
+      lazy-trees = true;
+      auto-allocate-uids = true;
+      use-cgroups = true;
+      auto-optimise-store = true;
+      keep-outputs = true;
     };
 
-    overlays = [
-      (final: prev: {
-        nix = final.nixVersions.latest;
-      })
-    ];
+    extraOptions =
+    let
+      features = pkgs.runCommandLocal "features.conf" {
+        nativeBuildInputs = with pkgs; [ nix jq ];
+      } ''
+        nix --experimental-features "$(
+          nix __dump-xp-features | jq -r 'keys[]'
+        )" config show | grep features > $out
+      '';
+    in
+      "include ${features}";
   };
 
-  nix.settings = {
-    use-xdg-base-directories = true;
-    experimental-features =
-    let
-      xp-features = pkgs.runCommandLocal "dump-xp-features" {}
-        "${lib.getExe pkgs.nix} __dump-xp-features > $out";
-    in
-      lib.attrNames (lib.importJSON xp-features);
+  nixpkgs.config = {
+    warnUndeclaredOptions = true;
+
+    allowAliases = false;
+    allowUnfree = true;
+    checkMeta = true;
+  };
+
+  programs.nh.enable = true;
+  system = {
+    disableInstallerTools = true;
+    stateVersion = lib.trivial.release;
   };
 
   xdg.dirs = {
     data.nix.persist = true; # REPL history
+    state.nix.create = true;
     cache.nix.persist = true; # tarballs
   };
 }

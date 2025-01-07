@@ -16,6 +16,8 @@
     execWheelOnly = true;
   };
 
+  nix.settings.trusted-users = [ "@wheel" ];
+
   xdg.dirs = {
     state.nixos.persist = true; # UIDs GIDs
     home = {

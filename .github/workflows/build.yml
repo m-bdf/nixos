@@ -9,26 +9,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - run: rm --recursive .git
 
       - name: Enforce LF line breaks
         run: "! grep --recursive \r"
 
-      - uses: cachix/install-nix-action@v30
-      - uses: cachix/cachix-action@v15
+      - uses: cachix/install-nix-action@master
+      - uses: cachix/cachix-action@master
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix flake check
+          --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
   delete-old-builds:
     needs: build
+
+    permissions:
+      actions: write
+
     runs-on: ubuntu-latest
     steps:
-      - uses: Mattraks/delete-workflow-runs@v2
+      - uses: Mattraks/delete-workflow-runs@main
         with:
           retain_days: 0

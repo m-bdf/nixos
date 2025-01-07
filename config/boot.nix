@@ -1,6 +1,9 @@
-{ pkgs, ... }:
+{ lib, pkgs, modulesPath, ... }:
 
 {
+  imports = [ /${modulesPath}/profiles/perlless.nix ];
+  system.forbiddenDependenciesRegexes = lib.mkForce [];
+
   boot = {
     loader = {
       efi.canTouchEfiVariables = true;
