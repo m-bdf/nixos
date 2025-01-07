@@ -1,12 +1,10 @@
 { pkgs, ... }:
 
 {
-  i18n.defaultLocale = "en_IE.UTF-8";
-  nixpkgs.overlays = [
-    (final: prev: {
-      glibcLocales = final.glibcLocalesUtf8;
-    })
-  ];
+  i18n = {
+    supportedLocales = [];
+    glibcLocales = pkgs.emptyDirectory;
+  };
 
   environment.variables.XKB_DEFAULT_LAYOUT = "eu";
   systemd.globalEnvironment.XKB_DEFAULT_LAYOUT = "eu";
