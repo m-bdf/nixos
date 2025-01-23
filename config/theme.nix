@@ -12,7 +12,6 @@
 
       "xdg/ghostty/config".text = ''
         theme = Dracula
-        window-decoration = none
       '';
 
       "xdg/helix/config.toml".text = ''
