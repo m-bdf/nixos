@@ -6,17 +6,20 @@
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
+      "xdg/helix/config.toml".text = ''
+        theme = "github_dark"
+      '';
+
+      "xdg/niri/config.kdl".text = ''
+        prefer-no-csd
+      '';
+
       "xdg/fuzzel/fuzzel.ini".text = ''
         include = ${inputs.dracula-fuzzel}/fuzzel.ini
       '';
 
       "xdg/ghostty/config".text = ''
         theme = Dracula
-        window-decoration = none
-      '';
-
-      "xdg/helix/config.toml".text = ''
-        theme = "github_dark"
       '';
     };
   };

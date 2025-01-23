@@ -1,18 +1,21 @@
 { config, lib, pkgs, ... }:
 
 let
+  spawn = pkg: "${lib.getExe pkgs.niri} msg action spawn -- ${lib.getExe pkg}";
   launch = pkg:
     "${lib.getExe config.programs.uwsm.package} app -- ${lib.getExe pkg}";
 in
 
 {
-  modules-left = [ "river/tags" ];
+  modules-left = [ "niri/workspaces" ];
   modules-center = [ "clock" ];
   modules-right = [ "network" "bluetooth" "wireplumber" "battery" ];
 
   clock = {
     interval = 1;
     format = "{:%c}";
+    tooltip = false;
+    on-click = spawn pkgs.fuzzel;
   };
 
   network = {

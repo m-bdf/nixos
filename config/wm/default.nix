@@ -3,35 +3,49 @@
 {
   imports = [ ./binds.nix ];
 
-  programs.river = {
-    enable = true;
-    xwayland.enable = false;
-    extraPackages = [ pkgs.qt5.qtwayland ];
+  options.programs.niri.startup = lib.mkOption {
+    type = with lib.types;
+      coercedTo nonEmptyStr lib.singleton (listOf nonEmptyStr);
   };
 
-  environment = {
-    etc."xdg/river/init".source = pkgs.writeShellScript "river.init" ''
-      uwsm finalize
-
-      for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
-        riverctl input $name natural-scroll enabled
-        riverctl input $name tap enabled
-      done
-
-      ${lib.concatMapStringsSep "\n" ({ mod, key, cmd, rep }: ''
-        riverctl map ${lib.optionalString rep "-repeat"} \
-          normal ${lib.defaultTo "None" mod} ${key} spawn '${cmd}'
-      '') config.programs.river.bindings}
-
-      ${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
+  config = {
+    programs.niri = {
+      enable = true;
+      startup = "${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
         url = "weasyl.com/~melynx/submissions/1182575/melynx-sylveon-garden.png";
         sha256 = "0dgxkksv6cr5s3pyh9j8apd2xbjksix8km8zs4n278jpdfhlrgm5";
-      }} --mode fill &
+      }} --mode fill";
+    };
 
-      riverctl default-layout rivertile
-      rivertile
-    '';
+    environment = {
+      systemPackages = with pkgs;
+        [ wl-clipboard-rs qt5.qtwayland qt6.qtwayland ];
+      variables.NIXOS_OZONE_WL = "1";
 
-    variables.NIXOS_OZONE_WL = "1";
+      etc."xdg/niri/config.kdl".text = ''
+        input {
+          disable-power-key-handling
+          touchpad { natural-scroll; tap; }
+        }
+        output "eDP-1" { scale 1; }
+
+        layout {
+          focus-ring { off; }
+          shadow { on; }
+
+          empty-workspace-above-first
+          preset-column-widths {
+            proportion 0.3
+            proportion 0.5
+            proportion 0.7
+            proportion 1.0
+          }
+        }
+
+        ${lib.concatMapStringsSep "\n" (cmd:
+          "spawn-at-startup \"sh\" \"-c\" \"${cmd}\""
+        ) config.programs.niri.startup}
+      '';
+    };
   };
 }

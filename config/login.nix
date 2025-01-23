@@ -27,10 +27,6 @@
       waylandCompositors = {};
     };
 
-    river.bindings = [{
-      mod = "Super";
-      key = "Escape";
-      cmd = "uwsm stop";
-    }];
+    niri.keybinds."Mod+Escape" = "spawn \"uwsm\" \"stop\"";
   };
 }

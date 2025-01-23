@@ -18,10 +18,7 @@
       ];
     };
 
-    river.bindings = [{
-      key = "XF86AudioMedia";
-      cmd = "gtklock";
-    }];
+    niri.keybinds.XF86AudioMedia = "spawn \"gtklock\"";
   };
 
   xdg.dirs.state.fprint.persist = true;
