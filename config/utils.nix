@@ -20,11 +20,8 @@
     '';
   };
 
-  programs.river.bindings = [{
-    mod = "Super";
-    key = "Return";
-    cmd = "${lib.getExe pkgs.fuzzel} --launch-prefix uwsm-app --terminal -T";
-  }];
+  programs.niri.bindings."Mod+Return" =
+    "${lib.getExe pkgs.fuzzel} --launch-prefix uwsm-app --terminal -T";
 
   xdg = {
     terminal-exec = {

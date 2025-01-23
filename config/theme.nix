@@ -6,6 +6,11 @@
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
+      "xdg/niri/config.kdl".text = ''
+        prefer-no-csd
+        hotkey-overlay { skip-at-startup; }
+      '';
+
       "xdg/fuzzel/fuzzel.ini".text = ''
         include = ${inputs.dracula-fuzzel}/fuzzel.ini
         font = sans
