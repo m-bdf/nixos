@@ -11,35 +11,41 @@
     })
   ];
 
-  programs.river = {
-    enable = true;
-    xwayland.enable = false;
-    extraPackages = [ pkgs.qt5.qtwayland ];
-  };
+  programs.niri.enable = true;
 
   environment = {
-    etc."xdg/river/init".source = pkgs.writeShellScript "river.init" ''
-      uwsm finalize
+    etc."xdg/niri/config.kdl".text = ''
+      input {
+        disable-power-key-handling
+        touchpad { natural-scroll; tap; }
+      }
+      output "eDP-1" { scale 1; }
 
-      for name in $(riverctl list-inputs | grep 'Touchpad\|Synaptics'); do
-        riverctl input $name natural-scroll enabled
-        riverctl input $name tap enabled
-      done
-
-      ${lib.concatMapStringsSep "\n" ({ mod, key, cmd, rep }: ''
-        riverctl map ${lib.optionalString rep "-repeat"} \
-          normal ${lib.defaultTo "None" mod} ${key} spawn '${cmd}'
-      '') config.programs.river.bindings}
-
-      ${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
+      spawn-at-startup "${lib.getExe pkgs.swaybg}" "--image" "${builtins.fetchurl {
         url = "weasyl.com/~melynx/submissions/1182575/melynx-sylveon-garden.png";
         sha256 = "0dgxkksv6cr5s3pyh9j8apd2xbjksix8km8zs4n278jpdfhlrgm5";
-      }} --mode fill &
+      }}" "--mode" "fill"
 
-      riverctl default-layout rivertile
-      rivertile
-    '';
+      layout {
+        empty-workspace-above-first
+        preset-column-widths {
+          proportion 0.3
+          proportion 0.5
+          proportion 0.7
+          proportion 1.0
+        }
+      }
 
+      binds {
+        ${lib.concatStringsSep "\n  " (lib.mapAttrsToList
+          (keys: cmd: "${keys} { spawn \"sh\" \"-c\" r\"${cmd}\"; }")
+        config.programs.niri.bindings)}
+      }
+      hotkey-overlay { skip-at-startup; }
+      screenshot-path "~/Downloads/Screenshot %c.png"
+    ''; # TODO: KDL v2: unquote strings, r"…" -> #"…"#
+
+    systemPackages = with pkgs; [ wl-clipboard-rs qt5.qtwayland qt6.qtwayland ];
     variables.NIXOS_OZONE_WL = "1";
   };
 }

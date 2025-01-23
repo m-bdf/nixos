@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 {
-  modules-left = [ "river/tags" ];
+  modules-left = [ "niri/workspaces" ];
   modules-center = [ "clock" ];
   modules-right = [ "network" "bluetooth" "wireplumber" "battery" ];
 
