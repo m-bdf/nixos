@@ -23,8 +23,6 @@
     }];
   };
 
-  services.gnome.gnome-keyring.enable = true;
-
   xdg.dirs = {
     data = {
       vscode.persist = true;
