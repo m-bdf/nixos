@@ -48,4 +48,9 @@
     systemPackages = with pkgs; [ wl-clipboard-rs qt5.qtwayland qt6.qtwayland ];
     variables.NIXOS_OZONE_WL = "1";
   };
+
+  xdg.dirs.cache = {
+    mesa_shader_cache.create = true;
+    mesa_shader_cache_db.create = true;
+  };
 }
