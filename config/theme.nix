@@ -2,19 +2,19 @@
 
 {
   environment = {
-    systemPackages = with pkgs; [ dracula-theme adwaita-icon-theme ];
-    sessionVariables.GTK_THEME = "Dracula";
+    systemPackages = with pkgs; [ dracula-theme dracula-icon-theme ];
+    variables.GTK_THEME = "Dracula";
 
     etc = {
       "xdg/niri/config.kdl".text = ''
+        cursor { xcursor-theme "Dracula-cursors"; }
         prefer-no-csd
         hotkey-overlay { skip-at-startup; }
       '';
 
       "xdg/fuzzel/fuzzel.ini".text = ''
         include = ${inputs.dracula-fuzzel}/fuzzel.ini
-        font = sans
-        dpi-aware = no
+        icon-theme = Dracula
       '';
 
       "xdg/ghostty/config".text = ''
@@ -30,29 +30,12 @@
     };
   };
 
-  fonts = {
-    enableDefaultPackages = false;
-    packages = with pkgs; [
-      nerd-fonts.fira-code
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-color-emoji
-    ];
-
-    fontconfig.defaultFonts =
-    let
-      fonts = [ "FiraCode Nerd Font" "Noto Color Emoji" ];
-    in
-    {
-      sansSerif = [ "Noto Sans" ] ++ fonts;
-      serif = [ "Noto Serif" ] ++ fonts;
-      monospace = fonts;
-      emoji = fonts;
+  programs.dconf.profiles.user.databases = [{
+    settings."org/gnome/desktop/interface" = {
+      gtk-theme = "Dracula";
+      icon-theme = "Dracula";
+      cursor-theme = "Dracula-cursors";
+      color-scheme = "prefer-dark";
     };
-  };
-
-  xdg.dirs.cache = {
-    mesa_shader_cache.create = true;
-    fontconfig.create = true;
-  };
+  }];
 }
