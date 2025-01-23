@@ -29,11 +29,7 @@
     };
   };
 
-  programs.river.bindings = [{
-    mod = "Super";
-    key = "Return";
-    cmd = lib.getExe pkgs.fuzzel;
-  }];
+  programs.niri.bindings."Mod+Return" = lib.getExe pkgs.fuzzel;
 
   xdg = {
     terminal-exec = {
