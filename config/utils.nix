@@ -7,7 +7,7 @@
       xdg-open = writeShellScriptBin "xdg-open" ''
         filetype=$(xdg-mime query filetype "$1" 2>/dev/null)
         app=$(xdg-mime query default $filetype 2>/dev/null)
-        exec uwsm app -- $app "$@"
+        uwsm app -- $app "$@"
       '';
     in
       [ uutils-coreutils-noprefix fd ripgrep xdg-open helix ghostty brave ];
@@ -21,28 +21,30 @@
         confirm-close-surface = false
       '';
 
-      "xdg/fuzzel/fuzzel.ini".text = ''
-        show-actions = true
-        launch-prefix = uwsm app --
-        terminal = xdg-terminal-exec
+      "xdg/walker/config.toml".text = ''
+        app_launch_prefix = "uwsm app -- "
       '';
     };
   };
 
-  programs.niri.bindings."Mod+Return" = "spawn \"${lib.getExe pkgs.fuzzel}\"";
+  programs.niri.bindings."Mod+Return" = "spawn \"${lib.getExe pkgs.walker}\"";
 
   xdg = {
     terminal-exec = {
       enable = true;
       package = pkgs.writeShellScriptBin "xdg-terminal-exec" ''
-        exec uwsm app -T -- "$@"
+        uwsm app -T -- "$@"
       '';
     };
 
     dirs = {
-      config."BraveSoftware/Brave-Browser".persist = true;
+      config = {
+        walker.create = true;
+        "BraveSoftware/Brave-Browser".persist = true;
+      };
       cache = {
         helix.create = true;
+        walker.create = true;
         ghostty.create = true;
         "BraveSoftware/Brave-Browser".create = true;
       };
