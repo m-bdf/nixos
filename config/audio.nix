@@ -25,5 +25,6 @@
       wireplumber.create = true;
       bluetooth.persist = true;
     };
+    cache.obexd.create = true;
   };
 }
