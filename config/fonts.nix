@@ -22,19 +22,11 @@
     };
   };
 
-  environment.etc = {
-    "xdg/fuzzel/fuzzel.ini".text = ''
-      font = sans
-      use-bold = true
-      dpi-aware = no
-    '';
-
-    "xdg/ghostty/config".text = ''
-      font-family = mono
-      font-family = emoji
-      font-size = 11
-    '';
-  };
+  environment.etc."xdg/ghostty/config".text = ''
+    font-family = mono
+    font-family = emoji
+    font-size = 11
+  '';
 
   xdg.dirs.cache.fontconfig.create = true;
 }

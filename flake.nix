@@ -18,11 +18,6 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    dracula-fuzzel = {
-      url = "github:dracula/fuzzel";
-      flake = false;
-    };
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
