@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   environment = {
@@ -6,10 +6,6 @@
     sessionVariables.GTK_THEME = "Dracula";
 
     etc = {
-      "xdg/fuzzel/fuzzel.ini".text = ''
-        include = ${inputs.dracula-fuzzel}/fuzzel.ini
-      '';
-
       "xdg/ghostty/config".text = ''
         theme = Dracula
       '';
