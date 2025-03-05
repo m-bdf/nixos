@@ -15,7 +15,7 @@ in
     interval = 1;
     format = "{:%c}";
     tooltip = false;
-    on-click = spawn pkgs.fuzzel;
+    on-click = spawn pkgs.walker;
   };
 
   network = {
@@ -31,7 +31,6 @@ in
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
     on-click = launch pkgs.overskride;
-    on-click-right = launch pkgs.blueberry;
   };
 
   wireplumber = {
@@ -39,7 +38,6 @@ in
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
     on-click = launch pkgs.pwvucontrol;
-    on-click-right = launch pkgs.pavucontrol;
   };
 
   battery = {

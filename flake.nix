@@ -27,11 +27,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dracula-fuzzel = {
-      url = "github:dracula/fuzzel";
-      flake = false;
-    };
-
     nixos-hardware.url = "github:NixOS/nixos-hardware";
   };
 
