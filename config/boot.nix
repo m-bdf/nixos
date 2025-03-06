@@ -26,6 +26,14 @@
   services = {
     fwupd.enable = true;
 
+    logind = {
+      lidSwitch = "ignore";
+      powerKey = "hybrid-sleep";
+    };
+
+    upower.enable = true;
+    dbus.implementation = "broker";
+
     kmscon = {
       enable = true;
       hwRender = true;

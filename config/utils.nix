@@ -4,38 +4,33 @@
   environment = {
     systemPackages = with pkgs;
     let
-      xdg-open = writeShellScriptBin "xdg-open" ''
-        filetype=$(xdg-mime query filetype "$1" 2>/dev/null)
-        app=$(xdg-mime query default $filetype 2>/dev/null)
-        uwsm app -- $app "$@"
-      '';
+      wrapSpawn = name: { pkg ? pkgs.${name}, arg ? "" }:
+        writeShellScriptBin name
+          "niri msg action spawn -- ${pkg}/bin/${name} ${arg} \"$@\"";
+
+      xdg-open = symlinkJoin {
+        name = "xdg-open";
+        paths = lib.mapAttrsToList wrapSpawn {
+          xdg-open.pkg = xdg-utils;
+          xdg-terminal-exec.arg = "--dir=\"$(pwd)\"";
+        };
+      };
     in
       [ uutils-coreutils-noprefix fd ripgrep xdg-open helix ghostty brave ];
 
     variables.EDITOR = "hx";
 
-    etc = {
-      "xdg/ghostty/config".text = ''
-        resize-overlay = never
-        app-notifications = false
-        confirm-close-surface = false
-      '';
-
-      "xdg/walker/config.toml".text = ''
-        app_launch_prefix = "uwsm app -- "
-      '';
-    };
+    etc."xdg/ghostty/config".text = ''
+      resize-overlay = never
+      app-notifications = false
+      confirm-close-surface = false
+    '';
   };
 
   programs.niri.bindings."Mod+Return" = "spawn \"${lib.getExe pkgs.walker}\"";
 
   xdg = {
-    terminal-exec = {
-      enable = true;
-      package = pkgs.writeShellScriptBin "xdg-terminal-exec" ''
-        uwsm app -T -- "$@"
-      '';
-    };
+    terminal-exec.enable = true;
 
     dirs = {
       config = {
