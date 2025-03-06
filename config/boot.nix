@@ -25,6 +25,7 @@
 
   services = {
     fwupd.enable = true;
+    dbus.implementation = "broker";
 
     kmscon = {
       enable = true;
