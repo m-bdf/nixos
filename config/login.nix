@@ -1,32 +1,51 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
-  services.greetd = {
-    enable = true;
-    settings.default_session.command =
-      "${lib.getExe pkgs.cage} -sdm last ${lib.getExe pkgs.greetd.gtkgreet}";
+  services = {
+    dbus.implementation = "broker";
+
+    logind = {
+      lidSwitch = "ignore";
+      powerKey = "hybrid-sleep";
+    };
+    upower.enable = true;
+
+    greetd = {
+      enable = true;
+      settings.default_session.command = lib.getExe pkgs.westonLite;
+    };
   };
 
-  environment.etc."greetd/environments".text =
-    lib.concatMapStrings (session: "uwsm start ${session}.desktop\n")
-      config.services.displayManager.sessionData.sessionNames;
+  environment.etc = {
+    "xdg/weston/weston.ini".text = ''
+      [core]
+      shell=kiosk
 
-  systemd.user.services."wayland-wm-env@" = {
-    path = config.services.displayManager.sessionPackages;
-    overrideStrategy = "asDropin";
+      [libinput]
+      enable-tap=true
+
+      [autolaunch]
+      path=${lib.getExe pkgs.greetd.gtkgreet}
+      watch=true
+    '';
+
+    "greetd/environments".text = "niri-session";
   };
 
   programs = {
-    uwsm = {
+    gtklock = {
       enable = true;
-      package = pkgs.uwsm.override {
-        fumonSupport = false;
-        uuctlSupport = false;
-        uwsmAppSupport = false;
-      };
-      waylandCompositors = {};
+      modules = with pkgs; [
+        gtklock-powerbar-module
+        gtklock-playerctl-module
+      ];
     };
 
-    niri.keybinds."Mod+Escape" = "spawn \"uwsm\" \"stop\"";
+    niri.keybinds = {
+      XF86AudioMedia = "spawn \"gtklock\"";
+      "Mod+Escape" = "quit --skip-confirmation";
+    };
   };
+
+  xdg.dirs.state.fprint.persist = true;
 }
