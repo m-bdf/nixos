@@ -1,9 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   spawn = pkg: "${lib.getExe pkgs.niri} msg action spawn -- ${lib.getExe pkg}";
-  launch = pkg:
-    "${lib.getExe config.programs.uwsm.package} app -- ${lib.getExe pkg}";
 in
 
 {
@@ -24,20 +22,20 @@ in
     format-wifi = "{icon}  {essid}";
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
-    on-click = launch pkgs.iwgtk;
+    on-click = spawn pkgs.iwgtk;
   };
 
   bluetooth = {
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
-    on-click = launch pkgs.overskride;
+    on-click = spawn pkgs.overskride;
   };
 
   wireplumber = {
     format-muted = "󰝟  {volume}%";
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
-    on-click = launch pkgs.pwvucontrol;
+    on-click = spawn pkgs.pwvucontrol;
   };
 
   battery = {
