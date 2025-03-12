@@ -4,15 +4,15 @@
   environment = {
     etc = {
       "xdg/helix/config.toml".text = ''
-        theme = "github_dark"
+        theme = "catppuccin_mocha"
       '';
 
       "xdg/niri/config.kdl".text = ''
-        cursor { xcursor-theme "phinger-cursors-dark"; }
+        cursor { xcursor-theme "catppuccin-mocha-dark-cursors"; }
       '';
 
       "xdg/ghostty/config".text = ''
-        theme = Dracula
+        theme = catppuccin-mocha
       '';
     };
 
@@ -20,24 +20,24 @@
       (colloid-gtk-theme.override {
         colorVariants = [ "dark" ];
         sizeVariants = [ "compact" ];
-        tweaks = [ "dracula" "normal" ];
+        tweaks = [ "catppuccin" "normal" ];
       })
 
       (colloid-icon-theme.override {
-        schemeVariants = [ "dracula" ];
+        schemeVariants = [ "catppuccin" ];
       })
 
-      phinger-cursors
+      catppuccin-cursors.mochaDark
     ];
 
-    sessionVariables.GTK_THEME = "Colloid-Dark-Compact-Dracula";
+    sessionVariables.GTK_THEME = "Colloid-Dark-Compact-Catppuccin";
   };
 
   programs.dconf.profiles.user.databases = [{
     settings."org/gnome/desktop/interface" = {
-      gtk-theme = "Colloid-Dark-Compact-Dracula";
-      icon-theme = "Colloid-Dracula-Dark";
-      cursor-theme = "phinger-cursors-dark";
+      gtk-theme = "Colloid-Dark-Compact-Catppuccin";
+      icon-theme = "Colloid-Catppuccin-Dark";
+      cursor-theme = "catppuccin-mocha-dark-cursors";
       color-scheme = "prefer-dark";
     };
   }];
