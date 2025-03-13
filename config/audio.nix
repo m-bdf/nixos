@@ -6,6 +6,7 @@
     sessionVariables.SONIC_PI_HOME = "/usr/share/SonicPi";
   };
 
+  security.rtkit.enable = true;
   hardware.bluetooth.enable = true;
   services.playerctld.enable = true;
 
@@ -26,5 +27,6 @@
       wireplumber.create = true;
       bluetooth.persist = true;
     };
+    cache.obexd.create = true;
   };
 }
