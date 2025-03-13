@@ -1,13 +1,32 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   services = {
+    kmscon = {
+      enable = true;
+      hwRender = true;
+    };
+
+    dbus.implementation = "broker";
+
     logind = {
       lidSwitch = "ignore";
       powerKey = "hybrid-sleep";
     };
     upower.enable = true;
+
+    greetd = {
+      enable = true;
+      settings.default_session = {
+        user = config.users.users.user.name;
+        command = "niri-session";
+      };
+    };
   };
+
+  environment.etc."xdg/niri/config.kdl".text = ''
+    spawn-at-startup "gtklock"
+  '';
 
   programs = {
     gtklock = {
