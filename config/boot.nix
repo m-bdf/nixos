@@ -33,10 +33,5 @@
 
     upower.enable = true;
     dbus.implementation = "broker";
-
-    kmscon = {
-      enable = true;
-      hwRender = true;
-    };
   };
 }

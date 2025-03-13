@@ -1,26 +1,24 @@
-{ lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
-  services.greetd = {
-    enable = true;
-    settings.default_session.command = lib.getExe pkgs.westonLite;
+  services = {
+    kmscon = {
+      enable = true;
+      hwRender = true;
+    };
+
+    greetd = {
+      enable = true;
+      settings.default_session = {
+        user = config.users.users.user.name;
+        command = "niri-session";
+      };
+    };
   };
 
-  environment.etc = {
-    "xdg/weston/weston.ini".text = ''
-      [core]
-      shell=kiosk
-
-      [libinput]
-      enable-tap=true
-
-      [autolaunch]
-      path=${lib.getExe pkgs.greetd.gtkgreet}
-      watch=true
-    '';
-
-    "greetd/environments".text = "niri-session";
-  };
+  environment.etc."xdg/niri/config.kdl".text = ''
+    spawn-at-startup "gtklock"
+  '';
 
   programs = {
     gtklock = {
@@ -31,10 +29,7 @@
       ];
     };
 
-    niri.bindings = {
-      XF86AudioMedia = "spawn \"gtklock\"";
-      "Mod+Escape" = "quit";
-    };
+    niri.bindings.XF86AudioMedia = "spawn \"gtklock\"";
   };
 
   xdg.dirs.state.fprint.persist = true;

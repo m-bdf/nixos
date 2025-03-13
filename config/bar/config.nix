@@ -42,5 +42,6 @@ in
     format = "{icon}  {capacity}%";
     format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
     states.critical = 5;
+    on-click = spawn pkgs.gtklock;
   };
 }
