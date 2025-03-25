@@ -7,7 +7,6 @@
   };
 
   security.rtkit.enable = true;
-  hardware.bluetooth.enable = true;
   services.playerctld.enable = true;
 
   programs.niri.bindings =

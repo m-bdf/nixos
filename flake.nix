@@ -1,5 +1,8 @@
 {
   nixConfig = {
+    sandbox = "relaxed";
+    build-users-group = "";
+
     extra-substituters = [ "https://m-bdf.cachix.org" ];
     extra-trusted-public-keys =
       [ "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s=" ];
@@ -10,7 +13,7 @@
 
     nixpkgs.url = "github:numtide/nixpkgs-unfree/nixos-unstable";
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
 
     impermanence.url = "github:Mic92/impermanence/userborn-support";
 
@@ -22,7 +25,7 @@
     gtklock.url = "github:fugidev/nixpkgs/gtklock-module";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
+  outputs = { self, nixpkgs, ... }@ inputs:
 
   with self.lib;
 
@@ -39,26 +42,10 @@
       setDefaultModuleLocation path path
     ) (listDir ./config);
 
-    nixosConfigurations =
-    let
-      mkSystem = name: modules: nixosSystem {
-        specialArgs = self;
-        modules = attrValues self.nixosModules;
-        extraModules = modules ++ [ ./hardware/${name}.nix ];
-      };
-    in
-      mapAttrs mkSystem {
-        qemu = [];
-
-        t480 = with nixos-hardware.nixosModules; [
-          lenovo-thinkpad-t480
-          common-gpu-nvidia-disable
-        ];
-
-        fw13 = with nixos-hardware.nixosModules; [
-          framework-13-7040-amd
-        ];
-      };
+    nixosConfigurations.nixos = nixosSystem {
+      specialArgs = self;
+      modules = attrValues self.nixosModules;
+    };
 
     checks = import ./tests.nix inputs;
   };
