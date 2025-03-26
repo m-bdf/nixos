@@ -8,11 +8,16 @@
     };
     upower.enable = true;
 
+    kmscon = {
+      enable = true;
+      hwRender = true;
+    };
+
     greetd = {
       enable = true;
       settings.default_session = {
         user = config.users.users.user.name;
-        command = "niri-session";
+        command = "niri-session 2>/dev/null";
       };
     };
   };

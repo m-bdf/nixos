@@ -7,29 +7,39 @@
 
       systemd-boot = {
         enable = true;
+        configurationLimit = 10;
         editor = false;
       };
       timeout = null;
     };
 
-    plymouth.enable = true;
-    kernelParams = [ "quiet" ];
+    kernelPackages = pkgs.linuxPackages_latest;
 
     initrd = {
-      systemd.emergencyAccess = true;
       includeDefaultModules = false;
+      systemd.emergencyAccess = true;
+      # verbose = false;
     };
+    consoleLogLevel = 3; #0?
+    kernelParams = [ "quiet" ];
 
-    kernelPackages = pkgs.linuxPackages_zen;
+    plymouth = {
+      enable = true;
+      theme = "blahaj";
+      themePackages = [ pkgs.plymouth-blahaj-theme ];
+    };
   };
 
   services = {
     fwupd.enable = true;
     dbus.implementation = "broker";
+  };
 
-    kmscon = {
-      enable = true;
-      hwRender = true;
-    };
+  environment = {
+    etc.machine-id.source = pkgs.runCommandLocal "machine-id" {
+      nativeBuildInputs = [ pkgs.systemdMinimal ];
+    } "systemd-machine-id-setup --root=/tmp --print > $out";
+
+    persistence.storage.directories = [ "/var/log" ];
   };
 }

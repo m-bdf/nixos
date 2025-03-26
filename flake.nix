@@ -54,9 +54,7 @@
         ];
 
         fw13 = with nixos-hardware.nixosModules; [
-          framework-13-7040-amd {
-            hardware.framework.amd-7040.preventWakeOnAC = true;
-          }
+          framework-13-7040-amd
         ];
       };
 
