@@ -20,6 +20,8 @@
     };
 
     gtklock.url = "github:fugidev/nixpkgs/gtklock-module";
+
+    tisnix.url = "github:vhdirk/tisnix";
   };
 
   outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:

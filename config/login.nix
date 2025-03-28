@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, ... }:
+{ inputs, config, lib, pkgs, ... }:
 
 {
   services = {
@@ -21,13 +21,18 @@
       };
     };
 
-    fprintd.package = pkgs.fprintd.overrideAttrs {
-      prePatch = ''
-        sed -i "/pam_dep /i pthread_dep = dependency('threads')" meson.build
-        sed -i "/pam_dep,/i pthread_dep," pam/meson.build
-        cp ${../pam_fprintd_grosshack.c} pam/pam_fprintd.c
-      '';
-    };
+    # fprintd.package = pkgs.fprintd.overrideAttrs {
+    #   # prePatch = ''
+    #   #   sed -i "/pam_dep /i pthread_dep = dependency('threads')" meson.build
+    #   #   sed -i "/pam_dep,/i pthread_dep," pam/meson.build
+    #   #   cp ${../pam_fprintd_grosshack.c} pam/pam_fprintd.c
+    #   # '';
+
+    #   postInstall = ''
+    #     cp ${pkgs.pam-any}/lib/security/pam_any.so \
+    #       $out/lib/security/pam_fprintd.so # wrapper with hardcoded arguments?
+    #   '';
+    # };
   };
 
   environment.etc."xdg/niri/config.kdl".text = ''
@@ -48,6 +53,23 @@
     };
 
     niri.bindings.XF86AudioMedia = "spawn \"gtklock\"";
+  };
+
+  security.pam.services = {
+    sudo.rules.auth.fprintd = {
+      modulePath = lib.mkForce "${pkgs.pam-any}/lib/security/libpam_any.so";
+      args = [
+        (builtins.toJSON {
+          mode = "One";
+          modules = {
+            passwd = "Password";
+            greetd = "Fingerprint";
+          };
+        })
+      ];
+    };
+
+    passwd.fprintAuth = false;
   };
 
   xdg.dirs.state.fprint.persist = true;

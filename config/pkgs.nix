@@ -8,6 +8,8 @@
   nixpkgs = {
     flake.source = lib.mkForce inputs.nixpkgs.outPath;
 
+    overlays = [ inputs.tisnix.overlays.tisnix ];
+
     config = {
       warnUndeclaredOptions = true;
 
