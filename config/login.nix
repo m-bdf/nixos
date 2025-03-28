@@ -20,6 +20,14 @@
         command = "niri-session 2>/dev/null";
       };
     };
+
+    fprintd.package = pkgs.fprintd.overrideAttrs {
+      prePatch = ''
+        sed -i "/pam_dep /i pthread_dep = dependency('threads')" meson.build
+        sed -i "/pam_dep,/i pthread_dep," pam/meson.build
+        cp ${../pam_fprintd_grosshack.c} pam/pam_fprintd.c
+      '';
+    };
   };
 
   environment.etc."xdg/niri/config.kdl".text = ''
