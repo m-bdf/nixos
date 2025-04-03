@@ -1,14 +1,19 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   i18n.defaultLocale = "en_IE.UTF-8";
 
-  environment.variables.XKB_DEFAULT_LAYOUT = "eu";
   systemd.globalEnvironment.XKB_DEFAULT_LAYOUT = "eu";
+  programs = {
+    niri = {
+      startup = "${lib.getExe pkgs.wvkbd} -L 250 --hidden --landscape-layers index";
+      keybinds."Win+Space" = "spawn \"pkill\" \"wvkbd\" \"-RTMIN\"";
+    };
 
-  programs.light = {
-    enable = true;
-    brightnessKeys.enable = true;
+    light = {
+      enable = true;
+      brightnessKeys.enable = true;
+    };
   };
   users.users.user.extraGroups = [ "video" ];
 
