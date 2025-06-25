@@ -5,6 +5,9 @@ let
 in
 
 {
+  layer = "top";
+  height = 32;
+
   modules-left = [ "niri/workspaces" ];
   modules-center = [ "clock" ];
   modules-right = [ "network" "bluetooth" "wireplumber" "battery" ];
@@ -43,6 +46,6 @@ in
     format = "{icon}  {capacity}%";
     format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
     states.critical = 5;
-    on-click = spawn pkgs.gtklock;
+    on-click = spawn pkgs.hyprlock;
   };
 }
