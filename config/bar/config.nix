@@ -23,6 +23,7 @@ in
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
     on-click = spawn pkgs.iwgtk;
+    on-click-right = spawn pkgs.trayscale;
   };
 
   bluetooth = {
