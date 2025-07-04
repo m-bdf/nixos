@@ -1,7 +1,6 @@
-{ lib, ... }:
-
 {
   networking = {
+    usePredictableInterfaceNames = false;
     useNetworkd = true;
 
     wireless.iwd = {
@@ -11,9 +10,25 @@
         DisableANQP = false;
       };
     };
+
+    nftables = {
+      enable = true;
+      flushRuleset = true;
+    };
   };
 
-  systemd.targets.network-online.wantedBy = lib.mkForce []; #86273
+  services = {
+    resolved = {
+      mdns.enable = false;
+      llmnr.enable = false;
+    };
+
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+    };
+    printing.enable = true;
+  };
 
   xdg.dirs.state.iwd.persist = true; # networks
 }
