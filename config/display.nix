@@ -7,7 +7,7 @@
   programs = {
     niri = {
       startup = "${lib.getExe pkgs.wvkbd} -L 250 --hidden --landscape-layers index";
-      keybinds."Win+Space" = "spawn \"pkill\" \"wvkbd\" \"-RTMIN\"";
+      keybinds."Win+Space" = "pkill wvkbd -RTMIN";
     };
 
     light = {

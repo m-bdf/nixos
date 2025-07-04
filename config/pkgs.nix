@@ -2,7 +2,9 @@
 
 let
   wrapSpawn = name: cmd:
-    pkgs.writeShellScriptBin name "niri msg action spawn -- ${cmd} \"$@\"";
+    pkgs.writeShellScriptBin name ''
+      niri msg action spawn -- ${cmd} "$@"
+    '';
 in
 
 {
@@ -21,7 +23,7 @@ in
   };
 
   programs = {
-    niri.keybinds."Mod+Return" = "spawn \"${lib.getExe pkgs.walker}\"";
+    niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
 
     nautilus-open-any-terminal = {
       enable = true;
@@ -33,7 +35,7 @@ in
     terminal-exec = {
       enable = true;
       package = wrapSpawn "xdg-terminal-exec"
-        "${lib.getExe pkgs.xdg-terminal-exec} --dir=\"$PWD\"";
+        ''${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"'';
     };
 
     dirs = {

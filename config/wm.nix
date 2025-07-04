@@ -1,8 +1,6 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./binds.nix ];
-
   options.programs.niri.startup = lib.mkOption {
     type = with lib.types;
       coercedTo nonEmptyStr lib.singleton (listOf nonEmptyStr);
@@ -27,23 +25,24 @@
           disable-power-key-handling
           touchpad { natural-scroll; tap; }
         }
+
         output "eDP-1" { scale 1; }
 
+        layer-rule {
+          match namespace="^wallpaper$"
+          place-within-backdrop true
+        }
+
         layout {
+          background-color "transparent"
+          empty-workspace-above-first
+
           focus-ring { off; }
           shadow { on; }
-
-          empty-workspace-above-first
-          preset-column-widths {
-            proportion 0.3
-            proportion 0.5
-            proportion 0.7
-            proportion 1.0
-          }
         }
 
         ${lib.concatMapStringsSep "\n" (cmd:
-          "spawn-at-startup \"sh\" \"-c\" \"${cmd}\""
+          ''spawn-at-startup "sh" "-c" "${cmd}"''
         ) config.programs.niri.startup}
       '';
     };

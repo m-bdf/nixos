@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   environment = {
@@ -10,16 +10,15 @@
   hardware.bluetooth.enable = true;
   services.playerctld.enable = true;
 
-  programs.niri.keybinds =
-    lib.mapAttrs (keys: cmd: "spawn \"sh\" \"-c\" \"${cmd}\"") {
-      XF86AudioMute = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-      XF86AudioLowerVolume = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%-";
-      XF86AudioRaiseVolume = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%+";
-      XF86AudioMicMute = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-      XF86AudioPrev = "playerctl previous";
-      XF86AudioPlay = "playerctl play-pause";
-      XF86AudioNext = "playerctl next";
-    };
+  programs.niri.keybinds = {
+    XF86AudioMute = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+    XF86AudioLowerVolume = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%-";
+    XF86AudioRaiseVolume = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%+";
+    XF86AudioMicMute = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+    XF86AudioPrev = "playerctl previous";
+    XF86AudioPlay = "playerctl play-pause";
+    XF86AudioNext = "playerctl next";
+  };
 
   xdg.dirs = {
     data.SonicPi.persist = true;
