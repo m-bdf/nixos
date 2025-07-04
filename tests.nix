@@ -20,13 +20,12 @@ let
 
       nodes.machine = {
         imports = attrValues self.nixosModules;
-        virtualisation.writableStore = false;
         users.users.user.name = mkForce "user";
       };
 
       testScript = ''
         machine.wait_for_unit("default.target")
-        ${readFile script}
+        ${fileContents script}
       '';
     };
   in

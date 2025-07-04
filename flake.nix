@@ -30,7 +30,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, ... }@ inputs:
+  outputs = { self, nixpkgs, ... }@ inputs:
 
   with self.lib;
 
@@ -52,18 +52,16 @@
       mkSystem = name: modules: nixosSystem {
         specialArgs = self;
         modules = attrValues self.nixosModules;
-        extraModules = modules ++ [ ./hardware/${name}.nix ];
+        extraModules = modules ++ [
+          ./hardware/${name}.nix {
+            networking.hostName = name;
+          }
+        ];
       };
     in
+      with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
-        qemu = [];
-
-        t480 = with nixos-hardware.nixosModules; [
-          lenovo-thinkpad-t480
-          common-gpu-nvidia-disable
-        ];
-
-        fw13 = with nixos-hardware.nixosModules; [
+        fw13 = [
           framework-13-7040-amd {
             hardware.framework.amd-7040.preventWakeOnAC = true;
           }
