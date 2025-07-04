@@ -14,11 +14,17 @@
   };
 
   inputs = {
-    systems.url = "github:nix-systems/default-linux";
-
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix = {
+      url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
+      inputs.git-hooks-nix.follows = "git-hooks";
+    };
 
     preservation.url = "github:nix-community/preservation";
 
@@ -32,25 +38,20 @@
 
   outputs = { self, nixpkgs, ... }@ inputs:
 
-  with self.lib;
+  with nixpkgs.lib;
+
+  let
+    listDir = dir: concatMapAttrs (entry: type: {
+      ${removeSuffix ".nix" entry} = /${dir}/${entry};
+    }) (builtins.readDir dir);
+  in
 
   {
-    lib = nixpkgs.lib.extend (final: prev: {
-      mkAliasOptionModule = mkRenamedOptionModule;
-
-      listDir = dir: mapAttrs' (entry: type:
-        nameValuePair (head (splitString "." entry)) /${dir}/${entry}
-      ) (builtins.readDir dir);
-    });
-
-    nixosModules = mapAttrs (name: path:
-      setDefaultModuleLocation path path
-    ) (listDir ./config);
-
+    nixosModules = listDir ./config;
     nixosConfigurations =
     let
       mkSystem = name: modules: nixosSystem {
-        specialArgs = self;
+        specialArgs.inputs = inputs;
         modules = attrValues self.nixosModules;
         extraModules = modules ++ [
           ./hardware/${name}.nix {
@@ -68,6 +69,13 @@
         ];
       };
 
-    checks = import ./tests.nix inputs;
+    checks = import ./checks.nix inputs;
+
+    devShells =
+      mapAttrs (platform: checks: {
+        default = nixpkgs.legacyPackages.${platform}.mkShellNoCC {
+          inherit (checks.git-hooks) name shellHook;
+        };
+      }) self.checks;
   };
 }

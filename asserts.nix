@@ -5,26 +5,24 @@ with lib;
 let
   mkRedundantOptionWarning = module: paths: path:
   let
-    filterByPaths = paths: set:
-      foldl' (res: p:
-        recursiveUpdate res (setAttrByPath p (getAttrFromPath p set))
-      ) {} paths;
+    removeAttrByPath = path: set:
+      if length path == 1 then removeAttrs set path else set // {
+        ${head path} = removeAttrByPath (tail path) set.${head path};
+      };
 
     systemWithoutOption = extendModules {
       modules = singleton (module // {
-        config = filterByPaths (remove path paths) config;
+        config = removeAttrByPath path module.config;
       });
     };
 
     defaultValue = attrByPath path id systemWithoutOption.config;
-    actualValue = getAttrFromPath path config;
-    isRedundant =
-      (builtins.tryEval defaultValue).success && actualValue == defaultValue;
+    actualValue = getAttrFromPath path module.config;
   in
     builtins.traceVerbose
       "Checking `${showAttrPath path}' in `${module._file}'…"
 
-    optional isRedundant
+    optional (builtins.tryEval (actualValue == defaultValue)).value
       "The option `${
         showAttrPath path
       }' is set in `${
