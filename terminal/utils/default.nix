@@ -12,7 +12,7 @@ let
   replacements = with pkgs; [
     (mkReplacement coreutils uutils-coreutils-noprefix)
     (mkReplacement coreutils-full uutils-coreutils-noprefix)
-    (mkReplacement diffutils uutils-diffutils)
+    # (mkReplacement diffutils uutils-diffutils)
     (mkReplacement findutils uutils-findutils)
     {
       oldDependency = glibc;
@@ -55,6 +55,8 @@ in
         defaultEditor = true;
         settings.theme = "github_dark";
       };
+
+      man.generateCaches = false;
     };
   };
 }

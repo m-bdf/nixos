@@ -19,7 +19,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     git-hooks = {
-      url = "github:cachix/git-hooks.nix";
+      url = "github:m-bdf/git-hooks.nix/no-config-file-symlink";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -33,7 +33,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    preservation.url = "github:nix-community/preservation";
+    preservation.url = "github:m-bdf/preservation/support-nondefault-username";
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -54,6 +54,28 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nh = {
+      url = "github:nix-community/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
+
+    dnshack = {
+      url = "github:ettom/dnshack";
+      flake = false;
+    };
+
+    fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, nix-on-droid, ... }@ inputs:
@@ -69,7 +91,7 @@
       warnUndeclaredOptions = true;
       allowAliases = false;
       allowUnfree = true;
-      checkMeta = true;
+      # checkMeta = true;
     };
 
     nixOverlay = final: prev: {
@@ -79,6 +101,8 @@
           dev = prev.nix;
           man = nix.man;
         };
+
+      nh = inputs.nh.packages.${final.stdenv.system}.nh;
     };
 
     pkgsFor = platform:
@@ -139,7 +163,7 @@
       mapAttrs mkSystem {
         fw13 = [
           framework-13-7040-amd {
-            hardware.framework.laptop13.audioEnhancement.enable = true;
+            # hardware.framework.laptop13.audioEnhancement.enable = true;
           }
         ];
       };

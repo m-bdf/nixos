@@ -1,6 +1,11 @@
-{ lib, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
 {
+  disabledModules = [ "security/pam.nix" ];
+  imports = [
+    (inputs.fprintd + /nixos/modules/security/pam.nix)
+  ];
+
   environment.etc."xdg/hypr/hyprlock.conf".text =
   let
     mkPowerButton = i: { icon, cmd }: ''

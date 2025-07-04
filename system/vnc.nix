@@ -1,5 +1,16 @@
 { lib, pkgs, ... }:
 
+let
+  wayvnc = pkgs.wayvnc.overrideAttrs {
+    patches = [
+      (pkgs.fetchpatch {
+        url = "https://github.com/any1/wayvnc/pull/396.patch";
+        hash = "sha256-IEfHVhWj075DQ+HRnGL8zhsVaj813UWEOiYnOUYS/50=";
+      })
+    ];
+  };
+in
+
 {
   networking.firewall.allowedTCPPorts = [ 5900 ];
 
@@ -14,7 +25,7 @@
     services.wayvnc = {
       requires = [ "wayvnc.socket" ];
       serviceConfig.ExecStart = toString [
-        (lib.getExe pkgs.wayvnc)
+        (lib.getExe wayvnc)
         "--external-listener-fd 3"
         "--exit-on-disconnect"
         "--log-level info"

@@ -1,3 +1,5 @@
+{ inputs, ... }:
+
 let
   settings = {
     "zen.welcome-screen.seen" = true;
@@ -22,6 +24,8 @@ let
 in
 
 {
+  imports = [ inputs.zen-browser.homeModules.twilight ];
+
   programs.zen-browser = {
     enable = true;
     profiles.profile = {

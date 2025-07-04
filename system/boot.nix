@@ -10,9 +10,16 @@
       theme = "blahaj";
       themePackages = [ pkgs.plymouth-blahaj-theme ];
     };
+
+    initrd.services.udev.packages = [
+      (pkgs.writeTextDir "/etc/udev/rules.d/90-vconsole.rules" "")
+    ];
   };
 
   services = {
+    udev.packages = [
+      (pkgs.writeTextDir "/etc/udev/rules.d/90-vconsole.rules" "")
+    ];
 
     kmscon = {
       enable = true;

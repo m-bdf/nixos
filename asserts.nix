@@ -62,12 +62,13 @@ let
       (concatMap collectAsserts (if isAttrs v then attrValues v else v));
   in
     concatMap (opt: optionals (
-      !elem (last opt.loc) [ "assertions" "warnings" ] &&
+      !elem (last opt.loc) [ "assertions" "warnings" "stateVersion" ] && #176295
       hasAttrByPath (dropPrefix opt.loc) freeform.config
     ) (
       if opt.type.getSubModules == null then
         map (mkRedundantAssert opt.loc opt.value)
           (filterUserModules opt.definitionsWithLocations)
+      else if hasPrefix "Alias" opt.description then [] #355488
       else
         collectAsserts ((opt.type.substSubModules (
           opt.type.getSubModules ++ [ subModule __curPos.file ]

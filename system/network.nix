@@ -1,4 +1,11 @@
+{ inputs, ... }:
+
 {
+  disabledModules = [ "system/boot/resolved.nix" ];
+  imports = [
+    (inputs.resolved + /nixos/modules/system/boot/resolved.nix)
+  ];
+
   networking = {
     usePredictableInterfaceNames = false;
     useNetworkd = true;
