@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   fonts = {
@@ -10,22 +10,35 @@
       noto-fonts-color-emoji
     ];
 
-    fontconfig.defaultFonts =
-    let
-      fonts = [ "FiraCode Nerd Font" "Noto Color Emoji" ];
-    in
-    {
-      sansSerif = [ "Noto Sans" ] ++ fonts;
-      serif = [ "Noto Serif" ] ++ fonts;
-      monospace = fonts;
-      emoji = fonts;
+    fontconfig = {
+      includeUserConf = false;
+      allowBitmaps = false;
+      defaultFonts =
+      let
+        fonts = [ "FiraCode Nerd Font" "Noto Color Emoji" ];
+      in
+      {
+        sansSerif = [ "Noto Sans" ] ++ fonts;
+        serif = [ "Noto Serif" ] ++ fonts;
+        monospace = fonts;
+        emoji = fonts;
+      };
     };
   };
 
+  boot.plymouth.font = pkgs.runCommandLocal "plymouth-font" {
+    env.FONTCONFIG_FILE = pkgs.makeFontsConf {
+      fontDirectories = [];
+      impureFontDirectories = [];
+      includes = config.environment.etc.fonts.source + "conf.d";
+    };
+  } ''
+    ln -s $(${pkgs.fontconfig}/bin/fc-match monospace -f %{file}) $out
+  '';
+
   environment.etc."xdg/ghostty/config".text = ''
-    font-family = mono
+    font-family = monospace
     font-family = emoji
-    font-size = 11
   '';
 
   xdg.dirs.cache.fontconfig.create = true;

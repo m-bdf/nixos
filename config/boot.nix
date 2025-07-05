@@ -1,34 +1,18 @@
-{ lib, pkgs, modulesPath, ... }:
+{ config, pkgs, ... }:
 
 {
-  imports = [ /${modulesPath}/profiles/perlless.nix ];
-  system.forbiddenDependenciesRegexes = lib.mkForce [];
-
+  console.enable = false;
   boot = {
-    loader = {
-      efi.canTouchEfiVariables = true;
+    kernelParams = [ "quiet" "fbcon=map:null" ];
 
-      systemd-boot = {
-        enable = true;
-        editor = false;
-      };
-      timeout = null;
+    plymouth = {
+      enable = true;
+      theme = "blahaj";
+      themePackages = [ pkgs.plymouth-blahaj-theme ];
     };
-
-    plymouth.enable = true;
-    kernelParams = [ "quiet" ];
-
-    initrd = {
-      systemd.emergencyAccess = true;
-      includeDefaultModules = false;
-    };
-
-    kernelPackages = pkgs.linuxPackages_zen;
   };
 
   services = {
-    fwupd.enable = true;
-    dbus.implementation = "broker";
 
     kmscon = {
       enable = true;
