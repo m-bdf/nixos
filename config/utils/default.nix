@@ -31,11 +31,10 @@ in
     nano.enable = false;
   };
 
-  xdg.dirs = {
-    cache.helix.create = true;
-    home = {
-      Documents.persist = true;
-      Downloads.persist = true;
-    };
-  };
+  preservation.preserveAt.state.users.user.directories = [
+    { directory = "Documents"; mountOptions = [ "exec" ]; }
+    "Downloads"
+  ];
+
+  xdg.dirs.cache.helix.create = true;
 }

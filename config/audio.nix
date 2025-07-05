@@ -3,7 +3,7 @@
 {
   environment = {
     systemPackages = with pkgs; [ sonic-pi ];
-    sessionVariables.SONIC_PI_HOME = "/usr/share/SonicPi";
+    variables.SONIC_PI_HOME = "$XDG_DATA_HOME/SonicPi";
   };
 
   security.rtkit.enable = true;

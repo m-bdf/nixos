@@ -9,8 +9,6 @@ let
     state = "/var/lib";
     cache = "/var/cache";
   };
-
-  dirs = basedirs // { home = "/home"; };
 in
 
 {
@@ -25,30 +23,26 @@ in
       };
     });
   in
-    mapAttrs (name: path: mkOption { inherit type; default = {}; }) dirs;
+    mapAttrs (name: path: mkOption { inherit type; default = {}; }) basedirs;
 
   config =
   let
-    filterMapEnabledSubdirs = attr: fn: dir: subdirs:
-      map (subdir: fn (dir + "/${subdir}"))
-        (attrNames (filterAttrs (path: cfg: cfg.${attr}) subdirs));
+    mapSubdirs = attr: fn:
+      flatten (mapAttrsToList (name: mapAttrsToList (subdir: cfg:
+        optional cfg.${attr} (fn "${basedirs.${name}}/${subdir}")
+      )) config.xdg.dirs);
 
-    filterMapSubdirs = attr: fn:
-      concatLists (mapAttrsToList (dir:
-        filterMapEnabledSubdirs attr fn dirs.${dir}
-      ) config.xdg.dirs);
-
-    inherit (config.users.users) user;
+    user = config.users.users.user.name;
   in
   {
     environment.sessionVariables = mapAttrs' (name: path:
       nameValuePair "XDG_${toUpper name}_HOME" path
     ) basedirs;
 
-    systemd.tmpfiles.rules = filterMapSubdirs "create"
-      (path: "d ${path} - ${user.name} ${user.group}");
+    systemd.tmpfiles.rules =
+      mapSubdirs "create" (path: "d ${path} - ${user}");
 
-    preservation.preserveAt.state.directories = filterMapSubdirs "persist"
-      (path: { directory = path; user = user.name; group = user.group; });
+    preservation.preserveAt.state.directories =
+      mapSubdirs "persist" (path: { directory = path; inherit user; });
   };
 }

@@ -21,7 +21,7 @@
     nix-index-database.comma.enable = true;
   };
 
-  environment.sessionVariables.STARSHIP_CACHE = "/var/cache/starship"; #starship/896
+  environment.variables.STARSHIP_CACHE = "$XDG_CACHE_HOME/starship"; #starship/896
 
   xdg.dirs = {
     data.fish.persist = true; # history

@@ -6,7 +6,7 @@
   {
     "/" = {
       fsType = "tmpfs";
-      options = options ++ [ "size=1G" ];
+      options = options ++ [ "size=1G" "mode=0755" ];
     };
 
     "/boot" = {
@@ -17,14 +17,16 @@
     "/nix" = {
       label = "nixos";
       fsType = "ext4";
-      neededForBoot = true;
       options = options ++ [ "exec" ];
     };
   };
 
   preservation = {
     enable = true;
-    preserveAt.state.persistentStoragePath = "/nix";
+    preserveAt.state = {
+      persistentStoragePath = "/nix";
+      commonMountOptions = [ "noexec" ];
+    };
   };
 
   boot = {

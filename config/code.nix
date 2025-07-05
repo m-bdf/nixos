@@ -3,7 +3,7 @@
 {
   environment = {
     systemPackages = with pkgs; [ vscode nixd github-desktop ];
-    sessionVariables.VSCODE_PORTABLE = "/usr/share/vscode"; #vscode/3884
+    variables.VSCODE_PORTABLE = "$XDG_DATA_HOME/vscode"; #vscode/3884
   };
 
   programs = {
