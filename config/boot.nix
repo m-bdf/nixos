@@ -28,10 +28,25 @@
 
   services = {
     fwupd.enable = true;
+    dbus.implementation = "broker";
 
     kmscon = {
       enable = true;
       hwRender = true;
     };
+
+    greetd = {
+      enable = true;
+      settings.default_session = {
+        user = config.users.users.user.name;
+        command = "niri-session";
+      };
+    };
+
+    logind = {
+      lidSwitch = "ignore";
+      powerKey = "hybrid-sleep";
+    };
+    upower.enable = true;
   };
 }

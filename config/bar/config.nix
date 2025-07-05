@@ -11,7 +11,7 @@ in
 
   clock = {
     interval = 1;
-    format = "{:%c}";
+    format = "{:%A %d %B %Y %X}";
     tooltip = false;
     on-click = spawn pkgs.walker;
   };
@@ -43,5 +43,6 @@ in
     format = "{icon}  {capacity}%";
     format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
     states.critical = 5;
+    on-click = spawn pkgs.gtklock;
   };
 }
