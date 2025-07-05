@@ -9,15 +9,15 @@
   config = {
     programs.niri = {
       enable = true;
-      startup = "${lib.getExe pkgs.swaybg} --image ${builtins.fetchurl {
-        url = "weasyl.com/~melynx/submissions/1182575/melynx-sylveon-garden.png";
-        sha256 = "0dgxkksv6cr5s3pyh9j8apd2xbjksix8km8zs4n278jpdfhlrgm5";
+      startup = "${lib.getExe pkgs.swaybg} --image ${pkgs.fetchurl rec {
+        name = "melynx-sylveon-garden.png";
+        url = "https://weasyl.com/~melynx/submissions/1182575/${name}";
+        hash = "sha256-pb5MoWtXoiMs0R/ViXrUU64u2lVIJujv0CUzs/Wc/TU=";
       }} --mode fill";
     };
 
     environment = {
-      systemPackages = with pkgs;
-        [ wl-clipboard-rs qt5.qtwayland qt6.qtwayland ];
+      systemPackages = [ pkgs.wl-clipboard-rs ];
       variables.NIXOS_OZONE_WL = "1";
 
       etc."xdg/niri/config.kdl".text = ''

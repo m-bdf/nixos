@@ -23,8 +23,7 @@
   xdg.dirs = {
     data.SonicPi.persist = true;
     state = {
-      # wireplumber.persist = true;
-      wireplumber.create = true;
+      wireplumber.persist = true;
       bluetooth.persist = true;
     };
     cache.obexd.create = true;

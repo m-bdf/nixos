@@ -9,6 +9,7 @@
     fish = {
       enable = true;
       useBabelfish = true;
+      interactiveShellInit = "set fish_greeting";
     };
 
     starship = {

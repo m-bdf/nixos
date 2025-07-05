@@ -4,10 +4,12 @@
 
     users.user = {
       name = "mae";
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
       home = "/home";
+      createHome = false;
+
+      isNormalUser = true;
       password = "mae";
+      group = "wheel";
     };
   };
 
@@ -17,8 +19,6 @@
   };
 
   nix.settings.trusted-users = [ "@wheel" ];
-
-  systemd.oomd.enableUserSlices = true;
 
   xdg.dirs.state.nixos.persist = true; # UIDs GIDs
 }

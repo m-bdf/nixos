@@ -1,10 +1,9 @@
 { lib, pkgs, ... }:
 
 let
-  wrapSpawn = name: cmd:
-    pkgs.writeShellScriptBin name ''
-      niri msg action spawn -- ${cmd} "$@"
-    '';
+  wrapSpawn = name: cmd: pkgs.writeShellScriptBin name ''
+    niri msg action spawn -- ${lib.removeSuffix "\n" cmd} "$@"
+  '';
 in
 
 {
@@ -22,6 +21,8 @@ in
     '';
   };
 
+  systemd.oomd.enableUserSlices = true;
+
   programs = {
     niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
 
@@ -34,8 +35,9 @@ in
   xdg = {
     terminal-exec = {
       enable = true;
-      package = wrapSpawn "xdg-terminal-exec"
-        ''${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"'';
+      package = wrapSpawn "xdg-terminal-exec" ''
+        ${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"
+      '';
     };
 
     dirs = {
