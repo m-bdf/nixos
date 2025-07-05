@@ -7,7 +7,7 @@
       isNormalUser = true;
       extraGroups = [ "wheel" ];
       home = "/home";
-      password = "";
+      password = "mae";
     };
   };
 
@@ -18,11 +18,7 @@
 
   nix.settings.trusted-users = [ "@wheel" ];
 
-  xdg.dirs = {
-    state.nixos.persist = true; # UIDs GIDs
-    home = {
-      Documents.persist = true;
-      Downloads.persist = true;
-    };
-  };
+  systemd.oomd.enableUserSlices = true;
+
+  xdg.dirs.state.nixos.persist = true; # UIDs GIDs
 }

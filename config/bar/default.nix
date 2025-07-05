@@ -11,6 +11,7 @@
       jackSupport = false;
       mpdSupport = false;
       mprisSupport = false;
+      pipewireSupport = false;
       pulseSupport = false;
       sndioSupport = false;
       traySupport = false;

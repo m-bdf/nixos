@@ -20,7 +20,7 @@
 
     nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
 
-    impermanence.url = "github:nix-community/impermanence";
+    preservation.url = "github:nix-community/preservation";
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -63,7 +63,7 @@
       mapAttrs mkSystem {
         fw13 = [
           framework-13-7040-amd {
-            hardware.framework.amd-7040.preventWakeOnAC = true;
+            hardware.framework.laptop13.audioEnhancement.enable = true;
           }
         ];
       };

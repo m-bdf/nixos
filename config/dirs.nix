@@ -14,7 +14,7 @@ let
 in
 
 {
-  imports = [ inputs.impermanence.nixosModules.impermanence ];
+  imports = [ inputs.preservation.nixosModules.preservation ];
 
   options.xdg.dirs =
   let
@@ -29,28 +29,26 @@ in
 
   config =
   let
-    filterMapSubdirs = attr: fn: dir: subdirs:
+    filterMapEnabledSubdirs = attr: fn: dir: subdirs:
       map (subdir: fn (dir + "/${subdir}"))
         (attrNames (filterAttrs (path: cfg: cfg.${attr}) subdirs));
 
-    filterMapEnabledSubdirs = attr: fn:
+    filterMapSubdirs = attr: fn:
       concatLists (mapAttrsToList (dir:
-        filterMapSubdirs attr fn dirs.${dir}
+        filterMapEnabledSubdirs attr fn dirs.${dir}
       ) config.xdg.dirs);
 
     inherit (config.users.users) user;
   in
   {
-    environment = {
-      sessionVariables = mapAttrs' (name: path:
-        nameValuePair "XDG_${toUpper name}_HOME" path
-      ) basedirs;
+    environment.sessionVariables = mapAttrs' (name: path:
+      nameValuePair "XDG_${toUpper name}_HOME" path
+    ) basedirs;
 
-      persistence.storage.directories = filterMapEnabledSubdirs "persist"
-        (path: { directory = path; user = user.name; group = user.group; });
-    };
-
-    systemd.tmpfiles.rules = filterMapEnabledSubdirs "create"
+    systemd.tmpfiles.rules = filterMapSubdirs "create"
       (path: "d ${path} - ${user.name} ${user.group}");
+
+    preservation.preserveAt.state.directories = filterMapSubdirs "persist"
+      (path: { directory = path; user = user.name; group = user.group; });
   };
 }

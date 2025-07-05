@@ -15,18 +15,27 @@
       brightnessKeys.enable = true;
     };
   };
-  users.users.user.extraGroups = [ "video" ];
+
+  systemd = {
+    packages = [
+      (pkgs.gammastep.override {
+        withRandr = false;
+        withDrm = false;
+        withVidmode = false;
+        withAppIndicator = false;
+      })
+    ];
+
+    user.services = {
+      gammastep.wantedBy = [ "graphical-session.target" ];
+      geoclue-agent.enable = false;
+    };
+  };
 
   services = {
-    redshift = {
-      enable = true;
-      package = pkgs.gammastep;
-      executable = "/bin/gammastep";
-    };
-
-    localtimed.enable = true;
+    automatic-timezoned.enable = true;
+    geoclue2.submitData = true;
   };
-  location.provider = "geoclue2";
 
   xdg.dirs.cache = {
     mesa_shader_cache.create = true;

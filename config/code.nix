@@ -9,12 +9,14 @@
   programs.git = {
     enable = true;
     lfs.enable = true;
+    package = pkgs.gitMinimal.override { withManual = true; };
 
     config = [{
       user = {
         name = "Maëlys Bras de fer";
         email = "mae.bdf@outlook.com";
       };
+      diff.external = "difft";
     }];
   };
 
