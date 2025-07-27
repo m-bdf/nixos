@@ -1,112 +1,83 @@
-{ _prefix, options, config, lib, pkgs, modules, extendModules, ... }@ self:
+{ _prefix, options, config, lib, modules, extendModules, ... }@ self:
 
 with lib;
 
 let
-  getSuffix = drop (length _prefix);
+  dropPrefix = drop (length _prefix);
 
-  collectOptions = modules:
-  let
-    freeform = evalModules {
-      specialArgs = self;
-      modules = toList modules ++ [ rec {
-        freeformType = with types;
-          attrsOf (either freeformType unspecified);
-      }];
-    };
-  in
-    filter (opt: hasAttrByPath (getSuffix opt.loc) freeform.config)
-      (collect isOption options);
+  collectModules = lib.modules.collectModules "";
+  collectedModules = (collectModules modules self).modules;
 
-  mkAssert = loc: file: optValue: defValue:
+  mkRedundantAssert = loc: value: def:
   let
-    removeDef =
-      concatMap (opt: optionals (opt.loc != loc) (
-        concatMap (def: optional (def.file == file) (
-          setAttrByPath (getSuffix opt.loc)
-            (mkOverride opt.highestPrio def.value)
-        )) opt.definitionsWithLocations
+    removeAttrByPath = path: set:
+      mkMerge (forEach (pushDownProperties set) (set:
+        if length path == 1 then removeAttrs set path else set // {
+          ${head path} = removeAttrByPath (tail path) set.${head path} or {};
+        }
       ));
 
-    module = if isList modules then toFunction (import file) self else modules;
-    config = mkMerge (removeDef (collectOptions module));
-
     systemWithoutDef = extendModules {
-      modules = singleton (_: module
-        // (if isList modules then { key = file; } else { imports = []; })
-        // (if module ? config then { inherit config; } else config)
-      );
+      modules = forEach collectedModules
+        (m: m // optionalAttrs (m._file == def.file) {
+          disabledModules = [m];
+          key = m.key + ":-" + showOption loc;
+          config = removeAttrByPath (dropPrefix loc) m.config;
+          imports = [];
+        });
     };
 
-    optWithoutDef = getAttrFromPath (getSuffix loc) systemWithoutDef.options;
+    optWithoutDef = getAttrFromPath (dropPrefix loc) systemWithoutDef.options;
 
-    prettyOpt = "option `${showOption loc}' defined in `${file}'";
-    prettyVal = generators.toPretty { multiline = false; } defValue;
+    prettyOpt = "option `${showOption loc}' defined in `${def.file}'";
+    prettyVal = generators.toPretty { multiline = false; } def.value;
   in
   {
     assertion = builtins.traceVerbose "Checking the ${prettyOpt}…"
       optWithoutDef.isDefined ->
-        !(builtins.tryEval (optWithoutDef.value == optValue)).value;
+        !(builtins.tryEval (optWithoutDef.value == value)).value;
 
     message = "The ${prettyOpt} is set to the redundant value `${prettyVal}'.";
   };
 
-  wrapModules = modules:
+  mkRedundantAsserts =
   let
-    assertsModule =
-      { config, moduleType, ... }: {
-        imports = modules ++ [ ./asserts.nix ];
+    userFiles = catAttrs "_file" (take (length modules) collectedModules);
+    filterUserModules = filter (m: elem m.file or m._file userFiles);
 
-        _module.args.modules = config._raw // {
-          disabledModules =
-            drop 3 (imap1 (i: m: m // {
-              key = ":anon-${toString i}";
-            }) moduleType.getSubModules);
-        };
-      };
-  in
-    { specialArgs, ... }: {
-      freeformType = with types;
-        coercedTo raw (m: {
-          config = m // { _raw.config = m; };
-        })
-          (submoduleWith {
-            inherit specialArgs;
-            modules = [{
-              options._raw = mkOption {
-                type = deferredModule;
-              };
-              imports = [ assertsModule ];
-            }];
-          });
+    freeform = evalModules {
+      modules = [ rec {
+        freeformType = with types;
+          either (attrsOf freeformType) unspecified;
+        config = mkMerge (catAttrs "config" collectedModules);
+      }];
     };
 
-  mkAsserts =
-  let
+    subModule = { moduleType, ... }@ self: {
+      _module.args.modules = filterUserModules
+        (collectModules moduleType.getSubModules self).modules;
+    };
+
     collectAsserts = v: v._asserts or
       (concatMap collectAsserts (if isAttrs v then attrValues v else v));
   in
-    concatMap (opt:
-      optionals (last opt.loc != "assertions") (
-        concatMap (def:
-          optional (hasPrefix (toString ./.) def.file)
-            (mkAssert opt.loc def.file opt.value def.value)
-        ) opt.definitionsWithLocations
-      )
-    ++
-      optionals (opt.type.getSubModules != null) (
-        collectAsserts (
-          (opt.type.substSubModules [
-            (wrapModules opt.type.getSubModules)
-          ]).merge opt.loc opt.definitionsWithLocations
-        )
-      )
-    );
+    concatMap (opt: optionals (
+      !elem (last opt.loc) [ "assertions" "warnings" ] &&
+      hasAttrByPath (dropPrefix opt.loc) freeform.config
+    ) (
+      if opt.type.getSubModules == null then
+        map (mkRedundantAssert opt.loc opt.value)
+          (filterUserModules opt.definitionsWithLocations)
+      else
+        collectAsserts ((opt.type.substSubModules (
+          opt.type.getSubModules ++ [ subModule __curPos.file ]
+        )).merge opt.loc opt.definitionsWithLocations)
+    ));
 in
 
 {
   options._asserts = mkOption {
-    default = mkAsserts (collectOptions modules);
+    default = mkRedundantAsserts (collect isOption options);
   };
 
   config = optionalAttrs (options ? assertions) {
