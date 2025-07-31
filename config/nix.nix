@@ -29,14 +29,6 @@
       "include ${features}";
   };
 
-  nixpkgs.config = {
-    warnUndeclaredOptions = true;
-
-    allowAliases = false;
-    allowUnfree = true;
-    checkMeta = true;
-  };
-
   programs.nh.enable = true;
   system = {
     disableInstallerTools = true;

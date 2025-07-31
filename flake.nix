@@ -59,6 +59,19 @@
     listDir = dir: concatMapAttrs (entry: type: {
       ${removeSuffix ".nix" entry} = /${dir}/${entry};
     }) (builtins.readDir dir);
+
+    pkgsConfig = {
+      warnUndeclaredOptions = true;
+      allowAliases = false;
+      allowUnfree = true;
+      checkMeta = true;
+    };
+
+    pkgsFor = platform:
+      import nixpkgs {
+        system = platform;
+        config = pkgsConfig;
+      };
   in
 
   {
@@ -66,7 +79,7 @@
     homeConfigurations =
       mapAttrs (platform: _:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${platform};
+          pkgs = pkgsFor platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.homeModules;
         }
@@ -76,7 +89,7 @@
     nixOnDroidConfigurations =
       mapAttrs (platform: _:
         nix-on-droid.lib.nixOnDroidConfiguration {
-          pkgs = nixpkgs.legacyPackages.${platform};
+          pkgs = pkgsFor platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.nixOnDroidModules ++ [{
             home.imports = attrValues self.homeModules;
@@ -99,6 +112,7 @@
           modules = modules ++ [
             ./hardware/${name}.nix {
               networking.hostName = name;
+              nixpkgs.config = pkgsConfig;
             }
           ];
         };
@@ -115,7 +129,7 @@
     packages =
       mapAttrs (platform: droidPkgs: {
         nixOnDroidBootstrapZips =
-          nixpkgs.legacyPackages.${platform}.symlinkJoin {
+          (pkgsFor platform).symlinkJoin {
             name = "nix-on-droid-bootstrap-zips";
             paths = mapAttrsToList (targetPlatform: system:
               system.config.build.bootstrapZip.override droidPkgs
@@ -127,7 +141,7 @@
 
     devShells =
       mapAttrs (platform: checks: {
-        default = nixpkgs.legacyPackages.${platform}.mkShellNoCC {
+        default = (pkgsFor platform).mkShellNoCC {
           inherit (checks.git-hooks) name shellHook;
         };
       }) self.checks;
