@@ -1,0 +1,52 @@
+name: droid
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt update
+      - run: sudo apt install qemu-user-static
+
+      - uses: cachix/install-nix-action@master
+        with:
+          extra_nix_config: extra-platforms = aarch64-linux
+
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - uses: actions/checkout@main
+      - run: nix build .#nixOnDroidBootstrapZips
+          --accept-flake-config --impure
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
+
+      - uses: actions/upload-pages-artifact@main
+        with:
+          path: result
+
+  deploy:
+    needs: build
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@main

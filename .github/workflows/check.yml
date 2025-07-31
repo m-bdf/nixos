@@ -1,4 +1,4 @@
-name: build
+name: check
 on:
   push:
   schedule:
@@ -6,13 +6,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  check:
     permissions:
       contents: read
 
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt update
+      - run: sudo apt install qemu-user-static
+
       - uses: cachix/install-nix-action@master
+        with:
+          extra_nix_config: extra-platforms = aarch64-linux
+
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
@@ -20,19 +26,21 @@ jobs:
 
       - uses: actions/checkout@main
       - run: nix flake check
-          --accept-flake-config
+          --accept-flake-config --impure
           --trace-verbose --show-trace
           --print-build-logs --keep-going
           --max-jobs 1
 
-  delete-old-builds:
-    needs: build
+  chore:
+    needs: check
 
     permissions:
+      deployments: write
       actions: write
 
     runs-on: ubuntu-latest
     steps:
+      - uses: int128/delete-deployments-action@v1
       - uses: Mattraks/delete-workflow-runs@main
         with:
           retain_days: 0

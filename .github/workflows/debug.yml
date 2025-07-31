@@ -6,6 +6,12 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
+      - run: sudo apt update
+      - run: sudo apt install qemu-user-static
+
       - uses: cachix/install-nix-action@master
+        with:
+          extra_nix_config: extra-platforms = aarch64-linux
+
+      - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master

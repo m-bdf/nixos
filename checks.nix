@@ -39,13 +39,25 @@ let
       };
     }) git-hooks.lib;
 
+  homeTests =
+    mapAttrsToList (platform: system: {
+      ${platform}.home-config =
+        (system.extendModules {
+          specialArgs.modules =
+            attrValues self.homeModules;
+          modules = [ ./asserts.nix ];
+        }).activationPackage;
+    }) self.homeConfigurations;
+
   configTests =
     mapAttrsToList (name: system: {
-      ${system.pkgs.stdenv.system}.${name} =
-        (system.extendModules {
-          modules = [ ./asserts.nix ];
-        }).config.system.build.toplevel;
+      ${system.pkgs.stdenv.system} = {
+        "nixos-config-${name}" =
+          (system.extendModules {
+            modules = [ ./asserts.nix ];
+          }).config.system.build.toplevel;
+      };
     }) self.nixosConfigurations;
 in
 
-foldl' recursiveUpdate gitHooks configTests
+foldl' recursiveUpdate gitHooks (homeTests ++ configTests)

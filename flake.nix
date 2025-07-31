@@ -1,15 +1,17 @@
 {
   nixConfig = {
     flake-registry = "";
-    allow-import-from-derivation = false;
+    trace-import-from-derivation = true;
 
     extra-substituters = [
       "https://m-bdf.cachix.org"
       "https://install.determinate.systems"
+      "https://nix-on-droid.cachix.org"
     ];
     extra-trusted-public-keys = [
       "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+      "nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU="
     ];
   };
 
@@ -26,6 +28,11 @@
       inputs.git-hooks-nix.follows = "git-hooks";
     };
 
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     preservation.url = "github:nix-community/preservation";
 
     nix-index-database = {
@@ -33,10 +40,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
+
     nixos-hardware.url = "github:NixOS/nixos-hardware";
   };
 
-  outputs = { self, nixpkgs, ... }@ inputs:
+  outputs = { self, nixpkgs, home-manager, nix-on-droid, ... }@ inputs:
 
   with nixpkgs.lib;
 
@@ -47,18 +62,46 @@
   in
 
   {
+    homeModules = listDir ./home;
+    homeConfigurations =
+      mapAttrs (platform: _:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${platform};
+          extraSpecialArgs.inputs = inputs;
+          modules = attrValues self.homeModules;
+        }
+      ) home-manager.packages;
+
+    nixOnDroidModules = listDir ./droid;
+    nixOnDroidConfigurations =
+      mapAttrs (platform: _:
+        nix-on-droid.lib.nixOnDroidConfiguration {
+          pkgs = nixpkgs.legacyPackages.${platform};
+          extraSpecialArgs.inputs = inputs;
+          modules = attrValues self.nixOnDroidModules ++ [{
+            home.imports = attrValues self.homeModules;
+          }];
+        }
+      ) nix-on-droid.packages;
+
     nixosModules = listDir ./config;
     nixosConfigurations =
     let
-      mkSystem = name: modules: nixosSystem {
+      baseSystem = nixosSystem {
         specialArgs.inputs = inputs;
-        modules = attrValues self.nixosModules;
-        extraModules = modules ++ [
-          ./hardware/${name}.nix {
-            networking.hostName = name;
-          }
-        ];
+        modules = attrValues self.nixosModules ++ [{
+          home.imports = attrValues self.homeModules;
+        }];
       };
+
+      mkSystem = name: modules:
+        baseSystem.extendModules {
+          modules = modules ++ [
+            ./hardware/${name}.nix {
+              networking.hostName = name;
+            }
+          ];
+        };
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -68,6 +111,17 @@
           }
         ];
       };
+
+    packages =
+      mapAttrs (platform: droidPkgs: {
+        nixOnDroidBootstrapZips =
+          nixpkgs.legacyPackages.${platform}.symlinkJoin {
+            name = "nix-on-droid-bootstrap-zips";
+            paths = mapAttrsToList (targetPlatform: system:
+              system.config.build.bootstrapZip.override droidPkgs
+            ) self.nixOnDroidConfigurations;
+          };
+      }) nix-on-droid.packages;
 
     checks = import ./checks.nix inputs;
 
