@@ -32,24 +32,18 @@ in
     };
   };
 
-  xdg = {
-    terminal-exec = {
-      enable = true;
-      package = wrapSpawn "xdg-terminal-exec" ''
-        ${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"
-      '';
-    };
+  xdg.terminal-exec = {
+    enable = true;
+    package = wrapSpawn "xdg-terminal-exec" ''
+      ${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"
+    '';
+  };
 
-    dirs = {
-      config = {
-        walker.create = true;
-        "BraveSoftware/Brave-Browser".persist = true;
-      };
-      cache = {
-        walker.persist = true;
-        ghostty.create = true;
-        "BraveSoftware/Brave-Browser".create = true;
-      };
+  home.xdg = {
+    cacheFile.walker.persist = true;
+    configFile = {
+      walker.persist = true;
+      "BraveSoftware/Brave-Browser".persist = true;
     };
   };
 }

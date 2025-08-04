@@ -32,13 +32,12 @@
     };
   };
 
-  xdg.dirs = {
-    data = {
+  home.xdg = {
+    configFile."GitHub Desktop".persist = true;
+    dataFile = {
       direnv.persist = true;
       vscode.persist = true;
       keyrings.persist = true;
     };
-    config."GitHub Desktop".persist = true;
-    cache.pre-commit.create = true;
   };
 }

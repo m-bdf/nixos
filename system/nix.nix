@@ -35,9 +35,8 @@
     stateVersion = lib.trivial.release;
   };
 
-  xdg.dirs = {
-    data.nix.persist = true; # REPL history
-    state.nix.create = true;
-    cache.nix.persist = true; # tarballs
+  home.xdg = {
+    cacheFile.nix.persist = true; # tarballs
+    dataFile.nix.persist = true; # REPL history
   };
 }

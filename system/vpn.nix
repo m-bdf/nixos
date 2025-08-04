@@ -31,5 +31,5 @@
   systemd.services.tailscaled-set.serviceConfig.ExecStartPre =
     "-${lib.getExe pkgs.tailscale} up --reset --timeout=1s";
 
-  xdg.dirs.state.tailscale.persist = true;
+  home.xdg.stateFile.tailscale.persist = true;
 }

@@ -20,12 +20,11 @@
     XF86AudioNext = "playerctl next";
   };
 
-  xdg.dirs = {
-    data.SonicPi.persist = true;
-    state = {
+  home.xdg = {
+    dataFile.SonicPi.persist = true;
+    stateFile = {
       wireplumber.persist = true;
       bluetooth.persist = true;
     };
-    cache.obexd.create = true;
   };
 }

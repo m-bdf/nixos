@@ -32,5 +32,8 @@
     useUserPackages = true;
   };
 
-  xdg.dirs.state.nixos.persist = true; # UIDs GIDs
+  systemd.services.home-manager-mae.environment =
+    { HOME = "/"; SKIP_SANITY_CHECKS = "1"; };
+
+  home.xdg.stateFile.nixos.persist = true; # UIDs GIDs
 }

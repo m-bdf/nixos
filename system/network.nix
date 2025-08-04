@@ -30,5 +30,5 @@
     printing.enable = true;
   };
 
-  xdg.dirs.state.iwd.persist = true; # networks
+  home.xdg.stateFile.iwd.persist = true; # networks
 }

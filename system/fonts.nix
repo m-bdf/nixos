@@ -40,6 +40,4 @@
     font-family = monospace
     font-family = emoji
   '';
-
-  xdg.dirs.cache.fontconfig.create = true;
 }

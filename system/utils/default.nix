@@ -30,11 +30,4 @@ in
     less.enable = lib.mkForce false;
     nano.enable = false;
   };
-
-  preservation.preserveAt.state.users.user.directories = [
-    { directory = "Documents"; mountOptions = [ "exec" ]; }
-    "Downloads"
-  ];
-
-  xdg.dirs.cache.helix.create = true;
 }

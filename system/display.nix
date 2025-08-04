@@ -36,10 +36,4 @@
     automatic-timezoned.enable = true;
     geoclue2.submitData = true;
   };
-
-  xdg.dirs.cache = {
-    mesa_shader_cache.create = true;
-    mesa_shader_cache_db.create = true;
-    radv_builtin_shaders.create = true;
-  };
 }

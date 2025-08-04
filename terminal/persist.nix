@@ -1,0 +1,46 @@
+{ config, lib, ... }:
+
+with lib;
+
+let
+  persistableFileModule = { config, ... }: {
+    options.persist = mkEnableOption "persisting this directory";
+    config.enable = mkIf config.persist (mkDefault false);
+  };
+
+  persistableFilesOption = mkOption {
+    type = with types;
+      attrsOf (submodule persistableFileModule);
+  };
+in
+
+{
+  options = {
+    xdg = {
+      cacheFile = persistableFilesOption;
+      configFile = persistableFilesOption;
+      dataFile = persistableFilesOption;
+      stateFile = persistableFilesOption;
+    };
+
+    home.file = persistableFilesOption // {
+      apply = mapAttrs (name: cfg: cfg //
+        optionalAttrs (!hasPrefix "/" cfg.target) {
+          target = "${config.home.homeDirectory}/${cfg.target}";
+        }
+      );
+    };
+  };
+
+  config = {
+    xdg.enable = true;
+
+    home.file = {
+      "Documents" = {
+        persist = true;
+        executable = true;
+      };
+      "Downloads".persist = true;
+    };
+  };
+}

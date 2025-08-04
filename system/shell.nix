@@ -23,10 +23,8 @@
 
   environment.variables.STARSHIP_CACHE = "$XDG_CACHE_HOME/starship"; #starship/896
 
-  xdg.dirs = {
-    data.fish.persist = true; # history
-    config.fish.create = true; # variables
-    state.comma.persist = true; # choices
-    cache.starship.create = true; # logs
+  home.xdg = {
+    dataFile.fish.persist = true; # history
+    stateFile.comma.persist = true; # choices
   };
 }

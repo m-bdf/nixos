@@ -33,5 +33,5 @@
     directories = [ "/var/log" ];
   };
 
-  xdg.dirs.state.systemd.persist = true;
+  home.xdg.stateFile.systemd.persist = true;
 }

@@ -32,5 +32,5 @@
     fprintd.enable = false;
   };
 
-  xdg.dirs.state.fprint.persist = true;
+  home.xdg.stateFile.fprint.persist = true;
 }
