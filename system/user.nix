@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, lib, pkgs, ... }:
 
 {
   imports = [
@@ -11,12 +11,13 @@
 
     users.user = {
       name = "mae";
+      group = "wheel";
+      password = "mae";
+      isNormalUser = true;
+
       home = "/home";
       createHome = false;
-
-      isNormalUser = true;
-      password = "mae";
-      group = "wheel";
+      shell = pkgs.fish;
     };
   };
 
@@ -27,9 +28,15 @@
 
   nix.settings.trusted-users = [ "@wheel" ];
 
+  programs.fish = {
+    enable = true;
+    useBabelfish = true;
+  };
+
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    extraSpecialArgs.inputs = inputs;
   };
 
   systemd.services.home-manager-mae.environment =

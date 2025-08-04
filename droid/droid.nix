@@ -1,14 +1,20 @@
-{ options, lib, ... }:
+{ inputs, options, lib, pkgs, ... }:
 
 {
   imports = [
     (lib.mkAliasOptionModule [ "home" ] [ "home-manager" "config" ])
   ];
 
-  user.userName = "mae";
+  user = {
+    userName = "mae";
+    shell = pkgs.fish;
+  };
 
   system.stateVersion = lib.last
     options.system.stateVersion.type.functor.payload.values;
 
-  home-manager.useGlobalPkgs = true;
+  home-manager = {
+    useGlobalPkgs = true;
+    extraSpecialArgs.inputs = inputs;
+  };
 }
