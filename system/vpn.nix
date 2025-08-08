@@ -2,15 +2,12 @@
 
 {
   services = {
-    networkd-dispatcher = {
-      enable = true;
-      rules.tailscale = {
-        onState = [ "routable" ];
-        script = ''
-          ${lib.getExe pkgs.ethtool} -K "$IFACE" \
-            rx-udp-gro-forwarding on rx-gro-list off
-        '';
-      };
+    networkd-dispatcher.rules.tailscale = {
+      onState = [ "routable" ];
+      script = ''
+        ${lib.getExe pkgs.ethtool} -K "$IFACE" \
+          rx-udp-gro-forwarding on rx-gro-list off
+      '';
     };
 
     tailscale = {

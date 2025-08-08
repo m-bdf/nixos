@@ -6,8 +6,10 @@
     wireless.iwd = {
       enable = true;
       settings.General = {
+        EnableNetworkConfiguration = true;
         AddressRandomization = "network";
         DisableANQP = false;
+        Country = "FR";
       };
     };
 
@@ -15,10 +17,15 @@
       enable = true;
       flushRuleset = true;
     };
+    firewall.allowedUDPPorts = [ 53 ];
   };
 
   services = {
     resolved = {
+      extraConfig = ''
+        DNSStubListenerExtra=0.0.0.0
+      '';
+
       mdns.enable = false;
       llmnr.enable = false;
     };
