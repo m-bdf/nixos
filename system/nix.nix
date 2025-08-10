@@ -1,42 +1,13 @@
-{ inputs, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 {
   nix = {
-    package = inputs.nix.packages.${pkgs.stdenv.system}.nix;
-
     channel.enable = false;
-    settings = {
-      use-xdg-base-directories = true;
-      flake-registry = "";
-      lazy-locks = true;
-      lazy-trees = true;
-      auto-allocate-uids = true;
-      use-cgroups = true;
-      auto-optimise-store = true;
-      keep-outputs = true;
-    };
-
-    extraOptions =
-    let
-      features = pkgs.runCommandLocal "features.conf" {
-        nativeBuildInputs = with pkgs; [ nix jq ];
-      } ''
-        nix --experimental-features "$(
-          nix __dump-xp-features | jq -r 'keys[]'
-        )" config show | grep features > $out
-      '';
-    in
-      "include ${features}";
+    extraOptions = config.home.nix.extraOptions;
   };
 
-  programs.nh.enable = true;
   system = {
     disableInstallerTools = true;
     stateVersion = lib.trivial.release;
-  };
-
-  home.xdg = {
-    cacheFile.nix.persist = true; # tarballs
-    dataFile.nix.persist = true; # REPL history
   };
 }

@@ -67,10 +67,20 @@
       checkMeta = true;
     };
 
+    nixOverlay = final: prev: {
+      nix = with inputs.nix.packages.${final.stdenv.system};
+        nix-cli // {
+          out = final.nix;
+          dev = prev.nix;
+          man = nix.man;
+        };
+    };
+
     pkgsFor = platform:
       import nixpkgs {
         system = platform;
         config = pkgsConfig;
+        overlays = [ nixOverlay ];
       };
   in
 
@@ -83,7 +93,7 @@
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.homeModules;
         }
-      ) home-manager.packages;
+      ) inputs.nix.packages;
 
     nixOnDroidModules = listDir ./droid;
     nixOnDroidConfigurations =
@@ -112,7 +122,10 @@
           modules = modules ++ [
             ./hardware/${name}.nix {
               networking.hostName = name;
-              nixpkgs.config = pkgsConfig;
+              nixpkgs = {
+                config = pkgsConfig;
+                overlays = [ nixOverlay ];
+              };
             }
           ];
         };
