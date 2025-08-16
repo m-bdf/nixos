@@ -9,10 +9,7 @@
 #include <unistd.h>
 
 int isatty(int fd) {
-  static typeof(isatty) *orig;
-  if (!orig) orig = dlsym(RTLD_NEXT, "isatty");
-
-  if (orig(fd)) return 1;
+  if (__isatty(fd)) return 1;
   if (fd != 1) return 0;
 
   const char *pager = getenv("PAGER");
@@ -52,9 +49,4 @@ int isatty(int fd) {
 
   globfree(&globbuf);
   return 0;
-}
-
-int main(int argc, const char **argv) {
-  return argc == 2 ? !isatty(atoi(argv[1])) :
-    execl(CAPSH, CAPSH, "--print", NULL);
 }

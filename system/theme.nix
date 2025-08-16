@@ -3,10 +3,6 @@
 {
   environment = {
     etc = {
-      "xdg/helix/config.toml".text = ''
-        theme = "github_dark"
-      '';
-
       "xdg/niri/config.kdl".text = ''
         cursor { xcursor-theme "phinger-cursors-dark"; }
         prefer-no-csd
