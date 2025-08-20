@@ -12,7 +12,7 @@ in
     let
       xdg-open = wrapSpawn "xdg-open" "${pkgs.glib}/bin/gio open";
     in
-      [ xdg-open ghostty nautilus brave ];
+      [ xdg-open ghostty nautilus ];
 
     etc."xdg/ghostty/config".text = ''
       resize-overlay = never
@@ -41,9 +41,6 @@ in
 
   home.xdg = {
     cacheFile.walker.persist = true;
-    configFile = {
-      walker.persist = true;
-      "BraveSoftware/Brave-Browser".persist = true;
-    };
+    configFile.walker.persist = true;
   };
 }
