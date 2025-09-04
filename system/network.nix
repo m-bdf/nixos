@@ -7,16 +7,18 @@
   ];
 
   networking = {
-    usePredictableInterfaceNames = false;
     useNetworkd = true;
 
     wireless.iwd = {
       enable = true;
-      settings.General = {
-        EnableNetworkConfiguration = true;
-        AddressRandomization = "network";
-        DisableANQP = false;
-        Country = "FR";
+      settings = {
+        General = {
+          EnableNetworkConfiguration = true;
+          AddressRandomization = "network";
+          DisableANQP = false;
+          Country = "FR";
+        };
+        DriverQuirks.DefaultInterface = "*";
       };
     };
 
