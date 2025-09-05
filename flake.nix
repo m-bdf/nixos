@@ -50,6 +50,11 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
+    bat = {
+      url = "github:sharkdp/bat";
+      flake = false;
+    };
+
     rustyscript = {
       url = "github:rscarson/rustyscript";
       flake = false;
