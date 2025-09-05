@@ -1,19 +1,14 @@
 type JsResult<T> = std::result::Result<T, rustyscript::Error>;
 
 fn guess_language_by_contents(contents: &str) -> JsResult<[String; 2]> {
-    eprintln!("Importing HighlightJS...");
-
-    const GUESS_LANGUAGE_MODULE: rustyscript::Module =
-        rustyscript::module!("guessLanguage", "
-            import HighlightJS from 'https://esm.sh/highlight.js?standalone';
-            export const guessLanguage = code => {
-                const result = HighlightJS.highlightAuto(code);
-                return [ result.language, result.secondBest.language ];
-            };
-        ");
-
-    rustyscript::ModuleWrapper::new_from_module(&GUESS_LANGUAGE_MODULE, Default::default())?
-        .call("guessLanguage", &contents)
+    const MODULE: rustyscript::Module = rustyscript::module!("guess.js", "
+        import HighlightJS from '{HIGHLIGHTJS}';
+        export default code => {
+            const result = HighlightJS.highlightAuto(code);
+            return [ result.language, result.secondBest.language ];
+        };
+    ");
+    rustyscript::Runtime::execute_module(&MODULE, vec![], Default::default(), &contents)
 }
 
 impl HighlightingAssets {

@@ -1,52 +1,33 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
-  addCargoDeps = pkg: deps:
-    pkg.overrideAttrs (final: prev: {
-      srcCargoDeps =
-        pkgs.rustPlatform.importCargoLock {
-          lockFile = final.src + /Cargo.lock;
-        };
+  bat = pkgs.bat.overrideAttrs (prev: {
+    inherit (pkgs.deno) RUSTY_V8_ARCHIVE;
 
-      cargoDeps =
-        final.srcCargoDeps.overrideAttrs (prev: {
-          buildCommand = prev.buildCommand +
-            lib.concatMapStrings (dep: ''
-              cp -rsu ${dep.cargoDeps}/* $out
-            '') (lib.toList deps);
-        });
+    cargoDeps =
+      prev.cargoDeps.overrideAttrs (prev: {
+        buildCommand = prev.buildCommand + ''
+          ln -sf ${pkgs.rustPlatform.importCargoLock {
+            lockFile = inputs.rustyscript + /Cargo.lock;
+          }}/* $out
+        '';
+      });
 
-      configurePhase =
-        lib.concatMapStrings (dep: ''
-          cargo add --path ${dep.src} -${
-            lib.optionalString dep.cargoBuildNoDefaultFeatures "-no"
-          }-default-features --features=${
-            lib.concatStringsSep "," dep.cargoBuildFeatures
-          }
-        '') (lib.toList deps);
-    });
-
-  rustyscript = pkgs.rustPlatform.buildRustPackage {
-    name = "rustyscript";
-    src = inputs.rustyscript;
-    cargoLock.lockFile = inputs.rustyscript + /Cargo.lock;
-
-    buildNoDefaultFeatures = true;
-    buildFeatures = [ "url_import" ];
-  };
-
-  bat = (addCargoDeps pkgs.bat rustyscript).overrideAttrs {
-    src = inputs.bat;
     patchPhase = ''
-      cat ${./highlight.rs} >> src/assets.rs
+      cargo add --path ${inputs.rustyscript} \
+        --no-default-features --features fs_import
+
+      sed 's|{HIGHLIGHTJS}|${inputs.highlightjs}|' \
+        ${./highlight.rs} >> src/assets.rs
+
       sed -i '/get_first_line_syntax/ { s/fn /&_/
         s/\..*(/.get_syntax_for_file_contents(/ }' src/assets.rs
+
       sed -i 's/fn print_file_ranges/pub(crate) &/' src/controller.rs
     '';
 
-    inherit (pkgs.deno) RUSTY_V8_ARCHIVE;
     doCheck = false;
-  };
+  });
 in
 
 {
