@@ -50,6 +50,11 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
+    rustyscript = {
+      url = "github:rscarson/rustyscript";
+      flake = false;
+    };
+
     highlightjs = {
       url = "https://esm.sh/highlight.js/esnext/highlight.bundle.mjs";
       flake = false;
