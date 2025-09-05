@@ -50,6 +50,16 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
+    highlightjs = {
+      url = "https://esm.sh/highlight.js/esnext/highlight.bundle.mjs";
+      flake = false;
+    };
+
+    github-textmate-theme = {
+      url = "github:primer/github-textmate-theme";
+      flake = false;
+    };
+
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
