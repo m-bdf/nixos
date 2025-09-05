@@ -4,8 +4,11 @@ let
   bat = pkgs.bat.overrideAttrs (prev: {
     inherit (pkgs.deno) RUSTY_V8_ARCHIVE;
 
+    src = inputs.bat;
     cargoDeps =
-      prev.cargoDeps.overrideAttrs (prev: {
+      (pkgs.rustPlatform.importCargoLock {
+        lockFile = inputs.bat + /Cargo.lock;
+      }).overrideAttrs (prev: {
         buildCommand = prev.buildCommand + ''
           ln -sf ${pkgs.rustPlatform.importCargoLock {
             lockFile = inputs.rustyscript + /Cargo.lock;
