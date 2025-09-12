@@ -1,29 +1,28 @@
 { config, lib, pkgs, ... }:
 
 let
-  mkReplacement = old: new: {
-    oldDependency = old;
+  mkReplacement = old: new: rec {
+    oldDependency = pkgs.${old};
     newDependency = pkgs.symlinkJoin {
-      inherit (old) name;
+      inherit (oldDependency) name;
       paths = [new];
     };
   };
 
-  replacements = with pkgs; [
-    (mkReplacement coreutils uutils-coreutils-noprefix)
-    (mkReplacement coreutils-full uutils-coreutils-noprefix)
-    # (mkReplacement diffutils uutils-diffutils)
-    (mkReplacement findutils uutils-findutils)
-    {
-      oldDependency = glibc;
-      newDependency = glibc.overrideAttrs {
+  replacements = with pkgs;
+    lib.mapAttrsToList mkReplacement {
+      coreutils = uutils-coreutils-noprefix;
+      coreutils-full = uutils-coreutils-noprefix;
+      # diffutils = uutils-diffutils;
+      findutils = uutils-findutils;
+
+      glibc = glibc.overrideAttrs (old: {
         postPatch = ''
           sed -i '/weak_alias/d' sysdeps/posix/isatty.c
           cat ${./isatty.c} >> sysdeps/posix/isatty.c
         '';
-      };
-    }
-  ];
+      });
+    };
 in
 
 {
