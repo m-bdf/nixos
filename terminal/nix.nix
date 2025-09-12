@@ -9,6 +9,7 @@
       flake-registry = "";
       lazy-locks = true;
       lazy-trees = true;
+      eval-cores = 0;
       auto-allocate-uids = true;
       use-cgroups = true;
       keep-outputs = true;
@@ -16,11 +17,9 @@
 
     extraOptions =
     let
-      features = pkgs.runCommandLocal "features.conf" {
-        nativeBuildInputs = with pkgs; [ nix jq ];
-      } ''
-        nix --offline --experimental-features "$(
-          nix __dump-xp-features | jq -r 'keys[]'
+      features = with pkgs; runCommandLocal "features.conf" {} ''
+        ${lib.getExe nix} --offline --experimental-features "$(
+          ${lib.getExe nix} __dump-xp-features | ${lib.getExe jq} -r 'keys[]'
         )" config show | grep features > $out
       '';
     in
