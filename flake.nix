@@ -75,11 +75,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nh = {
-      url = "github:nix-community/nh";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
 
     dnshack = {
@@ -121,8 +116,6 @@
           dev = prev.nix;
           man = nix.man;
         };
-
-      nh = inputs.nh.packages.${final.stdenv.system}.nh;
     };
 
     pkgsFor = platform:
