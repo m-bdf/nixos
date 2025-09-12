@@ -183,7 +183,7 @@
       mapAttrs mkSystem {
         fw13 = [
           framework-13-7040-amd {
-            # hardware.framework.laptop13.audioEnhancement.enable = true;
+            hardware.framework.laptop13.audioEnhancement.enable = true;
           }
         ];
       };
