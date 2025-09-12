@@ -1,7 +1,7 @@
 { inputs, pkgs, ... }:
 
 let
-  bat = pkgs.bat.overrideAttrs (prev: {
+  bat = pkgs.bat.overrideAttrs {
     inherit (pkgs.deno) RUSTY_V8_ARCHIVE;
 
     src = inputs.bat;
@@ -17,20 +17,23 @@ let
       });
 
     patchPhase = ''
-      cargo add --path ${inputs.rustyscript} \
-        --no-default-features --features fs_import
+      cargo add --path ${inputs.rustyscript} --no-default-features
 
       sed 's|{HIGHLIGHTJS}|${inputs.highlightjs}|' \
         ${./highlight.rs} >> src/assets.rs
 
       sed -i '/get_first_line_syntax/ { s/fn /&_/
-        s/\..*(/.get_syntax_for_file_contents(/ }' src/assets.rs
+        s/\..*/.get_syntax_for_file_contents(input)?/ }' src/assets.rs
 
-      sed -i 's/fn print_file_ranges/pub(crate) &/' src/controller.rs
+      sed -i 's/fn print_file(/pub(crate) &/' src/controller.rs
+
+      sed -i "/append/ s/self.first_line/&.drain(..= \
+        &.iter().position(|c| *c == b'\\\n').unwrap_or(&.len() - 1) \
+      ).collect()/" src/input.rs
     '';
 
     doCheck = false;
-  });
+  };
 in
 
 {
@@ -43,4 +46,6 @@ in
     };
     themes.github.src = inputs.github-textmate-theme;
   };
+
+  home.sessionVariables.PAGER = "bat";
 }

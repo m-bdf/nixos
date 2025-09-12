@@ -37,14 +37,7 @@ in
         };
     };
 
-    home = {
-      packages = with pkgs; [ curl moar ];
-
-      sessionVariables = {
-        PAGER = "moar";
-        SYSTEMD_PAGERSECURE = 1;
-      };
-    };
+    home.packages = with pkgs; [ curl ];
 
     programs = {
       fd.enable = true;

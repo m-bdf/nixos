@@ -1,14 +1,7 @@
-{ config, lib, ... }:
+{ config, ... }:
 
 {
   options.system.path = config.home.lib.mkPathOption;
 
-  config = {
-    programs = {
-      less.enable = lib.mkForce false;
-      nano.enable = false;
-    };
-
-    documentation.man.generateCaches = false;
-  };
+  config.documentation.man.generateCaches = false;
 }
