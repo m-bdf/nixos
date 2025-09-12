@@ -17,11 +17,14 @@
 
     extraOptions =
     let
-      features = with pkgs; runCommandLocal "features.conf" {} ''
-        ${lib.getExe nix} --offline --experimental-features "$(
-          ${lib.getExe nix} __dump-xp-features | ${lib.getExe jq} -r 'keys[]'
-        )" config show | grep features > $out
-      '';
+      features = with pkgs;
+        runCommandLocal "features.conf" {
+          nativeBuildInputs = [ nix jq ];
+        } ''
+          (nix __dump-xp-features && ${lib.getExe nix} __dump-xp-features) |
+            jq -r '"extra-experimental-features = \(keys | join(" "))"' > $out
+          ${lib.getExe nix} config show | grep system-features >> $out
+        '';
     in
       "include ${features}";
 
