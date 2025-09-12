@@ -40,6 +40,7 @@ in
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
     on-click = spawn pkgs.pwvucontrol;
+    on-click-right = spawn pkgs.helvum;
   };
 
   battery = {
