@@ -21,9 +21,12 @@
     };
   };
 
-  security.sudo-rs = {
-    enable = true;
-    execWheelOnly = true;
+  security = {
+    sudo-rs = {
+      enable = true;
+      execWheelOnly = true;
+    };
+    soteria.enable = true;
   };
 
   nix.settings.trusted-users = [ "@wheel" ];
