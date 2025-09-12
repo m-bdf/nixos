@@ -1,7 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, ... }:
 
 let
   airgorah = pkgs.airgorah.overrideAttrs {
+    src = inputs.airgorah;
+
     postPatch = ''
       cargo add nix --features user
       sed -i src/backend/app.rs -e '/sudo/c \
