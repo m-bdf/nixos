@@ -34,15 +34,19 @@
         }
 
         layout {
-          background-color "transparent"
           empty-workspace-above-first
+          preset-column-widths {
+            proportion 0.5
+            proportion 1.0
+          }
 
+          background-color "transparent"
           focus-ring { off; }
           shadow { on; }
         }
 
         ${lib.concatMapStringsSep "\n" (cmd:
-          ''spawn-at-startup "sh" "-c" "${cmd}"''
+          ''spawn-sh-at-startup "${cmd}"''
         ) config.programs.niri.startup}
       '';
     };

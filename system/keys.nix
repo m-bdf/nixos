@@ -20,26 +20,25 @@ let
     "Super+Alt+Right" = "move-column-right";
     "Super+Alt+End" = "move-column-to-last";
 
-    "Mod+Tab" = "maximize-column";
+    "Mod+Tab" = "switch-preset-window-width";
+    "Super+Alt+Tab" = "toggle-window-floating";
     "Mod+Backspace" = "close-window";
 
     "Print" = "screenshot";
   };
-
-  binds = lib.mapAttrsToList
-    (keys: action: "${keys} { ${action}; }")
-    (actions // config.programs.niri.keybinds);
 in
 
 {
   options.programs.niri.keybinds = lib.mkOption {
     type = with lib.types; attrsOf nonEmptyStr;
-    apply = lib.mapAttrs (keys: cmd: ''spawn "sh" "-c" "${cmd}"'');
+    apply = lib.mapAttrs (keys: cmd: ''spawn-sh "${cmd}"'');
   };
 
   config.environment.etc."xdg/niri/config.kdl".text = ''
     binds {
-      ${lib.concatStringsSep "\n  " binds}
+      ${lib.concatMapAttrsStringSep "\n  "
+        (keys: action: "${keys} { ${action}; }")
+        (actions // config.programs.niri.keybinds)}
     }
 
     hotkey-overlay { skip-at-startup; }
