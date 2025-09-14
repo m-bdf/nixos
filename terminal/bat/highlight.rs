@@ -13,15 +13,20 @@ impl HighlightingAssets {
         let controller = Controller::new(&config, &self);
         let mut printer = SimplePrinter::new(&config);
 
-        let mut contents = String::new();
-        let mut output = OutputHandle::FmtWrite(&mut contents);
+        let mut contents = vec![];
+        let mut output = OutputHandle::IoWrite(&mut contents);
         controller.print_file(&mut printer, &mut output, input, false, &None)?;
-        input.reader.first_line = contents.as_bytes().to_vec();
+        input.reader.first_line = contents;
 
-        if !contents.contains("\x1b[") {
-            for guess in guess_language_by_contents(&contents)? {
-                if let Some(syntax) = self.find_syntax_by_token(&guess)? {
-                    return Ok(Some(syntax));
+        if let Ok(contents) = str::from_utf8(&input.reader.first_line) {
+            if !contents.contains("\x1b[") {
+                if let Ok(guesses) = guess_language_by_contents(&contents) {
+                    for guess in guesses {
+                        if let Some(syntax) = self.find_syntax_by_token(&guess)? {
+                            eprintln!("Guessed syntax: {}", syntax.syntax.name);
+                            return Ok(Some(syntax));
+                        }
+                    }
                 }
             }
         }
