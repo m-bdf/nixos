@@ -1,7 +1,7 @@
 { inputs, lib, pkgs, ... }:
 
 let
-  default = pkgs.writeText "pkgs.nix" ''
+  default = pkgs.writeTextDir "default.nix" ''
     { config ? {}, ... }@ args:
 
     import ${inputs.nixpkgs} (args // {
@@ -12,33 +12,33 @@ let
     })
   '';
 
-  modules = pkgs.writeText "merged-modules.nix" ''
-    { lib, ... }: with builtins // lib;
+  modules = pkgs.writeTextDir "nixos/modules/module-list.nix" ''
+    with builtins;
 
     let
       merged = with getFlake "${inputs.self}";
-        foldl' recursiveUpdate {} [
+        foldl' inputs.nixpkgs.lib.recursiveUpdate {} [
           ((import inputs.nixpkgs {}).nixos {})
           nixOnDroidConfigurations.''${currentSystem}
           homeConfigurations.''${currentSystem}
         ];
     in
-    {
+
+    [{
       options = removeAttrs merged.options [ "_module" ];
       config = merged.config // { inherit (merged) _module; };
-    }
-  '';
-
-  nixpkgs = pkgs.runCommand "source" {} ''
-    cp --recursive --no-preserve=mode ${inputs.nixpkgs} $out
-    ln -sf ${default} $out/default.nix
-    echo '[ ${modules} ]' > $out/nixos/modules/module-list.nix
+    }]
   '';
 in
 
 {
   nix = {
-    registry.nixpkgs.flake = nixpkgs;
+    registry.nixpkgs.flake =
+      pkgs.symlinkJoin {
+        name = "source";
+        paths = [ default modules inputs.nixpkgs ];
+      };
+
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
     keepOldNixPath = false;
   };
