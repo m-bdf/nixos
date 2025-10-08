@@ -12,7 +12,7 @@ let
     })
   '';
 
-  modules = pkgs.writeTextDir "nixos/modules/module-list.nix" ''
+  modules = pkgs.writeTextDir "modules/module-list.nix" ''
     with builtins;
 
     let
@@ -26,7 +26,6 @@ let
 
     [{
       options = removeAttrs merged.options [ "_module" ];
-      config = merged.config // { inherit (merged) _module; };
     }]
   '';
 in
@@ -36,10 +35,13 @@ in
     registry.nixpkgs.flake =
       pkgs.symlinkJoin {
         name = "source";
-        paths = [ default modules inputs.nixpkgs ];
+        paths = [ default inputs.nixpkgs ];
       };
 
-    nixPath = [ "nixpkgs=flake:nixpkgs" ];
+    nixPath = [
+      "nixpkgs=flake:nixpkgs"
+      "nixpkgs/nixos=${modules}"
+    ];
     keepOldNixPath = false;
   };
 }
