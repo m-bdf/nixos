@@ -2,7 +2,7 @@
 
 let
   wrapSpawn = name: cmd: pkgs.writeShellScriptBin name ''
-    niri msg action spawn -- ${lib.removeSuffix "\n" cmd} "$@"
+    niri msg action spawn -- ${pkgs.writeShellScript name cmd} "$@"
   '';
 in
 
@@ -26,7 +26,7 @@ in
   environment = {
     systemPackages = with pkgs;
     let
-      xdg-open = wrapSpawn "xdg-open" "${pkgs.glib}/bin/gio open";
+      xdg-open = wrapSpawn "xdg-open" ''${pkgs.glib}/bin/gio open "$@"'';
     in
       [ xdg-open ghostty nautilus brave ];
 
@@ -55,7 +55,7 @@ in
   xdg.terminal-exec = {
     enable = true;
     package = wrapSpawn "xdg-terminal-exec" ''
-      ${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD"
+      ${lib.getExe pkgs.xdg-terminal-exec} --dir="$PWD" "''${@-:$SHELL}"
     '';
   };
 
