@@ -161,7 +161,7 @@ let
   #   }]
   # '';
 
-  nixos = pkgs.writeTextDir "modules/module-list.nix" ''
+  modules = pkgs.writeTextDir "modules/module-list.nix" ''
     [{
       options = builtins.mapAttrs
         (_: opts: {
@@ -189,7 +189,7 @@ in
   nix = {
     registry.nixpkgs.flake = nixpkgs;
     nixPath = [
-      "nixpkgs/nixos=${nixos}"
+      "nixpkgs/nixos=${modules}"
       "nixpkgs=flake:nixpkgs"
     ];
     keepOldNixPath = false;
