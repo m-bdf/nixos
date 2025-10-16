@@ -1,5 +1,24 @@
 { inputs, lib, pkgs, ... }:
 
+let
+  default = pkgs.writeTextDir "default.nix" ''
+    { config ? {}, ... }@ args:
+
+    import ./pkgs/top-level/impure.nix (args // {
+      config = ${
+        with lib; generators.toPretty { indent = "  "; }
+          (filterAttrs (_: v: !isFunction v) pkgs.config)
+      } // config;
+    })
+  '';
+
+  nixpkgs = pkgs.runCommand "source" {} ''
+    cp -R ${inputs.nixpkgs} $out
+    chmod +w $out/default.nix
+    cp ${default}/* $out
+  '';
+in
+
 {
   nix = {
     package = lib.mkDefault pkgs.nix;
@@ -22,13 +41,13 @@
           nativeBuildInputs = [ nix jq ];
         } ''
           (nix __dump-xp-features && ${lib.getExe nix} __dump-xp-features) |
-            jq -r '"extra-experimental-features = \(keys | join(" "))"' > $out
+            jq -sr '"experimental-features = \(add | keys | join(" "))"' > $out
           ${lib.getExe nix} config show | grep system-features >> $out
         '';
     in
       "include ${features}";
 
-    registry.nixpkgs.flake = inputs.nixpkgs;
+    registry.nixpkgs.flake = nixpkgs;
     nixPath = [ "nixpkgs=flake:nixpkgs" ];
     keepOldNixPath = false;
   };
