@@ -32,55 +32,170 @@ let
   typeToPretty = o: t: {
     inherit (t) name description deprecationMessage;
 
-    nestedTypes = lib.optionalAttrs (
+    nestedTypes = lib.optionalDrvAttr (
       t.name == "attrsOf" &&
       t.nestedTypes.elemType.name != o.type.name
     ) {
       elemType = typeToPretty o t.nestedTypes.elemType;
     };
 
-    getSubOptions = lib.optionalAttrs (
+    getSubOptions = lib.optionalDrvAttr (
       t.name == "submodule" &&
       lib.elem o.visible or true [ true "transparent" ]
     ) {
-      val = t.getSubOptions o.loc;
-      __pretty = subOpts: "_: " + optsToPretty subOpts;
+      val = optsToPretty (t.getSubOptions o.loc);
+      __pretty = subOpts: "_:\n  ${subOpts} # ${o}\n";
     };
   };
 
   optsToPretty = opts:
-    lib.generators.toPretty { allowPrettyValues = true; }
+    lib.generators.toPretty {
+      indent = "  ";
+      allowPrettyValues = true;
+    }
       (lib.mapAttrsRecursiveCond (v: !lib.isOption v)
         (_: o: {
-          inherit (o) _type declarations;
+          inherit (o) _type declarationPositions;
           description = o.description or null;
           type = typeToPretty o o.type;
         })
-        opts
+        (lib.removeAttrs opts [ "_module" ])
       );
 
-  modules = pkgs.writeText "merged-modules.nix" ''
-    {
-      options = ${optsToPretty (
-        lib.recursiveUpdate
-          (lib.removeAttrs (pkgs.nixos {}).options [ "_module" ])
-          (lib.removeAttrs options [ "_module" ])
-      )};
-    }
+  # modules = pkgs.writeText "merged-options.nix" ''
+  #   {
+  #     options = ${optsToPretty
+  #       (lib.mapAttrs (_: opts:
+  #         lib.mkOption {
+  #           type = {
+  #             name = "submodule";
+  #             getSubOptions = _: opts;
+  #             deprecationMessage = null;
+  #           };
+  #         } // {
+  #           declarationPositions = null;
+  #         }
+  #       )
+  #         (lib.recursiveUpdate (pkgs.nixos {}).options options)
+  #       )
+  #     };
+  #   }
+  # '';
+
+  # modules = pkgs.writeText "merged-options.nix" ''
+  #   { lib, ... }:
+
+  #   let
+  #     options = ${optsToPretty
+  #       (lib.recursiveUpdate (pkgs.nixos {}).options options)
+  #     };
+  #   in
+
+  #   {
+  #     options = lib.mapAttrs
+  #       (_: opts: lib.mkOption {
+  #         type = {
+  #           name = "submodule";
+  #           getSubOptions = _: opts;
+  #           deprecationMessage = null;
+  #         };
+  #       }) options;
+  #   }
+  # '';
+
+  # nixpkgs = pkgs.runCommand "source" {} ''
+  #   cp -R ${inputs.nixpkgs} $out
+  #   chmod -R +w $out
+  #   cp ${default} $out/default.nix
+  #   echo '[ ${modules} ]' > $out/nixos/modules/module-list.nix
+  # '';
+
+  # nixos = pkgs.writeTextDir "modules/module-list.nix" ''
+  #   [{
+  #     options = ${optsToPretty
+  #       (lib.mapAttrs (_: opts:
+  #         # lib.mkOption {
+  #         #   type = {
+  #         #     name = "submodule";
+  #         #     getSubOptions = _: opts;
+  #         #     deprecationMessage = null;
+  #         #   };
+  #         # } // {
+  #         #   declarationPositions = null;
+  #         # }
+
+  #         {
+  #           _type = "option";
+  #           declarationPositions = null;
+  #           __toString = _: "";
+
+  #           type = {
+  #             name = "submodule";
+  #             description = null;
+  #             deprecationMessage = null;
+  #             getSubOptions = _: opts;
+  #           };
+  #         }
+  #       )
+  #         (lib.recursiveUpdate (pkgs.nixos {}).options options)
+  #       )
+  #     };
+  #   }]
+  # '';
+
+  nixos = pkgs.writeTextDir "modules/module-list.nix" ''
+    let
+      options = ${optsToPretty
+        (lib.recursiveUpdate (pkgs.nixos {}).options options)
+      };
+    in
+
+    [{
+      options = builtins.mapAttrs
+        (_: opts: {
+          _type = "option";
+          type = {
+            name = "submodule";
+            getSubOptions = _: opts;
+            deprecationMessage = null;
+          };
+        }) options;
+    }]
   '';
+
+  # nixos = pkgs.writeTextDir "modules/module-list.nix" ''
+  #   [{
+  #     options = builtins.mapAttrs
+  #       (_: opts: {
+  #         _type = "option";
+  #         type = {
+  #           name = "submodule";
+  #           getSubOptions = _: opts;
+  #           deprecationMessage = null;
+  #         };
+  #       })
+  #       (import ${
+  #         pkgs.writeText "merged-options.nix" (optsToPretty
+  #           (lib.recursiveUpdate (pkgs.nixos {}).options options)
+  #         )
+  #       });
+  #   }]
+  # '';
 
   nixpkgs = pkgs.runCommand "source" {} ''
     cp -R ${inputs.nixpkgs} $out
-    chmod -R +w $out
-    cp ${default} $out/default.nix
-    echo '[ ${modules} ]' > $out/nixos/modules/module-list.nix
+    chmod +w $out
+    ln -sf ${default} $out/default.nix
   '';
 in
 
 {
   nix = {
     registry.nixpkgs.flake = nixpkgs;
-    nixPath = [ "nixpkgs=flake:nixpkgs" ];
+    nixPath = [
+      "nixpkgs/nixos=${nixos}"
+      "nixpkgs=flake:nixpkgs"
+    ];
     keepOldNixPath = false;
   };
 }
