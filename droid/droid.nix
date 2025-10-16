@@ -1,7 +1,7 @@
 { inputs, options, config, lib, pkgs, ... }:
 
 let
-  nixpkgs = pkgs.runCommand "nixpkgs.nix" {
+  nixpkgs = pkgs.runCommand "pkgs.nix" {
     nativeBuildInputs = [ config.home.programs.nix-index.package ];
   } ''
     echo with builtins\; { $(while read pkg _ _ path; do
