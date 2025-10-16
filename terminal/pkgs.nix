@@ -33,20 +33,21 @@ let
     );
 
   modules = pkgs.writeTextDir "module-list.nix" ''
-    [{
-      options = builtins.mapAttrs
-        (_: opts: {
-          _type = "option";
-          type = {
-            name = "submodule";
-            getSubOptions = _: opts;
-            deprecationMessage = null;
-          };
-        })
-        (import ${optsToPretty "merged-options"
-          (lib.recursiveUpdate (pkgs.nixos {}).options options)
-        });
-    }]
+    [
+      ({ lib, ... }:
+      {
+        options = lib.mapAttrs
+          (_: opts: lib.mkOption {
+            type = lib.mkOptionType {
+              name = "submodule";
+              getSubOptions = _: opts;
+            };
+          })
+          (import ${optsToPretty "merged-options"
+            (lib.recursiveUpdate (pkgs.nixos {}).options options)
+          });
+      })
+    ]
   '';
 in
 
