@@ -15,27 +15,30 @@ let
       t.name == "submodule" &&
       lib.elem o.visible or true [ true "transparent" ]
     ) {
-      val = optsToPretty o (t.getSubOptions o.loc);
-      __pretty = subOpts: "_: import ${subOpts}";
+      val = optsToPretty (t.getSubOptions o.loc);
+      __pretty = subOpts: "_:\n${subOpts} # ${o}\n";
     };
   };
 
-  optsToPretty = o: opts:
+  optsToPretty = opts:
   let
+    docs = lib.listToAttrs (
+      map (doc: doc // { value = doc; })
+        (lib.optionAttrSetToDocList opts)
+    );
+
     prettyOpts =
       lib.mapAttrsRecursiveCond (v: !lib.isOption v)
-        (_: o: {
+        (_: o: docs.${toString o} // {
           inherit (o) _type declarationPositions;
-          description = o.description or null;
           type = typeToPretty o o.type;
+          default = null;
         })
         (lib.removeAttrs opts [ "_module" ]);
   in
-    pkgs.writeText "${o}-options.nix" (
-      lib.generators.toPretty {
-        allowPrettyValues = true;
-      } prettyOpts
-    );
+    lib.generators.toPretty {
+      allowPrettyValues = true;
+    } prettyOpts;
 
   modules = pkgs.writeTextDir "module-list.nix" ''
     let
@@ -55,8 +58,10 @@ let
     in
       builtins.attrValues (
         builtins.mapAttrs mkModule
-          (import ${optsToPretty "merged"
-            (lib.recursiveUpdate (pkgs.nixos {}).options options)
+          (import ${
+            pkgs.writeText "merged-options.nix" (optsToPretty
+              (lib.recursiveUpdate (pkgs.nixos {}).options options)
+            )
           })
       )
   '';
