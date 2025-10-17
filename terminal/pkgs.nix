@@ -20,16 +20,21 @@ let
     };
   };
 
-  optsToPretty = o: opts: pkgs.writeText "${o}.nix"
-    (lib.generators.toPretty { allowPrettyValues = true; }
-      (lib.mapAttrsRecursiveCond (v: !lib.isOption v)
+  optsToPretty = o: opts:
+  let
+    prettyOpts =
+      lib.mapAttrsRecursiveCond (v: !lib.isOption v)
         (_: o: {
           inherit (o) _type declarationPositions;
           description = o.description or null;
           type = typeToPretty o o.type;
         })
-        (lib.removeAttrs opts [ "_module" ])
-      )
+        (lib.removeAttrs opts [ "_module" ]);
+  in
+    pkgs.writeText "${o}.nix" (
+      lib.generators.toPretty {
+        allowPrettyValues = true;
+      } prettyOpts
     );
 
   modules = pkgs.writeTextDir "module-list.nix" ''
