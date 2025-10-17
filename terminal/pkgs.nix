@@ -4,7 +4,7 @@ with lib;
 
 let
   typeToPretty = o: t: {
-    inherit (t) name description deprecationMessage;
+    inherit (t) name description;
 
     nestedTypes = optionalAttrs (
       t.name == "attrsOf" &&
@@ -26,36 +26,35 @@ let
   let
     docs = groupBy (o: o.name) (optionAttrSetToDocList opts);
 
-    prettyOpts = mapAttrsRecursiveCond (v: !isOption v)
-      (_: o: head docs.${toString o} // {
+    optToPretty = o:
+      head docs.${toString o} // {
         inherit (o) _type declarationPositions;
         type = typeToPretty o o.type;
         default = null;
-      })
-      (removeAttrs opts [ "_module" ]);
+      };
   in
-    generators.toPretty { allowPrettyValues = true; } prettyOpts;
+    generators.toPretty { allowPrettyValues = true; } (
+      mapAttrsRecursiveCond (v: !isOption v)
+        (_: optToPretty) (removeAttrs opts [ "_module" ])
+    );
 
   modules = pkgs.writeTextDir "module-list.nix" ''
-    let
-      mkModule = n: o:
-        { lib, ... }: with lib;
-
-        {
-          options.''${n} =
-            o // mkOption {
-              type = mkOptionType {
-                name = "submodule";
-                getSubOptions = _: o;
-              };
-            };
-        };
-    in
-      with builtins; attrValues (mapAttrs mkModule
-        (import ${pkgs.writeText "merged-options.nix"
+  let
+    wrapOpts = opts: {
+      _type = "option";
+      type = {
+        name = "submodule";
+        getSubOptions = _: opts;
+        deprecationMessage = null;
+      };
+    };
+  in
+    with builtins; attrValues (
+      mapAttrs (n: o: { options.''${n} = o // wrapOpts o; })
+        (import ${builtins.toFile "merged-options.nix"
           (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options))
         })
-      )
+    )
   '';
 in
 
