@@ -4,14 +4,14 @@ let
   typeToPretty = o: t: {
     inherit (t) name description deprecationMessage;
 
-    nestedTypes = lib.optionalDrvAttr (
+    nestedTypes = lib.optionalAttrs (
       t.name == "attrsOf" &&
       t.nestedTypes.elemType.name != o.type.name
     ) {
       elemType = typeToPretty o t.nestedTypes.elemType;
     };
 
-    getSubOptions = lib.optionalDrvAttr (
+    getSubOptions = lib.optionalAttrs (
       t.name == "submodule" &&
       lib.elem o.visible or true [ true "transparent" ]
     ) {
@@ -31,28 +31,34 @@ let
         })
         (lib.removeAttrs opts [ "_module" ]);
   in
-    pkgs.writeText "${o}.nix" (
+    pkgs.writeText "${o}-options.nix" (
       lib.generators.toPretty {
         allowPrettyValues = true;
       } prettyOpts
     );
 
   modules = pkgs.writeTextDir "module-list.nix" ''
-    [
-      ({ lib, ... }:
-      {
-        options = lib.mapAttrs
-          (_: opts: lib.mkOption {
-            type = lib.mkOptionType {
-              name = "submodule";
-              getSubOptions = _: opts;
+    let
+      mkModule = n: o:
+        { lib, ... }:
+
+        {
+          options.''${n} =
+            if lib.isOption o then o
+            else lib.mkOption {
+              type = lib.mkOptionType {
+                name = "submodule";
+                getSubOptions = _: o;
+              };
             };
-          })
-          (import ${optsToPretty "merged-options"
+        };
+    in
+      builtins.attrValues (
+        builtins.mapAttrs mkModule
+          (import ${optsToPretty "merged"
             (lib.recursiveUpdate (pkgs.nixos {}).options options)
-          });
-      })
-    ]
+          })
+      )
   '';
 in
 
