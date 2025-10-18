@@ -16,12 +16,12 @@ let
       # diffutils = uutils-diffutils;
       findutils = uutils-findutils;
 
-      glibc = glibc.overrideAttrs (old: {
+      glibc = glibc.overrideAttrs {
         postPatch = ''
           sed -i '/weak_alias/d' sysdeps/posix/isatty.c
           cat ${./isatty.c} >> sysdeps/posix/isatty.c
         '';
-      });
+      };
     };
 in
 
@@ -41,12 +41,6 @@ in
     programs = {
       fd.enable = true;
       ripgrep.enable = true;
-
-      helix = {
-        enable = true;
-        defaultEditor = true;
-        settings.theme = "github_dark";
-      };
 
       man.generateCaches = false;
     };
