@@ -26,9 +26,17 @@
       difftastic = {
         enable = true;
         enableAsDifftool = true;
-        background = "dark";
-        display = "inline";
+        options = {
+          background = "dark";
+          display = "inline";
+        };
       };
+    };
+
+    helix = {
+      enable = true;
+      defaultEditor = true;
+      settings.theme = "github_dark";
     };
   };
 
