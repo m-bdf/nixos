@@ -34,9 +34,9 @@
       };
     };
 
-    logind = {
-      lidSwitch = "ignore";
-      powerKey = "hybrid-sleep";
+    logind.settings.Login = {
+      HandleLidSwitch = "ignore";
+      HandlePowerKey = "hybrid-sleep";
     };
     upower.enable = true;
   };

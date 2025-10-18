@@ -4,8 +4,6 @@
   imports = [ /${modulesPath}/profiles/perlless.nix ];
   system.forbiddenDependenciesRegexes = lib.mkForce [];
 
-  services.fwupd.enable = true;
-
   boot = {
     loader = {
       efi.canTouchEfiVariables = true;
