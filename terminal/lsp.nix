@@ -49,6 +49,6 @@ let
 in
 
 {
-  home.packages = with pkgs; [ nixd ];
+  home.packages = [ pkgs.nixd ];
   nix.nixPath = [ "nixpkgs/nixos/modules=${modules}" ];
 }
