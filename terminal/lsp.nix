@@ -26,7 +26,7 @@ let
   let
     optToPretty = o:
       head (optionAttrSetToDocList o) // {
-        inherit (o) _type declarationPositions;
+        inherit (o) _type;
         type = typeToPretty o o.type;
         default = null;
       };
@@ -50,5 +50,5 @@ in
 
 {
   home.packages = [ pkgs.nixd ];
-  nix.nixPath = [ "nixpkgs/nixos/modules=${modules}" ];
+  nix.nixPath = lib.mkBefore [ "nixpkgs/nixos/modules=${modules}" ];
 }
