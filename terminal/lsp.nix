@@ -31,24 +31,21 @@ let
         default = null;
       };
   in
-    generators.toPretty { allowPrettyValues = true; } (
-      if isOption opts then optToPretty opts
-      else mapAttrsRecursiveCond (v: !isOption v)
-        (_: optToPretty) (removeAttrs opts [ "_module" ])
-    );
+    generators.toPretty { allowPrettyValues = true; }
+      (mapAttrsRecursiveCond (v: !isOption v) (_: optToPretty) opts);
 
-  modules = pkgs.writeTextDir "module-list.nix" ''
-    [{
-      options = ${optsToPretty (
-        mapAttrsRecursiveCond (v: !isOption v) (_: o: o // {
-          type = types.submodule {} // { getSubOptions = _: o; };
-        }) (recursiveUpdate (pkgs.nixos {}).options options)
-      )};
-    }]
-  '';
+  mergedOptions = pkgs.writeText "merged-options.nix"
+    (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options));
+
+  nixd = pkgs.nixd.overrideAttrs (prev: {
+    nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.makeBinaryWrapper ];
+    postFixup = ''
+      wrapProgram $out/bin/nixd \
+        --add-flag --nixos-options-expr='import ${mergedOptions}'
+    '';
+  });
 in
 
 {
-  home.packages = [ pkgs.nixd ];
-  nix.nixPath = lib.mkBefore [ "nixpkgs/nixos/modules=${modules}" ];
+  home.packages = [ nixd ];
 }
