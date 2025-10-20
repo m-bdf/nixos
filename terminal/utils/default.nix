@@ -13,7 +13,7 @@ let
     lib.mapAttrsToList mkReplacement {
       coreutils = uutils-coreutils-noprefix;
       coreutils-full = uutils-coreutils-noprefix;
-      # diffutils = uutils-diffutils;
+      diffutils = uutils-diffutils;
       findutils = uutils-findutils;
 
       glibc = glibc.overrideAttrs {
