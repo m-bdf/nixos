@@ -4,7 +4,7 @@ with lib;
 
 let
   typeToPretty = o: t: {
-    inherit (t) name description deprecationMessage;
+    inherit (t) name description;
 
     nestedTypes = optionalAttrs (
       t.name == "attrsOf" &&
@@ -18,32 +18,28 @@ let
       length (optionAttrSetToDocList o) > 1
     ) {
       val = optsToPretty (t.getSubOptions o.loc);
-      __pretty = opts: "_:\n${opts} # ${o}\n";
+      __pretty = opts: "_: ${opts}";
     };
   };
 
+  optToPretty = o:
+    head (optionAttrSetToDocList o) // {
+      inherit (o) _type declarationPositions;
+      type = typeToPretty o o.type;
+      default = null;
+    };
+
   optsToPretty = opts:
-  let
-    optToPretty = o:
-      head (optionAttrSetToDocList o) // {
-        inherit (o) _type;
-        type = typeToPretty o o.type;
-        default = null;
-      };
-  in
-    generators.toPretty { allowPrettyValues = true; }
+    generators.toPretty { multiline = false; allowPrettyValues = true; }
       (mapAttrsRecursiveCond (v: !isOption v) (_: optToPretty) opts);
 
   mergedOptions = pkgs.writeText "merged-options.nix"
     (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options));
 
-  nixd = pkgs.nixd.overrideAttrs (prev: {
-    nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.makeBinaryWrapper ];
-    postFixup = ''
-      wrapProgram $out/bin/nixd \
-        --add-flag --nixos-options-expr='import ${mergedOptions}'
-    '';
-  });
+  nixd = pkgs.writeShellScriptBin "nixd" ''
+    exec ${getExe pkgs.nixd} "$@" \
+      --nixos-options-expr='import ${mergedOptions}'
+  '';
 in
 
 {
