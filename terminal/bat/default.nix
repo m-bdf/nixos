@@ -3,7 +3,7 @@
 let
   rustyscript = import ./rustyscript.nix self;
 
-  bat = inputs.bat.legacyPackages.${pkgs.stdenv.system}.bat.overrideAttrs (prev: {
+  bat = pkgs.bat.overrideAttrs (prev: {
     inherit (rustyscript) RUSTY_V8_ARCHIVE;
 
     cargoDeps = pkgs.symlinkJoin {

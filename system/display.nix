@@ -11,7 +11,14 @@ in
 {
   i18n.defaultLocale = "en_IE.UTF-8";
 
-  systemd.globalEnvironment.XKB_DEFAULT_LAYOUT = "eu";
+  services = {
+    automatic-timezoned.enable = true;
+    geoclue2.submitData = true;
+
+    xserver.xkb.layout = "eu";
+    kmscon.useXkbConfig = true;
+  };
+
   programs = {
     niri = {
       startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
@@ -26,22 +33,18 @@ in
 
   systemd = {
     packages = [
-      (pkgs.gammastep.override {
-        withRandr = false;
-        withDrm = false;
-        withVidmode = false;
-        withAppIndicator = false;
+      (pkgs.sunsetr.overrideAttrs {
+        postInstall = ''
+          substituteInPlace sunsetr.service --replace-fail /usr $out
+          install -Dm644 sunsetr.service $out/lib/systemd/user/sunsetr.service
+        '';
+        doCheck = false; # tmp
       })
     ];
 
     user.services = {
-      gammastep.wantedBy = [ "graphical-session.target" ];
+      sunsetr.wantedBy = [ "graphical-session.target" ];
       geoclue-agent.enable = false;
     };
-  };
-
-  services = {
-    automatic-timezoned.enable = true;
-    geoclue2.submitData = true;
   };
 }
