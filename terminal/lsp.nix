@@ -18,23 +18,21 @@ let
   };
 
   optToPretty = o:
-    optionalAttrs (!o.internal or false) (
-      head (optionAttrSetToDocList o) // {
+    optionalAttrs (!o.internal or false)
+      (head (optionAttrSetToDocList o) // {
         inherit (o) _type declarationPositions;
         type = typeToPretty o o.type;
-      }
-    );
+      });
 
   optsToPretty = opts:
     generators.toPretty { multiline = false; allowPrettyValues = true; }
       (mapAttrsRecursiveCond (v: !isOption v) (_: optToPretty) opts);
 
-  mergedOptions = pkgs.writeText "merged-options.nix"
-    (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options));
-
   nixd = pkgs.writeShellScriptBin "nixd" ''
-    exec ${getExe pkgs.nixd} "$@" \
-      --nixos-options-expr='import ${mergedOptions}'
+    exec ${getExe pkgs.nixd} "$@" --nixos-options-expr='import ${
+      pkgs.writeText "merged-options.nix"
+        (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options))
+    }'
   '';
 in
 
