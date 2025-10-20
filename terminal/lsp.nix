@@ -18,11 +18,12 @@ let
   };
 
   optToPretty = o:
-    head (optionAttrSetToDocList o) // {
-      inherit (o) _type declarationPositions;
-      type = typeToPretty o o.type;
-      default = null; # tmp
-    };
+    optionalAttrs (!o.internal or false) (
+      head (optionAttrSetToDocList o) // {
+        inherit (o) _type declarationPositions;
+        type = typeToPretty o o.type;
+      }
+    );
 
   optsToPretty = opts:
     generators.toPretty { multiline = false; allowPrettyValues = true; }
