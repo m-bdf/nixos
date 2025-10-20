@@ -31,7 +31,9 @@ let
   nixd = pkgs.writeShellScriptBin "nixd" ''
     exec ${getExe pkgs.nixd} "$@" --nixos-options-expr='import ${
       pkgs.writeText "merged-options.nix"
-        (optsToPretty (recursiveUpdate (pkgs.nixos {}).options options))
+        (optsToPretty (recursiveUpdate (pkgs.nixos {
+          system.stateVersion = lib.trivial.release;
+        }).options options))
     }'
   '';
 in
