@@ -6,20 +6,15 @@ let
   typeToPretty = o: t: {
     inherit (t) name description;
 
-    nestedTypes = optionalAttrs (
-      t.name == "attrsOf" &&
-      t.nestedTypes.elemType.name != o.type.name
-    ) {
-      elemType = typeToPretty o t.nestedTypes.elemType;
-    };
+    nestedTypes.elemType = mapNullable (t:
+      optionalAttrs (t.name != o.type.name) (typeToPretty o t)
+    ) t.nestedTypes.elemType or null;
 
-    getSubOptions = optionalAttrs (
-      t.name == "submodule" &&
-      length (optionAttrSetToDocList o) > 1
-    ) {
-      val = optsToPretty (t.getSubOptions o.loc);
-      __pretty = opts: "_: ${opts}";
-    };
+    getSubOptions =
+      optionalAttrs (o.visible or true == true) {
+        val = optsToPretty (t.getSubOptions o.loc);
+        __pretty = opts: "_: ${opts}";
+      };
   };
 
   optToPretty = o:
