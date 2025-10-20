@@ -12,8 +12,8 @@ let
 
     getSubOptions =
       optionalAttrs (o.visible or true == true) {
-        val = optsToPretty (t.getSubOptions o.loc);
-        __pretty = opts: "_: ${opts}";
+        val = removeAttrs (t.getSubOptions o.loc) [ "if" "inherit" ]; # tmp
+        __pretty = opts: "_: ${optsToPretty opts}";
       };
   };
 
@@ -21,7 +21,7 @@ let
     head (optionAttrSetToDocList o) // {
       inherit (o) _type declarationPositions;
       type = typeToPretty o o.type;
-      default = null;
+      default = null; # tmp
     };
 
   optsToPretty = opts:
