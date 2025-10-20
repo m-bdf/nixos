@@ -20,16 +20,21 @@
       lfs.enable = true;
       package = pkgs.gitMinimal;
 
-      userName = "Maëlys Bras de fer";
-      userEmail = "mae.bdf@outlook.com";
+      settings.user = {
+        name = "Maëlys Bras de fer";
+        email = "mae.bdf@outlook.com";
+      };
+    };
 
-      difftastic = {
+    difftastic = {
+      enable = true;
+      git = {
         enable = true;
-        enableAsDifftool = true;
-        options = {
-          background = "dark";
-          display = "inline";
-        };
+        diffToolMode = true;
+      };
+      options = {
+        background = "dark";
+        display = "inline";
       };
     };
 
