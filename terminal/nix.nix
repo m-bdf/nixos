@@ -38,11 +38,12 @@ in
     let
       features = with pkgs;
         runCommandLocal "features.conf" {
-          nativeBuildInputs = [ nix jq ];
+          nativeBuildInputs = [ nixVersions.latest jq ];
         } ''
-          (nix __dump-xp-features && ${lib.getExe nix} __dump-xp-features) |
-            jq -sr '"experimental-features = \(add | keys | join(" "))"' > $out
-          ${lib.getExe nix} config show | grep system-features >> $out
+          { { nix __dump-xp-features && ${lib.getExe nix} __dump-xp-features
+            } | jq -sr '"experimental-features = \(add | keys | join(" "))"'
+            ${lib.getExe nix} --offline config show | grep system-features
+          } > $out
         '';
     in
       "include ${features}";
