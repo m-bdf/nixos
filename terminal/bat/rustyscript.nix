@@ -1,6 +1,6 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, lib, fetchurl, stdenv, rustPlatform, ... }:
 
-pkgs.rustPlatform.buildRustPackage (final: {
+rustPlatform.buildRustPackage (final: {
   pname = "rustyscript";
   version = "dev";
 
@@ -19,10 +19,10 @@ pkgs.rustPlatform.buildRustPackage (final: {
 
     rustyV8Asset =
       find "librusty_v8_${final.cargoBuildType}_${
-        pkgs.stdenv.hostPlatform.rust.cargoShortTarget
+        stdenv.hostPlatform.rust.cargoShortTarget
       }.a.gz" rustyV8Release.assets;
   in
-    pkgs.fetchurl {
+    fetchurl {
       url = rustyV8Asset.browser_download_url;
       hash = rustyV8Asset.digest;
     };

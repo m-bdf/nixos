@@ -1,7 +1,7 @@
-{ inputs, pkgs, ... }@ self:
+{ inputs, pkgs, ... }:
 
 let
-  rustyscript = import ./rustyscript.nix self;
+  rustyscript = pkgs.callPackage ./rustyscript.nix { inherit inputs; };
 
   bat = pkgs.bat.overrideAttrs (prev: {
     inherit (rustyscript) RUSTY_V8_ARCHIVE;
