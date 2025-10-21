@@ -1,7 +1,8 @@
-{ lib, pkgs, ... }:
+{ lib, niri, pkgs }:
 
 let
-  spawn = pkg: "${lib.getExe pkgs.niri} msg action spawn -- ${lib.getExe pkg}";
+  spawn = pkg:
+    "${lib.getExe niri} msg action spawn -- ${lib.getExe pkgs.${pkg}}";
 in
 
 {
@@ -16,7 +17,7 @@ in
     interval = 1;
     format = "{:%A %d %B %Y %X}";
     tooltip = false;
-    on-click = spawn pkgs.walker;
+    on-click = spawn "walker";
   };
 
   network = {
@@ -25,28 +26,28 @@ in
     format-wifi = "{icon}  {essid}";
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
-    on-click = spawn pkgs.iwgtk;
-    on-click-right = spawn pkgs.trayscale;
+    on-click = spawn "iwgtk";
+    on-click-right = spawn "trayscale";
   };
 
   bluetooth = {
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
-    on-click = spawn pkgs.overskride;
+    on-click = spawn "overskride";
   };
 
   wireplumber = {
     format-muted = "󰝟  {volume}%";
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
-    on-click = spawn pkgs.pwvucontrol;
-    on-click-right = spawn pkgs.helvum;
+    on-click = spawn "pwvucontrol";
+    on-click-right = spawn "helvum";
   };
 
   battery = {
     format = "{icon}  {capacity}%";
     format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
     states.critical = 5;
-    on-click = spawn pkgs.hyprlock;
+    on-click = spawn "hyprlock";
   };
 }

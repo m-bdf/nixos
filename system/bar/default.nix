@@ -1,4 +1,4 @@
-{ pkgs, ... }@ self:
+{ pkgs, ... }:
 
 {
   programs.waybar = {
@@ -21,7 +21,8 @@
   };
 
   environment.etc = {
-    "xdg/waybar/config".text = builtins.toJSON (import ./config.nix self);
+    "xdg/waybar/config".text = builtins.toJSON
+      (pkgs.callPackage ./config.nix {});
 
     "xdg/waybar/style.css".text = ''
       button { padding: 0 }
