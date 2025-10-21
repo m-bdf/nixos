@@ -1,4 +1,4 @@
-{ inputs, lib, fetchurl, stdenv, rustPlatform, ... }:
+{ inputs, lib, fetchurl, stdenv, rustPlatform }:
 
 rustPlatform.buildRustPackage (final: {
   pname = "rustyscript";
