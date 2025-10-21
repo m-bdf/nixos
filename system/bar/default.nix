@@ -21,8 +21,7 @@
   };
 
   environment.etc = {
-    "xdg/waybar/config".text = builtins.toJSON
-      (pkgs.callPackage ./config.nix {});
+    "xdg/waybar/config".text = pkgs.callPackage ./config.nix {};
 
     "xdg/waybar/style.css".text = ''
       button { padding: 0 }

@@ -5,7 +5,7 @@ let
     "${lib.getExe niri} msg action spawn -- ${lib.getExe pkgs.${pkg}}";
 in
 
-{
+builtins.toJSON {
   layer = "top";
   height = 32;
 
