@@ -32,7 +32,7 @@ let
     exec ${getExe pkgs.nixd} "$@" --nixos-options-expr='import ${
       pkgs.writeText "merged-options.nix"
         (optsToPretty (recursiveUpdate (pkgs.nixos {
-          system.stateVersion = lib.trivial.release;
+          system.stateVersion = trivial.release;
         }).options options))
     }'
   '';
