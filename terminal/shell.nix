@@ -11,12 +11,8 @@
 
     starship = {
       enable = true;
-      settings =
-      let
-        preset = pkgs.runCommandLocal "starship-nerd-font-preset" {}
-          "${lib.getExe pkgs.starship} preset nerd-font-symbols > $out";
-      in
-        lib.importTOML preset // { command_timeout = 2500; };
+      settings = { command_timeout = 2500; } // lib.importTOML
+        (pkgs.starship + /share/starship/presets/nerd-font-symbols.toml);
     };
 
     nix-index-database.comma.enable = true;
