@@ -1,40 +1,40 @@
-{ options, lib, pkgs, ... }:
-
-with lib;
+{ lib, pkgs, ... }:
 
 let
-  typeToPretty = o: t: {
-    inherit (t) name description;
+  mergeConfigs = pkgs.writeText "merge-configs.nix" ''
+    with builtins; path:
 
-    nestedTypes.elemType = mapNullable (t:
-      optionalAttrs (t.name != o.type.name) (typeToPretty o t)
-    ) t.nestedTypes.elemType or null;
+    let
+      flake =
+        if pathExists (path + /flake.nix)
+        then getFlake (toString path) else {};
 
-    getSubOptions =
-      optionalAttrs (o.visible or true == true) {
-        val = removeAttrs (t.getSubOptions o.loc) [ "if" "inherit" ]; # tmp
-        __pretty = opts: "_: ${optsToPretty opts}";
-      };
-  };
+      configs = concatMap attrValues [
+        flake.homeConfigurations or {}
+        flake.nixOnDroidConfigurations or {}
+        flake.nixosConfigurations or {}
+      ];
 
-  optToPretty = o:
-    optionalAttrs (!o.internal or false)
-      (head (optionAttrSetToDocList o) // {
-        inherit (o) _type declarationPositions;
-        type = typeToPretty o o.type;
-      });
+      configsForCurrentSystem =
+        filter (c: (tryEval
+          (c.pkgs.stdenv.system == currentSystem)
+        ).value) configs;
 
-  optsToPretty = opts:
-    generators.toPretty { multiline = false; allowPrettyValues = true; }
-      (mapAttrsRecursiveCond (v: !isOption v) (_: optToPretty) opts);
+      mergeConfigs = zipAttrsWith (_: l:
+        if any (v: !isAttrs v || v ? _type) l
+        then head l else mergeConfigs l
+      );
+    in
+
+    if configsForCurrentSystem != []
+    then mergeConfigs configsForCurrentSystem
+    else (import <nixpkgs> {}).nixos {}
+  '';
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
-    exec ${getExe pkgs.nixd} "$@" --nixos-options-expr='import ${
-      pkgs.writeText "merged-options.nix"
-        (optsToPretty (recursiveUpdate (pkgs.nixos {
-          system.stateVersion = trivial.release;
-        }).options options))
-    }'
+    exec ${lib.getExe pkgs.nixd} "$@" \
+      --nixpkgs-expr="(import ${mergeConfigs} ./.).pkgs" \
+      --nixos-options-expr='(import ${mergeConfigs} ./.).options'
   '';
 in
 
