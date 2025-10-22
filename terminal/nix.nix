@@ -1,23 +1,4 @@
-{ inputs, lib, pkgs, ... }:
-
-let
-  default = pkgs.writeTextDir "default.nix" ''
-    { config ? {}, ... }@ args:
-
-    import ./pkgs/top-level/impure.nix (args // {
-      config = ${
-        with lib; generators.toPretty { indent = "  "; }
-          (filterAttrs (_: v: !isFunction v) pkgs.config)
-      } // config;
-    })
-  '';
-
-  nixpkgs = pkgs.runCommand "source" {} ''
-    cp -R ${inputs.nixpkgs} $out
-    chmod +w $out/default.nix
-    cp ${default}/* $out
-  '';
-in
+{ lib, pkgs, ... }:
 
 {
   nix = {
@@ -47,10 +28,6 @@ in
         '';
     in
       "include ${features}";
-
-    registry.nixpkgs.flake = nixpkgs;
-    nixPath = [ "nixpkgs=flake:nixpkgs" ];
-    keepOldNixPath = false;
   };
 
   programs.nh.enable = true;
