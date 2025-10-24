@@ -3,7 +3,7 @@
 with lib;
 
 let
-  arch = removeSuffix "-linux" pkgs.stdenv.system;
+  inherit (pkgs.stdenv.targetPlatform.rust.platform) arch;
 
   initialLoginInner = pkgs.writeText "login-inner" ''
     set -o allexport -o errexit

@@ -113,12 +113,12 @@
       inherit (inputs.nix.packages.${final.stdenv.system}) nix;
     };
 
-    pkgsFor = platform:
-      import nixpkgs {
-        system = platform;
+    pkgsFor = system: crossSystem:
+      (import nixpkgs {
+        inherit system crossSystem;
         config = pkgsConfig;
         overlays = [ nixOverlay ];
-      };
+      }).buildPackages;
   in
 
   {
@@ -126,7 +126,7 @@
     homeConfigurations =
       mapAttrs (platform: _:
         home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgsFor platform;
+          pkgs = pkgsFor platform platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.homeModules;
         }
@@ -136,7 +136,7 @@
     nixOnDroidConfigurations =
       mapAttrs (platform: _:
         nix-on-droid.lib.nixOnDroidConfiguration {
-          pkgs = pkgsFor platform;
+          pkgs = pkgsFor platform platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.nixOnDroidModules ++ [{
             home.imports = attrValues (listDir ./terminal);
@@ -179,10 +179,16 @@
     packages =
       mapAttrs (platform: droidPkgs: {
         nixOnDroidBootstrapZips =
-          (pkgsFor platform).symlinkJoin {
+          (pkgsFor platform platform).symlinkJoin {
             name = "nix-on-droid-bootstrap-zips";
             paths = mapAttrsToList (targetPlatform: system:
-              system.config.build.bootstrapZip.override droidPkgs
+              (nix-on-droid.lib.nixOnDroidConfiguration {
+                pkgs = pkgsFor platform targetPlatform;
+                extraSpecialArgs.inputs = inputs;
+                modules = attrValues self.nixOnDroidModules ++ [{
+                  home.imports = attrValues (listDir ./terminal);
+                }];
+              }).config.build.bootstrapZip.override droidPkgs
             ) self.nixOnDroidConfigurations;
           };
       }) nix-on-droid.packages;
@@ -191,7 +197,7 @@
 
     devShells =
       mapAttrs (platform: checks: {
-        default = (pkgsFor platform).mkShellNoCC {
+        default = (pkgsFor platform platform).mkShellNoCC {
           inherit (checks.git-hooks) name shellHook;
         };
       }) self.checks;

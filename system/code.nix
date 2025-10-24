@@ -1,8 +1,6 @@
 { pkgs, ... }:
 
 {
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-
   environment = {
     systemPackages = with pkgs; [ vscode github-desktop ];
     variables.VSCODE_PORTABLE = "$XDG_DATA_HOME/vscode"; #vscode/3884
