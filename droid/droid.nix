@@ -28,13 +28,16 @@ in
 
     home-manager = {
       useGlobalPkgs = true;
-      extraSpecialArgs.inputs = inputs // { inherit nixpkgs; };
+      extraSpecialArgs.inputs = inputs;
     };
 
     home = {
-      nix.settings = {
-        use-xdg-base-directories = lib.mkForce false;
-        auto-optimise-store = lib.mkForce false;
+      nix = {
+        settings = {
+          use-xdg-base-directories = lib.mkForce false;
+          auto-optimise-store = lib.mkForce false;
+        };
+        registry.nixpkgs.flake = lib.mkForce nixpkgs;
       };
       programs.nh.enable = lib.mkForce false;
     };
