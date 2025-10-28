@@ -1,37 +1,7 @@
 { lib, pkgs, ... }:
 
-let
-  wayvnc = pkgs.wayvnc.overrideAttrs {
-    patches = [
-      (pkgs.fetchpatch {
-        url = "https://github.com/any1/wayvnc/pull/396.patch";
-        hash = "sha256-IEfHVhWj075DQ+HRnGL8zhsVaj813UWEOiYnOUYS/50=";
-      })
-    ];
-  };
-in
-
 {
-  networking.firewall.allowedTCPPorts = [ 5900 ];
-
-  systemd.user = {
-    sockets.wayvnc = {
-      partOf = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-      wantedBy = [ "graphical-session.target" ];
-      socketConfig.ListenStream = 5900;
-    };
-
-    services.wayvnc = {
-      requires = [ "wayvnc.socket" ];
-      serviceConfig.ExecStart = toString [
-        (lib.getExe wayvnc)
-        "--external-listener-fd 3"
-        "--exit-on-disconnect"
-        "--log-level info"
-      ];
-    };
-  };
+  programs.wayvnc.enable = true;
 
   environment.etc."xdg/wayvnc/config".text = ''
     enable_auth=true
@@ -39,5 +9,25 @@ in
     relax_encryption=true
   '';
 
-  security.pam.services.wayvnc = {};
+
+  systemd.user = {
+    services.wayvnc = {
+      serviceConfig.ExecStart = toString [
+        (lib.getExe pkgs.wayvnc)
+        "--external-listener-fd 3"
+        "--exit-on-disconnect"
+        "--log-level info"
+      ];
+      requires = [ "wayvnc.socket" ];
+    };
+
+    sockets.wayvnc = {
+      partOf = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      wantedBy = [ "graphical-session.target" ];
+      socketConfig.ListenStream = 5900;
+    };
+  };
+
+  networking.firewall.allowedTCPPorts = [ 5900 ];
 }
