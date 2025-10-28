@@ -23,7 +23,6 @@ impl HighlightingAssets {
                 if let Ok(guesses) = guess_language_by_contents(&contents) {
                     for guess in guesses {
                         if let Some(syntax) = self.find_syntax_by_token(&guess)? {
-                            eprintln!("Guessed syntax: {}", syntax.syntax.name);
                             return Ok(Some(syntax));
                         }
                     }
