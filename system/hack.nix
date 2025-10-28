@@ -4,6 +4,10 @@ let
   airgorah = pkgs.airgorah.overrideAttrs {
     src = inputs.airgorah;
 
+    cargoDeps = pkgs.rustPlatform.importCargoLock {
+      lockFile = inputs.airgorah + /Cargo.lock;
+    };
+
     postPatch = ''
       cargo add nix --features user
       sed -i src/backend/app.rs -e '/sudo/c \
