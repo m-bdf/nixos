@@ -8,12 +8,11 @@ let
     then getFlake (toString path) else {};
 
   pkgs = import flake.inputs.nixpkgs or <nixpkgs> {};
-  hm = import flake.inputs.home-manager or <home-manager> {};
+  hm = import flake.inputs.home-manager or <home-manager> { inherit pkgs; };
 
-  defaultConfigs = [
-    (hm.lib.homeManagerConfiguration { inherit pkgs; })
-    (pkgs.nixos hm.nixos)
-  ];
+  defaultNixOS = pkgs.nixos hm.nixos;
+  defaultHM.options =
+    defaultNixOS.options.home-manager.users.type.getSubOptions [];
 
   customConfigs = concatMap attrValues [
     flake.homeConfigurations or {}
@@ -33,5 +32,5 @@ let
 in
 
 if configsForCurrentSystem == []
-then mergeConfigs defaultConfigs
+then mergeConfigs [ defaultHM defaultNixOS ]
 else mergeConfigs configsForCurrentSystem
