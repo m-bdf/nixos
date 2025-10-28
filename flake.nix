@@ -91,6 +91,11 @@
         home-manager.follows = "home-manager";
       };
     };
+
+    airgorah = {
+      url = "github:m-bdf/airgorah";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, nix-on-droid, ... }@ inputs:
