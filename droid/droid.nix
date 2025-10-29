@@ -34,8 +34,8 @@ in
     home = {
       nix = {
         settings = {
-          use-xdg-base-directories = lib.mkForce false;
-          auto-optimise-store = lib.mkForce false;
+          # use-xdg-base-directories = lib.mkForce false;
+          # auto-optimise-store = lib.mkForce false;
         };
         registry.nixpkgs.flake = lib.mkForce nixpkgs;
       };

@@ -52,7 +52,7 @@ in
 
   config.environment.packages = [
     (pkgs.writeScriptBin "nod-update" ''
-      curl -s "https://fw13.tail3a4624.ts.net/activate-${arch}.sh" | sh
+      curl -s "https://m-bdf.github.io/nixos/activate-${arch}.sh" | sh
     '')
   ];
 }
