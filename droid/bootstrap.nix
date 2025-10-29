@@ -8,7 +8,8 @@ let
   initialLoginInner = pkgs.writeText "login-inner" ''
     set -o allexport -o errexit
     ${toShellVars config.environment.sessionVariables}
-    unset HOME LD_PRELOAD
+    unset LD_PRELOAD
+    HOME=$PWD
 
     NIX_CONFIG='${
       concatMapAttrsStringSep "\n"
