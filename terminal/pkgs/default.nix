@@ -1,7 +1,7 @@
 { inputs, lib, pkgs, ... }:
 
 let
-  default = pkgs.writeTextDir "default.nix" ''
+  default = pkgs.writeText "default.nix" ''
     { config ? {}, ... }@ args:
 
     import ./pkgs/top-level/impure.nix (args // {
@@ -15,7 +15,7 @@ let
   nixpkgs = pkgs.runCommand "source" {} ''
     cp -R ${inputs.nixpkgs} $out
     chmod +w $out/default.nix
-    cp ${default}/* $out
+    cp ${default} $out/default.nix
   '';
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
