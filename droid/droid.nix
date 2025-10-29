@@ -1,26 +1,40 @@
 { inputs, options, config, lib, pkgs, ... }:
 
 let
-  nixpkgs = pkgs.runCommand "source" {
+  storePaths = pkgs.runCommand "store-paths.nix" {
     nativeBuildInputs = [ config.home.programs.nix-index.package ];
   } ''
-    cd ${inputs.nixpkgs}
-    mkdir -p $out/pkgs/stdenv
-
-    cp --recursive --parents default.nix lib \
-      pkgs/top-level pkgs/stdenv/{adapters,booter}.nix \
-      pkgs/build-support/trivial-builders/default.nix $out
-
-    { echo with builtins\; {; while read pkg _ _ path
-        do echo \"''${pkg//./\".\"}\" = storePath \"$path\"\;
+    { echo 'with builtins; {'; while read pkg _ _ path; do
+        echo \"''${pkg//./\".\"}\" = storePath \"$path\"\;
       done < <(nix-locate --at-root --whole-name '''); echo }
-    } > $out/pkgs/store-paths.nix
+    } > $out
+  '';
 
-    echo 'args: [ (_: rec {
-      inherit (args) config;
-      stdenv = (import ../store-paths.nix).stdenvNoCC;
-      overlays = [ (_: _: import ../store-paths.nix) ];
-    }) ]' > $out/pkgs/stdenv/default.nix
+  default = pkgs.writeText "default.nix" ''
+    { config ? {}, overlays ? [], ... }@ args:
+
+    import ./pkgs/top-level/impure.nix (args // {
+      config = ${
+        with lib; generators.toPretty { indent = "  "; }
+          (filterAttrs (_: v: !isFunction v) pkgs.config)
+      } // config;
+
+      overlays = overlays ++ [
+        (_: _: import ${storePaths})
+      ];
+
+      stdenvStages = args: [
+        (_: { __raw = true; cc = ${pkgs.stdenv.cc}; })
+      ] ++ builtins.tail (import ./pkgs/stdenv/native args);
+    })
+  '';
+
+  nixpkgs = pkgs.runCommand "source" {} ''
+    mkdir -p $out/pkgs/build-support
+    cp ${default} $out/default.nix
+    cd ${inputs.nixpkgs}
+    cp --recursive --parents lib pkgs/{top-level,stdenv} \
+      pkgs/build-support/{setup-hooks,trivial-builders} $out
   '';
 in
 
