@@ -2,27 +2,17 @@
 
 let
   settings = {
-    bitwarden = {
-      global_extensionInitialInstall_extensionInstalled = true;
-    };
-
     darkreader = {
-      schemeVersion = 2;
+      syncSettings = false;
       previewNewDesign = true;
       previewNewestDesign = true;
-
-      syncSitesFixes = true;
-      enableForProtectedPages = true;
+      fetchNews = false;
       disabledFor = [ "localhost" ];
-
-      changeBrowserTheme = true;
-      automation = {
-        enabled = true;
-        mode = "system";
-      };
+      syncSitesFixes = true;
     };
 
-    ublock-origin = {};
+    ublock-origin.userSettings.prefetchingDisabled = false;
+    bitwarden.global_extensionInitialInstall_extensionInstalled = true;
   };
 
   addons = inputs.firefox-addons.packages.${pkgs.stdenv.system};
