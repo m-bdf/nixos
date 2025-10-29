@@ -25,6 +25,7 @@ rustPlatform.buildRustPackage (final: {
     fetchurl {
       url = rustyV8Asset.browser_download_url;
       hash = rustyV8Asset.digest;
+      passthru = rustyV8Asset;
     };
 
   doCheck = false;
