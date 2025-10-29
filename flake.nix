@@ -115,7 +115,8 @@
     };
 
     nixOverlay = final: prev: {
-      inherit (inputs.nix.packages.${final.stdenv.system}) nix;
+      # inherit (inputs.nix.packages.${final.stdenv.system}) nix;
+      nix = inputs.nix.packages.${final.stdenv.system}.nix-cli;
     };
 
     pkgsFor = platform:
