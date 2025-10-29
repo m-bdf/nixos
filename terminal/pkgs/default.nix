@@ -1,9 +1,22 @@
 { inputs, lib, pkgs, ... }:
 
 let
-  config = pkgs.writeText "nixpkgs-config.nix"
-    (lib.generators.toPretty {}
-      (lib.filterAttrs (_: v: !lib.isFunction v) pkgs.config));
+  default = pkgs.writeTextDir "default.nix" ''
+    { config ? {}, ... }@ args:
+
+    import ./pkgs/top-level/impure.nix (args // {
+      config = ${
+        with lib; generators.toPretty { indent = "  "; }
+          (filterAttrs (_: v: !isFunction v) pkgs.config)
+      } // config;
+    })
+  '';
+
+  nixpkgs = pkgs.runCommand "source" {} ''
+    cp -R ${inputs.nixpkgs} $out
+    chmod +w $out/default.nix
+    cp ${default}/* $out
+  '';
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
     exec ${lib.getExe pkgs.nixd} "$@" \
@@ -14,7 +27,7 @@ in
 
 {
   nix = {
-    registry.nixpkgs.flake = inputs.nixpkgs;
+    registry.nixpkgs.flake = nixpkgs;
     nixPath = [
       "nixpkgs=flake:nixpkgs"
       "home-manager=${inputs.home-manager}"
@@ -22,8 +35,5 @@ in
     keepOldNixPath = false;
   };
 
-  home = {
-    sessionVariables.NIXPKGS_CONFIG = config;
-    packages = [ nixd ];
-  };
+  home.packages = with pkgs; [ nixd nixfmt ];
 }
