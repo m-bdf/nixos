@@ -4,9 +4,12 @@ let
   storePaths = pkgs.runCommand "store-paths.nix" {
     nativeBuildInputs = [ config.home.programs.nix-index.package ];
   } ''
-    { echo 'with builtins; {'; while read pkg _ _ path; do
-        echo \"''${pkg//./\".\"}\" = storePath \"$path\"\;
-      done < <(nix-locate --at-root --whole-name '''); echo }
+    { echo {
+      nix-locate --at-root --whole-name ''' |
+      while read pkg _ _ path; do
+        echo \"''${pkg//./\".\"}\" = \"$path\"\;
+      done
+      echo }
     } > $out
   '';
 
@@ -20,21 +23,23 @@ let
       } // config;
 
       overlays = overlays ++ [
-        (_: _: import ${storePaths})
+        (_: prev: prev.lib.mapAttrsRecursiveCond (v: !v ? out)
+          (_: d: prev.lib.toDerivation d.out // d) (import ${storePaths})
+        )
       ];
 
       stdenvStages = args: [
-        (_: { __raw = true; cc = ${pkgs.stdenv.cc}; })
+        (_: { __raw = true; cc = null; })
       ] ++ builtins.tail (import ./pkgs/stdenv/native args);
     })
   '';
 
   nixpkgs = pkgs.runCommand "source" {} ''
-    mkdir -p $out/pkgs/build-support
+    mkdir -p $out/pkgs
     cp ${default} $out/default.nix
     cd ${inputs.nixpkgs}
-    cp --recursive --parents lib pkgs/{top-level,stdenv} \
-      pkgs/build-support/{setup-hooks,trivial-builders} $out
+    cp --recursive --parents lib \
+      pkgs/{top-level,stdenv,build-support} $out
   '';
 in
 
