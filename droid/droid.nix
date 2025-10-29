@@ -1,12 +1,26 @@
 { inputs, options, config, lib, pkgs, ... }:
 
 let
-  nixpkgs = pkgs.runCommand "pkgs.nix" {
+  nixpkgs = pkgs.runCommand "source" {
     nativeBuildInputs = [ config.home.programs.nix-index.package ];
   } ''
-    echo with builtins\; { $(while read pkg _ _ path; do
-      echo \"''${pkg//./\".\"}\" = storePath \"$path\"\;
-    done < <(nix-locate --at-root --whole-name ''')) } > $out
+    cd ${inputs.nixpkgs}
+    mkdir -p $out/pkgs/stdenv
+
+    cp --recursive --parents default.nix lib \
+      pkgs/top-level pkgs/stdenv/{adapters,booter}.nix \
+      pkgs/build-support/trivial-builders/default.nix $out
+
+    { echo with builtins\; {; while read pkg _ _ path
+        do echo \"''${pkg//./\".\"}\" = storePath \"$path\"\;
+      done < <(nix-locate --at-root --whole-name '''); echo }
+    } > $out/pkgs/store-paths.nix
+
+    echo 'args: [ (_: rec {
+      inherit (args) config;
+      stdenv = (import ../store-paths.nix).stdenvNoCC;
+      overlays = [ (_: _: import ../store-paths.nix) ];
+    }) ]' > $out/pkgs/stdenv/default.nix
   '';
 in
 
@@ -34,7 +48,7 @@ in
     home = {
       nix = {
         settings = {
-          # use-xdg-base-directories = lib.mkForce false;
+          use-xdg-base-directories = lib.mkForce false;
           # auto-optimise-store = lib.mkForce false;
         };
         registry.nixpkgs.flake = lib.mkForce nixpkgs;

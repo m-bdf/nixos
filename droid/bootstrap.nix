@@ -9,7 +9,6 @@ let
     set -o allexport -o errexit
     ${toShellVars config.environment.sessionVariables}
     unset LD_PRELOAD
-    HOME=$PWD
 
     NIX_CONFIG='${
       concatMapAttrsStringSep "\n"
@@ -53,7 +52,7 @@ in
 
   config.environment.packages = [
     (pkgs.writeScriptBin "nod-update" ''
-      curl -s "https://m-bdf.github.io/nixos/activate-${arch}.sh" | sh
+      curl -s https://fw13.tail3a4624.ts.net/activate-${arch}.sh | sh
     '')
   ];
 }
