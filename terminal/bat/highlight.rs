@@ -41,6 +41,11 @@ fn guess_language_by_contents(contents: &str) -> Result<Vec<String>> {
         import hljs from '{HIGHLIGHTJS}';
 
         export default code => {
+            try {
+                JSON.parse(code);
+                return [ 'json' ];
+            } catch {}
+
             const result = hljs.highlightAuto(code);
             const first = hljs.getLanguage(result.language);
             const second = hljs.getLanguage(result.secondBest.language);
