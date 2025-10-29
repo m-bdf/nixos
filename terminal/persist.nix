@@ -26,8 +26,7 @@ in
     home.file = persistableFilesOption // {
       apply = mapAttrs (name: cfg: cfg //
         optionalAttrs (!hasPrefix "/" cfg.target) {
-          target = removePrefix "/"
-            "${config.home.homeDirectory}/${cfg.target}";
+          target = "${config.home.homeDirectory}/${cfg.target}";
         }
       );
     };
@@ -36,12 +35,17 @@ in
   config = {
     xdg.enable = true;
 
-    home.file = {
-      "Documents" = {
-        persist = true;
-        executable = true;
+    home = {
+      activation.unsetHome =
+        hm.dag.entryBefore [ "linkGeneration" ] "HOME=";
+
+      file = {
+        "Documents" = {
+          persist = true;
+          executable = true;
+        };
+        "Downloads".persist = true;
       };
-      "Downloads".persist = true;
     };
   };
 }
