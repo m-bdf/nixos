@@ -14,24 +14,31 @@ let
   '';
 
   default = pkgs.writeText "default.nix" ''
-    { config ? {}, overlays ? [], ... }@ args:
+    _:
 
-    import ./pkgs/top-level/impure.nix (args // {
-      config = ${
-        with lib; generators.toPretty { indent = "  "; }
-          (filterAttrs (_: v: !isFunction v) pkgs.config)
-      } // config;
-
-      overlays = overlays ++ [
-        (_: prev: prev.lib.mapAttrsRecursiveCond (v: !v ? out)
-          (_: d: prev.lib.toDerivation d.out // d) (import ${storePaths})
-        )
-      ];
-
+    import ./pkgs/top-level/impure.nix {
       stdenvStages = args: [
         (_: { __raw = true; cc = null; })
-      ] ++ builtins.tail (import ./pkgs/stdenv/native args);
-    })
+      ] ++ builtins.tail
+        (import ./pkgs/stdenv/native args);
+
+      overlays = [
+        (_: prev: {
+          stdenv = prev.stdenv.override {
+            shell = ${pkgs.stdenv.shell};
+            initialPath = [
+              ${toString pkgs.stdenv.initialPath}
+            ];
+          };
+        })
+
+        (_: prev: with prev.lib;
+          mapAttrsRecursiveCond (v: !v ? out)
+            (_: d: toDerivation d.out // d)
+            (import ${storePaths})
+        )
+      ];
+    }
   '';
 
   nixpkgs = pkgs.runCommand "source" {} ''
