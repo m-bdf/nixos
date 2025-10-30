@@ -21,7 +21,6 @@ in
     relax_encryption=true
   '';
 
-
   systemd.user = {
     services.wayvnc = {
       serviceConfig.ExecStart = toString [
