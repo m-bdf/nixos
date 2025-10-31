@@ -25,10 +25,10 @@ let
       overlays = [
         (_: prev: {
           stdenv = prev.stdenv.override {
-            shell = ${pkgs.stdenv.shell};
             initialPath = [
               ${toString pkgs.stdenv.initialPath}
             ];
+            shell = ${pkgs.stdenv.shell};
           };
         })
 
@@ -80,6 +80,7 @@ in
         registry.nixpkgs.flake = lib.mkForce nixpkgs;
       };
       programs.nh.enable = lib.mkForce false;
+      # home.packages = [ (import nixpkgs {}).stdenv ];
     };
 
     environment.sessionVariables =
