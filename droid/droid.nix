@@ -14,7 +14,7 @@ let
   '';
 
   default = pkgs.writeText "default.nix" ''
-    _:
+    { config ? {}, ... }:
 
     import ./pkgs/top-level/impure.nix {
       stdenvStages = args: [
@@ -23,16 +23,16 @@ let
         (import ./pkgs/stdenv/native args);
 
       overlays = [
-        (final: prev: {
-          stdenv = prev.stdenv.override (prev: {
-            initialPath = [ final.coreutils ];
-            shell = final.bashNonInteractive + prev.shell;
-          });
+        (_: prev: {
+          stdenv = prev.stdenv.override {
+            initialPath = [ ${toString pkgs.stdenv.initialPath} ];
+            shell = ${pkgs.stdenv.shell};
+          };
         })
 
         (_: prev: with prev.lib;
           mapAttrsRecursiveCond (v: !v ? out) (_: d:
-            toDerivation d.out // mapAttrs (_: toDerivation) d
+            toDerivation d.out // mapAttrs (_: builtins.storePath) d
           ) (import ${storePaths})
         )
       ];
