@@ -2,7 +2,10 @@
 
 {
   imports = [ /${modulesPath}/profiles/perlless.nix ];
-  system.forbiddenDependenciesRegexes = lib.mkForce [];
+  system = {
+    forbiddenDependenciesRegexes = lib.mkForce [];
+    nixos-init.enable = true;
+  };
 
   boot = {
     loader = {
