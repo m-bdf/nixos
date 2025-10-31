@@ -23,19 +23,17 @@ let
         (import ./pkgs/stdenv/native args);
 
       overlays = [
-        (_: prev: {
-          stdenv = prev.stdenv.override {
-            initialPath = [
-              ${toString pkgs.stdenv.initialPath}
-            ];
-            shell = ${pkgs.stdenv.shell};
-          };
+        (final: prev: {
+          stdenv = prev.stdenv.override (prev: {
+            initialPath = [ final.coreutils ];
+            shell = final.bashNonInteractive + prev.shell;
+          });
         })
 
         (_: prev: with prev.lib;
-          mapAttrsRecursiveCond (v: !v ? out)
-            (_: d: toDerivation d.out // d)
-            (import ${storePaths})
+          mapAttrsRecursiveCond (v: !v ? out) (_: d:
+            toDerivation d.out // mapAttrs (_: toDerivation) d
+          ) (import ${storePaths})
         )
       ];
     }
@@ -80,7 +78,6 @@ in
         registry.nixpkgs.flake = lib.mkForce nixpkgs;
       };
       programs.nh.enable = lib.mkForce false;
-      # home.packages = [ (import nixpkgs {}).stdenv ];
     };
 
     environment.sessionVariables =
