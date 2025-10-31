@@ -17,7 +17,7 @@ let
     }'
 
     PATH+=:${pkgs.nix}/bin
-    nix build --no-link ${config.build.activationPackage}
+    nix build --refresh --no-link ${config.build.activationPackage}
     exec ${config.build.activationPackage}/activate
   '';
 
