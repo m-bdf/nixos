@@ -13,13 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: wimpysworld/nothing-but-nix@main
+      - run: |
+          # sudo apt update
+          # sudo apt remove man-db
+          sudo apt install qemu-user-static
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           determinate: true
           extra-conf: extra-platforms = aarch64-linux
-
-      - run: nix-env -iA qemu-user
 
       - uses: cachix/cachix-action@master
         with:
