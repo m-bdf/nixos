@@ -14,4 +14,6 @@ jobs:
           extra_nix_config: extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
+      - run: nix flake prefetch-inputs
+
       - uses: mxschmitt/action-tmate@master
