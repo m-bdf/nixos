@@ -4,12 +4,12 @@
     trace-import-from-derivation = true;
 
     extra-substituters = [
-      "https://m-bdf.cachix.org"
+      # "https://m-bdf.cachix.org"
       "https://install.determinate.systems"
       "https://nix-on-droid.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s="
+      # "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU="
     ];
@@ -181,16 +181,16 @@
         ];
       };
 
-    packages =
-      mapAttrs (platform: droidPkgs: {
-        nixOnDroidBootstrapZips =
-          (pkgsFor platform).symlinkJoin {
-            name = "nix-on-droid-bootstrap-zips";
-            paths = mapAttrsToList (targetPlatform: system:
-              system.config.build.bootstrapZip.override droidPkgs
-            ) self.nixOnDroidConfigurations;
-          };
-      }) nix-on-droid.packages;
+    # packages =
+    #   mapAttrs (platform: droidPkgs: {
+    #     nixOnDroidBootstrapZips =
+    #       (pkgsFor platform).symlinkJoin {
+    #         name = "nix-on-droid-bootstrap-zips";
+    #         paths = mapAttrsToList (targetPlatform: system:
+    #           system.config.build.bootstrapZip.override droidPkgs
+    #         ) self.nixOnDroidConfigurations;
+    #       };
+    #   }) nix-on-droid.packages;
 
     checks = import ./checks.nix inputs;
 
