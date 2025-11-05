@@ -11,7 +11,7 @@
       enable = true;
       startup = "${lib.getExe pkgs.swaybg} --image ${pkgs.fetchurl rec {
         name = "melynx-sylveon-garden.png";
-        url = "https://weasyl.com/~melynx/submissions/1182575/${sha256}/${name}";
+        url = "https://cdn.weasyl.com/~melynx/submissions/1182575/${sha256}/${name}";
         sha256 = "a5be4ca16b57a2232cd11fd5897ad453ae2eda554826e8efd02533b3f59cfd35";
       }} --mode fill";
     };
