@@ -21,6 +21,7 @@ jobs:
           determinate: true
           extra-conf: |
             eval-cores = 0
+            download-buffer-size = 1073741824 # 1GiB
             extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
@@ -33,7 +34,7 @@ jobs:
           --accept-flake-config --impure
           --trace-verbose --show-trace
           --print-build-logs --keep-going
-            download-buffer-size = 1073741824 # 1GiB
+          --download-buffer-size $((2**30)) # 1GiB
 
       - uses: actions/upload-pages-artifact@main
         with:
