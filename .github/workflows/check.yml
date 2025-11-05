@@ -16,9 +16,10 @@ jobs:
       - run: sudo apt install qemu-user-static
       - uses: wimpysworld/nothing-but-nix@main
 
-      - uses: cachix/install-nix-action@master
+      - uses: DeterminateSystems/nix-installer-action@main
         with:
-          extra_nix_config: extra-platforms = aarch64-linux
+          #determinate: true
+          extra-conf: extra-platforms = aarch64-linux
 
       - uses: cachix/cachix-action@master
         with:
@@ -26,8 +27,6 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - uses: actions/checkout@main
-      - run: nix flake prefetch-inputs
-
       - run: nix flake check
           --accept-flake-config --impure
           --trace-verbose --show-trace
