@@ -14,8 +14,8 @@ jobs:
     steps:
       - uses: wimpysworld/nothing-but-nix@main
       - run: |
-          # sudo apt update
-          # sudo apt remove man-db
+          sudo apt update
+          sudo apt remove man-db
           sudo apt install qemu-user-static
 
       - uses: DeterminateSystems/nix-installer-action@main
