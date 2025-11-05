@@ -15,6 +15,7 @@ jobs:
       - uses: cachix/install-nix-action@master
         with:
           install_url: https://install.determinate.systems/nix
+          install_options: --no-confirm
           extra_nix_config: extra-platforms = aarch64-linux
 
       - run: sudo apt update
