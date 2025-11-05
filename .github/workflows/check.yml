@@ -19,7 +19,7 @@ jobs:
           determinate: true
           extra-conf: extra-platforms = aarch64-linux
 
-      - run: nix-env -iA nixpkgs#qemu-user
+      - run: nix-env -iA qemu-user
 
       - uses: cachix/cachix-action@master
         with:
