@@ -12,11 +12,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: cachix/install-nix-action@master
-        with:
-          install_url: https://install.determinate.systems/nix
-          install_options: --no-confirm
-          extra_nix_config: extra-platforms = aarch64-linux
+      - run: |
+          exe=nix-installer-x86_64-linux
+          curl https://install.determinate.systems/nix/$exe -LO
+          chmod +x $exe
+          ./$exe # --determinate --extra-conf 'extra-platforms = aarch64-linux'
 
       - run: sudo apt update
       - run: sudo apt install qemu-user-static
