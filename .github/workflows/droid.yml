@@ -20,6 +20,8 @@ jobs:
         with:
           determinate: true
           extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
             eval-cores = 0
             extra-platforms = aarch64-linux
 
