@@ -1,6 +1,6 @@
 name: droid
 on:
-  # push:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,6 @@ jobs:
           determinate: true
           extra-conf: |
             eval-cores = 0
-            download-buffer-size = 1073741824 # 1GiB
             extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
