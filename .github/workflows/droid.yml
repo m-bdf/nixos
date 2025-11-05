@@ -33,7 +33,7 @@ jobs:
             # auto-allocate-uids = true
             # use-cgroups = true
             # keep-outputs = true
-            download-buffer-size = 1073741824
+            # download-buffer-size = 1073741824 # 1GiB
 
       - uses: actions/checkout@main
       - uses: cachix/cachix-action@master
