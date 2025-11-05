@@ -12,15 +12,14 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          exe=nix-installer-x86_64-linux
-          curl https://install.determinate.systems/nix/$exe -LO
-          chmod +x $exe
-          ./$exe install # --determinate --extra-conf 'extra-platforms = aarch64-linux'
-
+      - uses: wimpysworld/nothing-but-nix@main
       - run: sudo apt update
       - run: sudo apt install qemu-user-static
-      - uses: wimpysworld/nothing-but-nix@main
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          determinate: true
+          extra-conf: extra-platforms = aarch64-linux
 
       - uses: cachix/cachix-action@master
         with:
