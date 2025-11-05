@@ -17,6 +17,7 @@ jobs:
           sudo apt remove man-db
           sudo apt install qemu-user-static
 
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           determinate: true
@@ -35,9 +36,7 @@ jobs:
           # use-cgroups = true
           # keep-outputs = true
 
-      - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
-
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
