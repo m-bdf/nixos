@@ -18,9 +18,8 @@ let
 
     import ./pkgs/top-level/impure.nix {
       stdenvStages = args: [
-        (_: { __raw = true; cc = null; })
-      ] ++ builtins.tail
-        (import ./pkgs/stdenv/native args);
+        (_: { __raw = true; cc = null; fetchurl = null; })
+      ] ++ builtins.tail (import ./pkgs/stdenv/native args);
 
       overlays = [
         (_: prev: {
