@@ -22,17 +22,17 @@ jobs:
           extra-conf: |
             extra-platforms = aarch64-linux
 
-            experimental-features = auto-allocate-uids blake3-hashes build-time-fetch-tree ca-derivations cgroups configurable-impure-env daemon-trust-override dynamic-derivations external-builders fetch-closure fetch-tree flakes git-hashing impure-derivations local-overlay-store mounted-ssh-store nix-command no-url-literals parallel-eval parse-toml-timestamps pipe-operators read-only-local-store recursive-nix verified-fetches
-            # system-features = benchmark big-parallel kvm nixos-test uid-range
+          # experimental-features = auto-allocate-uids blake3-hashes build-time-fetch-tree ca-derivations cgroups configurable-impure-env daemon-trust-override dynamic-derivations external-builders fetch-closure fetch-tree flakes git-hashing impure-derivations local-overlay-store mounted-ssh-store nix-command no-url-literals parallel-eval parse-toml-timestamps pipe-operators read-only-local-store recursive-nix verified-fetches
+          # system-features = benchmark big-parallel kvm nixos-test uid-range
 
-            # use-xdg-base-directories = true
-            # flake-registry = ""
-            # lazy-locks = true
-            # lazy-trees = true
-            eval-cores = 0
-            # auto-allocate-uids = true
-            # use-cgroups = true
-            # keep-outputs = true
+          # use-xdg-base-directories = true
+          # flake-registry = ""
+          # lazy-locks = true
+          # lazy-trees = true
+          # eval-cores = 0
+          # auto-allocate-uids = true
+          # use-cgroups = true
+          # keep-outputs = true
 
       - uses: actions/checkout@main
       - uses: cachix/cachix-action@master
