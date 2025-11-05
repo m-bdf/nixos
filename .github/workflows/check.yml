@@ -18,7 +18,7 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
-          #determinate: true
+          determinate: true
           extra-conf: extra-platforms = aarch64-linux
 
       - uses: cachix/cachix-action@master
