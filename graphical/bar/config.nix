@@ -1,11 +1,11 @@
-{ lib, niri, pkgs }:
+pkgs:
 
 let
-  spawn = pkg:
-    "${lib.getExe niri} msg action spawn -- ${lib.getExe pkgs.${pkg}}";
+  spawn = pkg: with pkgs.lib;
+    "${getExe pkgs.niri} msg action spawn -- ${getExe pkgs.${pkg}}";
 in
 
-builtins.toJSON {
+{
   layer = "top";
   height = 32;
 

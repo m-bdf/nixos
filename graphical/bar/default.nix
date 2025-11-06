@@ -3,6 +3,7 @@
 {
   programs.waybar = {
     enable = true;
+    systemd.enable = true;
     package = pkgs.waybar.override {
       cavaSupport = false;
       evdevSupport = false;
@@ -18,12 +19,9 @@
       udevSupport = false;
       upowerSupport = false;
     };
-  };
 
-  environment.etc = {
-    "xdg/waybar/config".text = pkgs.callPackage ./config.nix {};
-
-    "xdg/waybar/style.css".text = ''
+    settings.main = import ./config.nix pkgs;
+    style = ''
       button { padding: 0 }
       label { padding: 5px 10px }
 
