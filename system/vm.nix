@@ -41,6 +41,7 @@ in
       })
     ];
 
+    system.nixos-init.enable = mkForce false;
     console.enable = mkForce true;
     boot.kernelParams = [
       "plymouth.ignore-serial-consoles"
