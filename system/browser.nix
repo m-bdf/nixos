@@ -24,31 +24,33 @@ let
 in
 
 {
-  imports = [
-    (lib.setDefaultModuleLocation
-      (inputs.zen-browser + /hm-module.nix)
-      inputs.zen-browser.homeModules.twilight
-    )
-  ];
+  home = {
+    imports = [
+      (lib.setDefaultModuleLocation
+        (inputs.zen-browser + /hm-module.nix)
+        inputs.zen-browser.homeModules.twilight
+      )
+    ];
 
-  programs.zen-browser = {
-    enable = true;
-    profiles.profile = {
-      settings = settings // {
-        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+    programs.zen-browser = {
+      enable = true;
+      profiles.profile = {
+        settings = settings // {
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        };
+        userChrome = ''
+          .zen-current-workspace-indicator,
+          [data-l10n-id*=workspace] {
+            display: none !important;
+          }
+        '';
       };
-      userChrome = ''
-        .zen-current-workspace-indicator,
-        [data-l10n-id*=workspace] {
-          display: none !important;
-        }
-      '';
     };
-  };
 
-  home.file = {
-    ".zen".persist = true;
-    ".zen/profile/prefs.js".text = "";
-    ".zen/profile/storage-sync-v2.sqlite".text = "";
+    home.file = {
+      ".zen".persist = true;
+      ".zen/profile/prefs.js".text = "";
+      # ".zen/profile/storage-sync-v2.sqlite".text = "";
+    };
   };
 }

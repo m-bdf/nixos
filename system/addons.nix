@@ -23,7 +23,7 @@ let
 in
 
 {
-  programs.zen-browser = {
+  home.programs.zen-browser = {
     policies.ExtensionSettings =
       mapAddons (addon: {
         install_url = "file:" + addon;
@@ -35,7 +35,7 @@ in
     profiles.profile = {
       settings = {
         "extensions.webextensions.uuids" = mapAddons (addon: addon.outputHash);
-        "extensions.webextensions.restrictedDomains" = "";
+        # "extensions.webextensions.restrictedDomains" = "";
       };
       extensions = {
         settings = mapAddons (addon: { inherit (addon) settings; });
