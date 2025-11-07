@@ -12,6 +12,7 @@ let
 in
 
 {
+  programs.wayvnc.enable = true;
   home.services.wayvnc = {
     enable = true;
     package = wayvnc;
@@ -26,8 +27,6 @@ in
       relax_encryption = true;
     };
   };
-
-  programs.wayvnc.enable = true;
 
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 5900 ];
 }
