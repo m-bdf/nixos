@@ -30,11 +30,11 @@ in
 
         case "$IFACE-$STATE" in
           eth0-routable)
-            ln -Tsf '${configDir}' \
-              '${config.home.xdg.stateHome}/iwd/ap'
+            ln -Tsf "${configDir}" \
+              ${config.home.xdg.stateHome}/iwd/ap
 
             iwctl device wlan0 set-property Mode ap
-            iwctl ap wlan0 start-profile '${ssid}'
+            iwctl ap wlan0 start-profile "${ssid}"
             ;;
 
           eth0-off)
