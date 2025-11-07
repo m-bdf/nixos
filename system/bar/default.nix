@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  programs.waybar = {
+  home.programs.waybar = {
     enable = true;
     systemd.enable = true;
     package = pkgs.waybar.override {
