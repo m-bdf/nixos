@@ -1,22 +1,13 @@
 { lib, pkgs, ... }:
 
-let
-  wrapSpawn = name: cmd: pkgs.writeShellScriptBin name ''
-    niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
-  '';
-in
-
 {
   systemd.oomd.enableUserSlices = true;
 
   home = {
-    home.packages = with pkgs;
-    let
-      xdg-open = wrapSpawn "xdg-open" ''
-        sleep 1 && ${pkgs.glib}/bin/gio open "$@"
-      '';
-    in
-      [ xdg-open nautilus brave ];
+    services.walker = {
+      enable = true;
+      systemd.enable = true;
+    };
 
     programs.ghostty = {
       enable = true;
@@ -27,10 +18,21 @@ in
       };
     };
 
-    services.walker = {
-      enable = true;
-      systemd.enable = true;
-    };
+    home.packages = with pkgs;
+    let
+      wrapSpawn = name: cmd: pkgs.writeShellScriptBin name ''
+        niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
+      '';
+
+      xdg-open = wrapSpawn "xdg-open" ''
+        sleep 1 && ${pkgs.glib}/bin/gio open "$@"
+      '';
+
+      xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
+        ${lib.getExe pkgs.xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
+      '';
+    in
+      [ xdg-open xdg-terminal-exec nautilus brave ];
   };
 
   programs = {
@@ -44,13 +46,6 @@ in
       };
       lockAll = true;
     }];
-  };
-
-  xdg.terminal-exec = {
-    enable = true;
-    package = wrapSpawn "xdg-terminal-exec" ''
-      ${lib.getExe pkgs.xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
-    '';
   };
 
   home.xdg = {
