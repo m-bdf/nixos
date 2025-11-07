@@ -36,8 +36,5 @@
     ln -s $(${pkgs.fontconfig}/bin/fc-match monospace -f %{file}) $out
   '';
 
-  environment.etc."xdg/ghostty/config".text = ''
-    font-family = monospace
-    font-family = emoji
-  '';
+  home.programs.ghostty.settings.font-family = [ "monospace" "emoji" ];
 }

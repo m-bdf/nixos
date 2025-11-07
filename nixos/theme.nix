@@ -42,11 +42,7 @@
       cursor { xcursor-theme "phinger-cursors-dark"; }
       prefer-no-csd
     '';
-  };
 
-  environment.etc = {
-    "xdg/ghostty/config".text = ''
-      theme = Dracula
-    '';
+    programs.ghostty.settings.theme = "Dracula";
   };
 }

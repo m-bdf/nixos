@@ -7,23 +7,31 @@ let
 in
 
 {
-  environment = {
-    systemPackages = with pkgs;
+  systemd.oomd.enableUserSlices = true;
+
+  home = {
+    home.packages = with pkgs;
     let
       xdg-open = wrapSpawn "xdg-open" ''
         sleep 1 && ${pkgs.glib}/bin/gio open "$@"
       '';
     in
-      [ xdg-open ghostty nautilus brave ];
+      [ xdg-open nautilus brave ];
 
-    etc."xdg/ghostty/config".text = ''
-      resize-overlay = never
-      app-notifications = false
-      confirm-close-surface = false
-    '';
+    programs.ghostty = {
+      enable = true;
+      settings = {
+        resize-overlay = "never";
+        app-notifications = false;
+        confirm-close-surface = false;
+      };
+    };
+
+    services.walker = {
+      enable = true;
+      systemd.enable = true;
+    };
   };
-
-  systemd.oomd.enableUserSlices = true;
 
   programs = {
     niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
