@@ -8,7 +8,7 @@
 
   security.rtkit.enable = true;
   hardware.bluetooth.enable = true;
-  services.playerctld.enable = true;
+  home.services.playerctld.enable = true;
 
   services.pipewire.extraConfig.pipewire = {
     default-output."context.modules" = [{
