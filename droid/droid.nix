@@ -33,8 +33,8 @@
     let
       dnshack = pkgs.callPackage inputs.dnshack {};
     in {
-      DNSHACK_RESOLVER_CMD = "${dnshack}/bin/dnshackresolver";
-      LD_PRELOAD = "${dnshack}/lib/libdnshackbridge.so";
+      DNSHACK_RESOLVER_CMD = dnshack + /bin/dnshackresolver;
+      LD_PRELOAD = dnshack + /lib/libdnshackbridge.so;
     };
   };
 }

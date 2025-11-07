@@ -30,7 +30,7 @@
     FONTCONFIG_FILE = pkgs.makeFontsConf {
       fontDirectories = [];
       impureFontDirectories = [];
-      includes = config.environment.etc.fonts.source + "conf.d";
+      includes = "${config.environment.etc.fonts.source}/conf.d";
     };
   } ''
     ln -s $(${pkgs.fontconfig}/bin/fc-match monospace -f %{file}) $out

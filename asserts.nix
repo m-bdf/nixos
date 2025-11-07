@@ -21,7 +21,7 @@ let
       modules = forEach collectedModules
         (m: m // optionalAttrs (m._file == def.file) {
           disabledModules = [m];
-          key = m.key + ":-" + showOption loc;
+          key = "${m.key}:-${showOption loc}";
           config = removeAttrByPath (dropPrefix loc) m.config;
           imports = [];
         });

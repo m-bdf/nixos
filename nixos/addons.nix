@@ -26,7 +26,7 @@ in
   home.programs.zen-browser = {
     policies.ExtensionSettings =
       mapAddons (addon: {
-        install_url = "file:" + addon;
+        install_url = "file:${addon}";
         installation_mode = "force_installed";
         default_area = "navbar";
         private_browsing = true;

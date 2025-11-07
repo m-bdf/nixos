@@ -29,7 +29,7 @@ let
     };
 
     initialPackageInfo =
-      import "${nixDirectory}/nix-support/package-info.nix";
+      import (nixDirectory + /nix-support/package-info.nix);
 
     config = recursiveUpdate prev.config {
       environment.files.loginInner = initialLoginInner;
