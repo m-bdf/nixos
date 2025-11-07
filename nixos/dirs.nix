@@ -17,7 +17,8 @@ rec
     stateHome = "/var/lib";
   };
 
-  environment.sessionVariables = config.home.systemd.user.sessionVariables;
+  environment.sessionVariables =
+    config.home.systemd.user.sessionVariables;
 
   systemd.tmpfiles.rules =
     map (path: "d ${path} - ${user}") (attrValues home.xdg);
