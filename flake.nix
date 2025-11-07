@@ -149,7 +149,7 @@
         }
       ) nix-on-droid.packages;
 
-    nixosModules = listDir ./system;
+    nixosModules = listDir ./nixos;
     nixosConfigurations =
     let
       baseSystem = nixosSystem {
