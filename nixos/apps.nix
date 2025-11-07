@@ -36,7 +36,7 @@
   };
 
   programs = {
-    niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
+    niri.keybinds."Mod+Return" = "walker";
 
     nautilus-open-any-terminal.enable = true;
     dconf.profiles.user.databases = [{

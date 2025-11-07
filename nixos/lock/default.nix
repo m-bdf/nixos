@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, lib, ... }:
 
 {
   disabledModules = [ "security/pam.nix" ];
@@ -30,8 +30,8 @@
   };
 
   programs.niri = {
-    startup = lib.getExe pkgs.hyprlock;
-    keybinds.XF86AudioMedia = lib.getExe pkgs.hyprlock;
+    startup = "hyprlock";
+    keybinds.XF86AudioMedia = "hyprlock";
   };
 
   security.pam = {

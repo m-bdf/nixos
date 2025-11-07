@@ -1,8 +1,8 @@
 pkgs:
 
 let
-  spawn = pkg: with pkgs.lib;
-    "${getExe pkgs.niri} msg action spawn -- ${getExe pkgs.${pkg}}";
+  spawn = pkg:
+    "niri msg action spawn -- ${pkgs.lib.getExe pkgs.${pkg}}";
 in
 
 {
