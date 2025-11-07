@@ -37,14 +37,14 @@
       enable = true;
       platformTheme.name = "gtk3";
     };
-  };
 
-  environment.etc = {
-    "xdg/niri/config.kdl".text = ''
+    xdg.configFile."niri/config.kdl".text = ''
       cursor { xcursor-theme "phinger-cursors-dark"; }
       prefer-no-csd
     '';
+  };
 
+  environment.etc = {
     "xdg/ghostty/config".text = ''
       theme = Dracula
     '';

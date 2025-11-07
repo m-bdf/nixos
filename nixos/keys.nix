@@ -34,7 +34,7 @@ in
     apply = lib.mapAttrs (keys: cmd: ''spawn-sh "${cmd}"'');
   };
 
-  config.environment.etc."xdg/niri/config.kdl".text = ''
+  config.home.xdg.configFile."niri/config.kdl".text = ''
     binds {
       ${lib.concatMapAttrsStringSep "\n  "
         (keys: action: "${keys} { ${action}; }")

@@ -16,11 +16,13 @@
       }} --mode fill";
     };
 
-    environment = {
-      systemPackages = [ pkgs.wl-clipboard-rs ];
-      variables.NIXOS_OZONE_WL = "1";
+    home = {
+      home = {
+        packages = [ pkgs.wl-clipboard-rs ];
+        sessionVariables.NIXOS_OZONE_WL = "1";
+      };
 
-      etc."xdg/niri/config.kdl".text = ''
+      xdg.configFile."niri/config.kdl".text = ''
         input {
           disable-power-key-handling
           touchpad { natural-scroll; tap; }
