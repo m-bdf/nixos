@@ -8,22 +8,21 @@
 
   home.programs.hyprlock = {
     enable = true;
-    extraConfig =
-    let
-      mkPowerButton = i: { icon, cmd }: ''
-        label {
-          halign = right
-          valign = top
-          position = ${toString ((1 - i) * 33)}, -7
+    extraConfig = lib.readFile ./config.conf;
 
-          font_size = 11
-          text = cmd[] echo ' ${icon}  '
-          onclick = ${cmd}
-        }
-      '';
+    settings.label =
+    let
+      mkPowerButton = i: { icon, cmd }: {
+        halign = "right";
+        valign = "top";
+        position = "${toString ((1 - i) * 33)}, -7";
+
+        font_size = 11;
+        text = "cmd[] echo ' ${icon}  '";
+        onclick = cmd;
+      };
     in
-      lib.readFile ./config.conf +
-      lib.concatImapStrings mkPowerButton [
+      lib.imap mkPowerButton [
         { icon = ""; cmd = "systemctl reboot"; }
         { icon = "⏻"; cmd = "systemctl poweroff"; }
         { icon = ""; cmd = "niri msg action quit --skip-confirmation"; }
