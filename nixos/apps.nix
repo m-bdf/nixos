@@ -20,16 +20,16 @@
 
     home.packages = with pkgs;
     let
-      wrapSpawn = name: cmd: pkgs.writeShellScriptBin name ''
+      wrapSpawn = name: cmd: writeShellScriptBin name ''
         niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
       '';
 
       xdg-open = wrapSpawn "xdg-open" ''
-        sleep 1 && ${pkgs.glib}/bin/gio open "$@"
+        sleep 1 && ${glib}/bin/gio open "$@"
       '';
 
       xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
-        ${lib.getExe pkgs.xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
+        ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
       '';
     in
       [ xdg-open xdg-terminal-exec nautilus brave ];
