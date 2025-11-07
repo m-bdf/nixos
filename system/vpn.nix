@@ -28,8 +28,5 @@
   systemd.services.tailscaled-set.serviceConfig.ExecStartPre =
     "-${lib.getExe pkgs.tailscale} up --reset --timeout=1s";
 
-  programs.wayvnc.enable = true;
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 5900 ];
-
   home.xdg.stateFile.tailscale.persist = true;
 }
