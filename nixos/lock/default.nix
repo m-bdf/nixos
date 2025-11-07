@@ -6,26 +6,29 @@
     (inputs.fprintd + /nixos/modules/security/pam.nix)
   ];
 
-  environment.etc."xdg/hypr/hyprlock.conf".text =
-  let
-    mkPowerButton = i: { icon, cmd }: ''
-      label {
-        halign = right
-        valign = top
-        position = ${toString ((1 - i) * 33)}, -7
+  home.programs.hyprlock = {
+    enable = true;
+    extraConfig =
+    let
+      mkPowerButton = i: { icon, cmd }: ''
+        label {
+          halign = right
+          valign = top
+          position = ${toString ((1 - i) * 33)}, -7
 
-        font_size = 11
-        text = cmd[] echo ' ${icon}  '
-        onclick = ${cmd}
-      }
-    '';
-  in
-    lib.readFile ./config.conf +
-    lib.concatImapStrings mkPowerButton [
-      { icon = ""; cmd = "systemctl reboot"; }
-      { icon = "⏻"; cmd = "systemctl poweroff"; }
-      { icon = ""; cmd = "niri msg action quit --skip-confirmation"; }
-    ];
+          font_size = 11
+          text = cmd[] echo ' ${icon}  '
+          onclick = ${cmd}
+        }
+      '';
+    in
+      lib.readFile ./config.conf +
+      lib.concatImapStrings mkPowerButton [
+        { icon = ""; cmd = "systemctl reboot"; }
+        { icon = "⏻"; cmd = "systemctl poweroff"; }
+        { icon = ""; cmd = "niri msg action quit --skip-confirmation"; }
+      ];
+  };
 
   programs.niri = {
     startup = lib.getExe pkgs.hyprlock;
