@@ -20,7 +20,7 @@ let
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
     exec ${lib.getExe pkgs.nixd} "$@" \
-      --nixpkgs-expr="(import ${./configs.nix} ./.).pkgs" \
+      --nixpkgs-expr='(import ${./configs.nix} ./.).pkgs' \
       --nixos-options-expr='(import ${./configs.nix} ./.).options'
   '';
 in
