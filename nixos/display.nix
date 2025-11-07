@@ -31,20 +31,10 @@ in
     };
   };
 
-  systemd = {
-    packages = [
-      (pkgs.sunsetr.overrideAttrs {
-        postInstall = ''
-          substituteInPlace sunsetr.service --replace-fail /usr $out
-          install -Dm644 sunsetr.service $out/lib/systemd/user/sunsetr.service
-        '';
-        doCheck = false; # tmp
-      })
-    ];
-
-    user.services = {
-      sunsetr.wantedBy = [ "graphical-session.target" ];
-      geoclue-agent.enable = false;
-    };
+  home.services.gammastep = {
+    enable = true;
+    provider = "geoclue2";
   };
+
+  systemd.user.services.geoclue-agent.enable = false;
 }
