@@ -27,7 +27,7 @@
   };
 
   boot.plymouth.font = pkgs.runCommandLocal "plymouth-font" {
-    env.FONTCONFIG_FILE = pkgs.makeFontsConf {
+    FONTCONFIG_FILE = pkgs.makeFontsConf {
       fontDirectories = [];
       impureFontDirectories = [];
       includes = config.environment.etc.fonts.source + "conf.d";
