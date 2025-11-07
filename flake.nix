@@ -127,7 +127,7 @@
   in
 
   {
-    homeModules = listDir ./terminal // listDir ./graphical;
+    homeModules = listDir ./home;
     homeConfigurations =
       mapAttrs (platform: _:
         home-manager.lib.homeManagerConfiguration {
@@ -144,7 +144,7 @@
           pkgs = pkgsFor platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.nixOnDroidModules ++ [{
-            home.imports = attrValues (listDir ./terminal);
+            home.imports = attrValues self.homeModules;
           }];
         }
       ) nix-on-droid.packages;
