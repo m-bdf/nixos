@@ -49,7 +49,7 @@ let
         }).activationPackage;
     }) self.homeConfigurations;
 
-  configTests =
+  nixosTests =
     mapAttrsToList (name: system: {
       ${system.pkgs.stdenv.system} = {
         "nixos-config-${name}" =
@@ -60,4 +60,4 @@ let
     }) self.nixosConfigurations;
 in
 
-foldl' recursiveUpdate gitHooks (homeTests ++ configTests)
+foldl' recursiveUpdate gitHooks (homeTests ++ nixosTests)
