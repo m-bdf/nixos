@@ -3,16 +3,20 @@
 let
   replaceDirectDependencies = args:
     pkgs.replaceDirectDependencies (args // {
-      replacements = map (r: r // {
-        oldDependency = with lib.strings;
-          substring 0 43 r.oldDependency +
-          replicate (stringLength r.oldDependency - 43) ".";
-      }) (
-        lib.optional (args.replacements != []) {
-          oldDependency = args.drv;
-          newDependency = placeholder "out";
-        } ++ args.replacements
-      );
+      replacements = with lib.strings;
+        map (r: rec {
+          oldDependency = "${substring 0 43 r.oldDependency}[-${
+            replaceString "-" "" (substring 44 (-1) r.oldDependency)
+          }]{00,${toString (stringLength r.oldDependency - 43)}}";
+
+          newDependency = pkgs.runCommand (
+            substring 44 (-1) r.newDependency + replicate (
+              stringLength oldDependency - stringLength r.newDependency
+            ) "-"
+          ) {} ''
+            cp -R ${r.newDependency} $out
+          '';
+        }) args.replacements;
     });
 
   mkReplacement = old: new: {
