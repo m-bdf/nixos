@@ -5,7 +5,8 @@
     (lib.mkAliasOptionModule [ "home" ] [ "home-manager" "config" ])
   ];
 
-  options.environment.path = config.home.lib.mkPathOption;
+  # options.environment.path = config.home.lib.mkPathOption;
+  options.build.activationPackage = config.home.lib.mkToplevelOption;
 
   config = {
     user = {
