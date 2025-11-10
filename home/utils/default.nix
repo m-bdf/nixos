@@ -1,54 +1,52 @@
 { config, lib, pkgs, ... }:
 
 let
-  replaceDirectDependencies = args:
-    pkgs.replaceDirectDependencies (args // {
-      replacements = with lib.strings;
-        map (r: rec {
-          oldDependency = "${substring 0 43 r.oldDependency}[-${
-            replaceString "-" "" (substring 44 (-1) r.oldDependency)
-          }]{00,${toString (stringLength r.oldDependency - 43)}}";
+  getStoreHash = lib.substring 0 43;
+  getNameVersion = lib.substring 44 (-1);
 
-          newDependency = pkgs.runCommand (
-            substring 44 (-1) r.newDependency + replicate (
-              stringLength oldDependency - stringLength r.newDependency
-            ) "-"
-          ) {} ''
-            cp -R ${r.newDependency} $out
-          '';
-        }) args.replacements;
-    });
+  mkRegexReplacement = r:
+    with lib.strings; rec {
+      oldDependency = "${
+        getStoreHash r.oldDependency
+      }[-${
+        replaceString "-" "" (getNameVersion r.oldDependency)
+      }]{00,${
+        toString (stringLength (getNameVersion r.oldDependency))
+      }}";
 
-  mkReplacement = old: new: {
-    oldDependency = old;
+      newDependency = pkgs.runCommand (
+        getNameVersion r.newDependency + replicate (
+          stringLength oldDependency - stringLength r.newDependency
+        ) "-"
+      ) {} ''
+        cp -R ${r.newDependency} $out
+      '';
+    };
+
+  mkReplacement = old: new: rec {
+    oldDependency = pkgs.${old};
     newDependency =
-      if old.name == new.name then new
+      if oldDependency.name == new.name then new
       else pkgs.symlinkJoin {
-        name = lib.substring 44 (-1) old;
+        name = getNameVersion oldDependency;
         paths = [new];
       };
   };
 
-  mkReplacements = old: new: map (o:
-    mkReplacement pkgs.${old}.${o} (lib.getOutput o new)
-  ) pkgs.${old}.outputs;
-
   replacements = with pkgs;
-    lib.concatLists (
-      lib.mapAttrsToList mkReplacements {
-        coreutils = uutils-coreutils-noprefix;
-        coreutils-full = uutils-coreutils-noprefix;
-        diffutils = uutils-diffutils;
-        findutils = uutils-findutils;
+    lib.mapAttrsToList mkReplacement {
+      coreutils = uutils-coreutils-noprefix;
+      coreutils-full = uutils-coreutils-noprefix;
+      diffutils = uutils-diffutils;
+      findutils = uutils-findutils;
 
-        glibc = glibc.overrideAttrs {
-          prePatch = ''
-            sed -i '/weak_alias/d' sysdeps/posix/isatty.c
-            cat ${./isatty.c} >> sysdeps/posix/isatty.c
-          '';
-        };
-      }
-    );
+      glibc = glibc.overrideAttrs {
+        prePatch = ''
+          sed -i '/weak_alias/d' sysdeps/posix/isatty.c
+          cat ${./isatty.c} >> sysdeps/posix/isatty.c
+        '';
+      };
+    };
 in
 
 {
@@ -59,7 +57,10 @@ in
     lib.mkToplevelOption = lib.mkOption {
       apply = drv:
         pkgs.replaceDependencies.override {
-          inherit replaceDirectDependencies;
+          replaceDirectDependencies = args:
+            pkgs.replaceDirectDependencies (args // {
+              replacements = map mkRegexReplacement args.replacements;
+            });
         } {
           inherit drv replacements;
         };
