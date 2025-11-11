@@ -1,7 +1,6 @@
 { config, nixosConfig, lib, pkgs, ... }:
 
 let
-
   replaceDirectDependencies = args:
     pkgs.replaceDirectDependencies (args // {
       replacements = map (r: r // {
