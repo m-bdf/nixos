@@ -16,8 +16,9 @@ int isatty(int fd) {
   if (!pager || !pager[0]) return 0;
   char comm[strlen(pager) + 1];
 
-  static char path[PATH_MAX];
-  sprintf(path, "/proc/self/fd/%d", fd);
+  static char cmdline[PATH_MAX],
+    path[PATH_MAX] = "/dev/stdout";
+  const char *cmd = cmdline;
 
   static struct stat statself, statbuf;
   if (stat(path, &statself) < 0) return 0;
@@ -36,12 +37,21 @@ int isatty(int fd) {
 
     globfree(&globbuf);
 
+    strcpy(path + len, "/cmdline");
+    if ((fd = open(path, O_RDONLY)) < 0) return 0;
+
+    if (read(fd, cmdline, sizeof(cmdline)) < 0 ||
+      close(fd) < 0) return 0;
+
+    if (cmdline[0] == '/')
+      cmd = strrchr(cmdline, '/') + 1;
+    if (!strcmp(cmd, pager)) return 1;
+
     strcpy(path + len, "/comm");
     if ((fd = open(path, O_RDONLY)) < 0) return 0;
 
-    len = read(fd, comm, sizeof(comm));
-    if (close(fd) < 0 ||
-      len < sizeof(comm)) return 0;
+    if ((len = read(fd, comm, sizeof(comm))) < 0 ||
+      close(fd) < 0) return 0;
 
     return comm[len - 1] == '\n' &&
       !strncmp(comm, pager, len - 1);
