@@ -1,34 +1,22 @@
-{ config, lib, pkgs, ... }:
+{ config, nixosConfig, lib, pkgs, ... }:
 
 let
-  getStoreHash = lib.substring 0 43;
-  getNameVersion = lib.substring 44 (-1);
 
-  mkRegexReplacement = r:
-    with lib.strings; rec {
-      oldDependency = "${
-        getStoreHash r.oldDependency
-      }[-${
-        replaceString "-" "" (getNameVersion r.oldDependency)
-      }]{00,${
-        toString (stringLength (getNameVersion r.oldDependency))
-      }}";
-
-      newDependency = pkgs.runCommand (
-        getNameVersion r.newDependency + replicate (
-          stringLength oldDependency - stringLength r.newDependency
-        ) "-"
-      ) {} ''
-        cp -R ${r.newDependency} $out
-      '';
-    };
+  replaceDirectDependencies = args:
+    pkgs.replaceDirectDependencies (args // {
+      replacements = map (r: r // {
+        oldDependency = with lib.strings;
+          substring 0 43 r.oldDependency +
+          replicate (stringLength r.oldDependency - 43) ".";
+      }) args.replacements;
+    });
 
   mkReplacement = old: new: rec {
     oldDependency = pkgs.${old};
     newDependency =
       if oldDependency.name == new.name then new
       else pkgs.symlinkJoin {
-        name = getNameVersion oldDependency;
+        name = lib.substring 44 (-1) oldDependency;
         paths = [new];
       };
   };
@@ -50,19 +38,17 @@ let
 in
 
 {
-  # options.home.path = config.lib.mkPathOption;
   options.home.activationPackage = config.lib.mkToplevelOption;
 
   config = {
     lib.mkToplevelOption = lib.mkOption {
       apply = drv:
         pkgs.replaceDependencies.override {
-          replaceDirectDependencies = args:
-            pkgs.replaceDirectDependencies (args // {
-              replacements = map mkRegexReplacement args.replacements;
-            });
+          inherit replaceDirectDependencies;
         } {
           inherit drv replacements;
+          cutoffPackages = lib.optional (nixosConfig != null)
+            nixosConfig.system.build.initialRamdisk;
         };
     };
 

@@ -1,7 +1,6 @@
 { config, lib, ... }:
 
 {
-  # options.system.path = config.home.lib.mkPathOption;
   options.system.build = {
     toplevel = config.home.lib.mkToplevelOption;
     vm = config.home.lib.mkToplevelOption;
