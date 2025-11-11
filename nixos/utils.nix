@@ -1,10 +1,7 @@
 { config, lib, ... }:
 
 {
-  options.system.build = {
-    toplevel = config.home.lib.mkToplevelOption;
-    vm = config.home.lib.mkToplevelOption;
-  };
+  options.system.build.toplevel = config.home.lib.mkToplevelOption;
 
   config = {
     programs = {
