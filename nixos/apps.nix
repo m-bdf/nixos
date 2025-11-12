@@ -4,11 +4,6 @@
   systemd.oomd.enableUserSlices = true;
 
   home = {
-    services.walker = {
-      enable = true;
-      systemd.enable = true;
-    };
-
     programs.ghostty = {
       enable = true;
       settings = {
@@ -36,7 +31,7 @@
   };
 
   programs = {
-    niri.keybinds."Mod+Return" = "walker";
+    niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
 
     nautilus-open-any-terminal.enable = true;
     dconf.profiles.user.databases = [{
