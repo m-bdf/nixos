@@ -24,7 +24,12 @@ let
     lib.mapAttrsToList mkReplacement {
       coreutils = uutils-coreutils-noprefix;
       coreutils-full = uutils-coreutils-noprefix;
-      diffutils = uutils-diffutils;
+      diffutils = uutils-diffutils.overrideAttrs {
+        postInstall = ''
+          ln -s diffutils $out/bin/diff
+          ln -s diffutils $out/bin/cmp
+        '';
+      };
       findutils = uutils-findutils;
 
       glibc = glibc.overrideAttrs {
