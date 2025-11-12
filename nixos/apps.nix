@@ -18,11 +18,9 @@
       wrapSpawn = name: cmd: writeShellScriptBin name ''
         niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
       '';
-
       xdg-open = wrapSpawn "xdg-open" ''
         sleep 1 && ${glib}/bin/gio open "$@"
       '';
-
       xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
         ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
       '';
