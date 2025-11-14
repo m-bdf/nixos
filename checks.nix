@@ -56,7 +56,7 @@ let
           specialArgs.modules =
             attrValues self.nixOnDroidModules;
           modules = [ ./asserts.nix ];
-        }).activationPackage;
+        }).config.build.activationPackage;
     }) self.nixOnDroidConfigurations;
 
   nixosTests =
