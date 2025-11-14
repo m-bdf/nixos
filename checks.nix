@@ -49,6 +49,16 @@ let
         }).activationPackage;
     }) self.homeConfigurations;
 
+  droidTests =
+    mapAttrsToList (platform: system: {
+      ${platform}.droid-config =
+        (system.config.build.extendModules {
+          specialArgs.modules =
+            attrValues self.nixOnDroidModules;
+          modules = [ ./asserts.nix ];
+        }).activationPackage;
+    }) self.nixOnDroidConfigurations;
+
   nixosTests =
     mapAttrsToList (name: system: {
       ${system.pkgs.stdenv.system} = {
@@ -60,4 +70,5 @@ let
     }) self.nixosConfigurations;
 in
 
-foldl' recursiveUpdate gitHooks (homeTests ++ nixosTests)
+foldl' recursiveUpdate gitHooks
+  (homeTests ++ droidTests ++ nixosTests)

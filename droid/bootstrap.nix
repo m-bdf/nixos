@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, droidPkgs, extendModules, ... }:
 
 with lib;
 
@@ -31,23 +31,31 @@ let
     initialPackageInfo =
       import (nixDirectory + /nix-support/package-info.nix);
 
-    config = recursiveUpdate prev.config {
+    config = recursiveUpdate (extendModules {
+      modules = [{ home-manager.useUserPackages = false; }];
+    }).config {
       environment.files.loginInner = initialLoginInner;
     };
   };
 
-  exportBootstrap = droidPkgs:
-    pkgs.runCommand "bootstrapZip-${arch}" {
-      bootstrap = droidPkgs."bootstrap-${arch}".override overrideBootstrap;
-    } ''
-      mkdir $out && ln -s ${initialLoginInner} $out/activate-${arch}.sh
-      cd $bootstrap && ${getExe pkgs.zip} -r9q $out/bootstrap-${arch} .
-    '';
+  bootstrapZip = pkgs.runCommand "bootstrapZip-${arch}" {
+    bootstrap = droidPkgs."bootstrap-${arch}".override overrideBootstrap;
+  } ''
+    mkdir $out && ln -s ${initialLoginInner} $out/activate-${arch}.sh
+    cd $bootstrap && ${getExe pkgs.zip} -r9q $out/bootstrap-${arch} .
+  '';
 in
 
 {
-  options.build.bootstrapZip = mkOption {
-    default = makeOverridable exportBootstrap {};
+  options = {
+    environment.files.prootStatic = mkOption {
+      apply = _: droidPkgs."prootTermux-${arch}";
+    };
+
+    build = {
+      bootstrapZip = mkOption { default = bootstrapZip; };
+      extendModules = mkOption { default = extendModules; };
+    };
   };
 
   config.environment.packages = [

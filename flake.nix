@@ -187,7 +187,9 @@
           (pkgsFor platform).symlinkJoin {
             name = "nix-on-droid-bootstrap-zips";
             paths = mapAttrsToList (targetPlatform: system:
-              system.config.build.bootstrapZip.override droidPkgs
+              (system.config.build.extendModules {
+                specialArgs = { inherit droidPkgs; };
+              }).config.build.bootstrapZip
             ) self.nixOnDroidConfigurations;
           };
       }) nix-on-droid.packages;
