@@ -24,7 +24,7 @@
     home = {
       nix.settings = {
         use-xdg-base-directories = lib.mkForce false;
-        # auto-optimise-store = lib.mkForce false;
+        auto-optimise-store = lib.mkForce false;
       };
       programs.nh.enable = lib.mkForce false;
     };

@@ -12,6 +12,7 @@
       eval-cores = 0;
       auto-allocate-uids = true;
       use-cgroups = true;
+      auto-optimise-store = true;
       keep-outputs = true;
     };
 
