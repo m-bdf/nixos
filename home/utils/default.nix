@@ -22,6 +22,13 @@ let
 
   replacements = with pkgs;
     lib.mapAttrsToList mkReplacement {
+      glibc = glibc.overrideAttrs {
+        prePatch = ''
+          sed -i '/weak_alias/d' sysdeps/posix/isatty.c
+          cat ${./isatty.c} >> sysdeps/posix/isatty.c
+        '';
+      };
+
       coreutils = uutils-coreutils-noprefix;
       coreutils-full = uutils-coreutils-noprefix;
       diffutils = uutils-diffutils.overrideAttrs {
@@ -31,38 +38,20 @@ let
         '';
       };
       findutils = uutils-findutils;
-
-      glibc = glibc.overrideAttrs {
-        prePatch = ''
-          sed -i '/weak_alias/d' sysdeps/posix/isatty.c
-          cat ${./isatty.c} >> sysdeps/posix/isatty.c
-        '';
-      };
     };
 in
 
 {
   options.home.activationPackage = config.lib.mkToplevelOption;
 
-  config = {
-    lib.mkToplevelOption = lib.mkOption {
-      apply = drv:
-        pkgs.replaceDependencies.override {
-          inherit replaceDirectDependencies;
-        } {
-          inherit drv replacements;
-          cutoffPackages = lib.optional (nixosConfig != null)
-            nixosConfig.system.build.initialRamdisk;
-        };
-    };
-
-    home.packages = with pkgs; [ curl ];
-
-    programs = {
-      fd.enable = true;
-      ripgrep.enable = true;
-
-      man.generateCaches = false;
-    };
+  config.lib.mkToplevelOption = lib.mkOption {
+    apply = drv:
+      pkgs.replaceDependencies.override {
+        inherit replaceDirectDependencies;
+      } {
+        inherit drv replacements;
+        cutoffPackages = lib.optional (nixosConfig != null)
+          nixosConfig.system.build.initialRamdisk;
+      };
   };
 }
