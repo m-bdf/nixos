@@ -19,9 +19,14 @@ let
   '';
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
-    exec ${lib.getExe pkgs.nixd} "$@" \
-      --nixpkgs-expr='(import ${./configs.nix} ./.).pkgs' \
-      --nixos-options-expr='(import ${./configs.nix} ./.).options'
+    configs='(import ${./configs.nix} ./.)'
+
+    while ! ${lib.getExe pkgs.nixd} "$@" \
+      --nixpkgs-expr="$configs.pkgs" \
+      --nixos-options-expr="$configs.options"
+    do
+      sleep 1
+    done
   '';
 in
 

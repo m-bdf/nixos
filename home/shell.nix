@@ -12,7 +12,7 @@
     starship = {
       enable = true;
       settings = { command_timeout = 2500; } // lib.importTOML
-        (pkgs.starship + /share/starship/presets/nerd-font-symbols.toml);
+        (pkgs.starship.src + /docs/public/presets/toml/nerd-font-symbols.toml);
     };
 
     nix-index-database.comma.enable = true;
