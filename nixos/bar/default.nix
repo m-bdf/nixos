@@ -8,6 +8,7 @@
       cavaSupport = false;
       evdevSupport = false;
       experimentalPatches = false;
+      gpsSupport = false;
       inputSupport = false;
       jackSupport = false;
       mpdSupport = false;
