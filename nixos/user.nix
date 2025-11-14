@@ -29,8 +29,6 @@
     soteria.enable = true;
   };
 
-  nix.settings.trusted-users = [ "@wheel" ];
-
   programs.fish = {
     enable = true;
     useBabelfish = true;
