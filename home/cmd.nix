@@ -12,6 +12,10 @@ let
               elem "command-line-utilities" (
                 importTOML (final.src + /Cargo.toml)
               ).package.categories or []
+            &&
+              any (d: d.name == "rustix") (
+                importTOML (final.src + /Cargo.lock)
+              ).package
             ) "--cfg=rustix_use_libc";
         });
     });
