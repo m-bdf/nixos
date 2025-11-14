@@ -1,7 +1,10 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 {
-  nix.channel.enable = false;
+  nix = {
+    channel.enable = false;
+    inherit (config.home.nix) extraOptions;
+  };
 
   system = {
     disableInstallerTools = true;

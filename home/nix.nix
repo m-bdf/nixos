@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   nix = {
@@ -6,7 +6,6 @@
 
     settings = {
       use-xdg-base-directories = true;
-      trusted-users = [ config.home.username ];
       flake-registry = "";
       lazy-locks = true;
       lazy-trees = true;
