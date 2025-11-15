@@ -36,8 +36,13 @@ in
     xdg.enable = true;
 
     home = {
-      activation.unsetHome =
-        hm.dag.entryBefore [ "linkGeneration" ] "HOME=";
+      activation = {
+        unsetHome = hm.dag.entryBefore
+          [ "linkGeneration" ] "HOME=";
+        resetHome = hm.dag.entryBetween
+          [ "batCache" ] [ "linkGeneration" ]
+          "HOME=${config.home.homeDirectory}";
+      };
 
       file = {
         "Documents" = {
