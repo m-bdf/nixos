@@ -1,4 +1,8 @@
-{ inputs, options, config, lib, pkgs, ... }:
+{ inputs, options, config, lib, pkgs, droidPkgs, ... }:
+
+let
+  arch = lib.removeSuffix "-linux" pkgs.stdenv.system;
+in
 
 {
   imports = [
@@ -8,9 +12,16 @@
   options = {
     build.activationPackage = config.home.lib.mkToplevelOption;
     environment.path = config.home.lib.mkPathOption;
+
+    environment.files.prootStatic = lib.mkOption {
+      apply = _: droidPkgs."prootTermux-${arch}";
+    };
   };
 
   config = {
+    _module.args.droidPkgs =
+      inputs.nix-on-droid.packages."${arch}-linux";
+
     user = {
       userName = "mae";
       shell = pkgs.fish;

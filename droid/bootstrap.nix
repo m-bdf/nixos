@@ -47,15 +47,9 @@ let
 in
 
 {
-  options = {
-    environment.files.prootStatic = mkOption {
-      apply = _: droidPkgs."prootTermux-${arch}";
-    };
-
-    build = {
-      bootstrapZip = mkOption { default = bootstrapZip; };
-      extendModules = mkOption { default = extendModules; };
-    };
+  options.build = {
+    bootstrapZip = mkOption { default = bootstrapZip; };
+    extendModules = mkOption { default = extendModules; };
   };
 
   config.environment.packages = [
