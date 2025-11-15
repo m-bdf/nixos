@@ -198,9 +198,11 @@
 
     devShells =
       mapAttrs (platform: checks: {
-        default = (pkgsFor platform).mkShellNoCC {
-          inherit (checks.git-hooks) name shellHook;
-        };
+        default = with pkgsFor platform;
+          (stdenvNoCC.override {
+            setupScript = emptyFile;
+          }).mkDerivation
+            checks.git-hooks.drvAttrs;
       }) self.checks;
   };
 }
