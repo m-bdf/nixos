@@ -30,7 +30,6 @@ let
       };
 
       coreutils = uutils-coreutils-noprefix;
-      coreutils-full = uutils-coreutils-noprefix;
       diffutils = uutils-diffutils.overrideAttrs {
         postInstall = ''
           ln -s diffutils $out/bin/diff
