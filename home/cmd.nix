@@ -23,9 +23,18 @@ let
 in
 
 {
-  options._module.args = lib.mkOption {
-    apply = args: args // {
-      pkgs = args.pkgs.extend rustixUseLibcOverlay;
+  options = {
+    _module.args = lib.mkOption {
+      apply = args: args // {
+        pkgs = args.pkgs.extend rustixUseLibcOverlay;
+      };
+    };
+
+    home.path = lib.mkOption {
+      apply = drv: drv.override {
+        includeClosures = true;
+        ignoreCollisions = true;
+      };
     };
   };
 
