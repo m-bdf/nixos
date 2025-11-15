@@ -7,13 +7,7 @@
 
   options = {
     build.activationPackage = config.home.lib.mkToplevelOption;
-
-    environment.path = lib.mkOption {
-      apply = drv: drv.override {
-        includeClosures = true;
-        ignoreCollisions = true;
-      };
-    };
+    environment.path = config.home.lib.mkPathOption;
   };
 
   config = {

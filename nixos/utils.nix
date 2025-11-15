@@ -3,13 +3,7 @@
 {
   options.system = {
     build.toplevel = config.home.lib.mkToplevelOption;
-
-    path = lib.mkOption {
-      apply = drv: drv.override {
-        includeClosures = true;
-        ignoreCollisions = true;
-      };
-    };
+    path = config.home.lib.mkPathOption;
   };
 
   config = {
