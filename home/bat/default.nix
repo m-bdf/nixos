@@ -42,7 +42,10 @@ in
       style = "plain";
       theme = "GitHub Dark";
     };
-    themes.github.src = inputs.github-textmate-theme;
+    themes."GitHub Dark" = {
+      src = inputs.github-textmate-theme;
+      file = "GitHub Dark.tmTheme";
+    };
   };
 
   home.sessionVariables.PAGER = "bat";
