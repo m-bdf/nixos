@@ -30,12 +30,12 @@
       extraSpecialArgs.inputs = inputs;
     };
 
-    home = {
+    home = lib.mapAttrsRecursive (_: lib.mkForce) {
       nix.settings = {
-        use-xdg-base-directories = lib.mkForce false;
-        auto-optimise-store = lib.mkForce false;
+        use-xdg-base-directories = false;
+        auto-optimise-store = false;
       };
-      programs.nh.enable = lib.mkForce false;
+      programs.nh.enable = false;
     };
 
     environment.sessionVariables =
