@@ -32,7 +32,9 @@ let
       import (nixDirectory + /nix-support/package-info.nix);
 
     config = recursiveUpdate (extendModules {
-      modules = [{ home-manager.useUserPackages = false; }];
+      modules = [{
+        home-manager.useUserPackages = false;
+      }];
     }).config {
       environment.files.loginInner = initialLoginInner;
     };
