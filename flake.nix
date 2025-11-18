@@ -201,8 +201,9 @@
         default = with pkgsFor platform;
           (stdenvNoCC.override {
             setupScript = emptyFile;
-          }).mkDerivation
-            checks.git-hooks.drvAttrs;
+          }).mkDerivation {
+            inherit (checks.git-hooks) name shellHook;
+          };
       }) self.checks;
   };
 }
