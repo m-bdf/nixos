@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let
   rustixUseLibcOverlay = _: prev: {
@@ -35,13 +35,11 @@ in
 
   config = {
     lib.mkPathOption = lib.mkOption {
-      apply = drv: drv.override {
-        includeClosures = true;
-        ignoreCollisions = true;
-      };
+      apply = drv: drv.override (prev: {
+        paths = prev.paths ++ lib.concatLists
+          (lib.catAttrs "propagatedBuildInputs" prev.paths);
+      });
     };
-
-    home.packages = with pkgs; [ curl ];
 
     programs = {
       fd.enable = true;

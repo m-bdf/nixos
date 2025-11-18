@@ -54,7 +54,7 @@ in
 
   config.environment.packages = [
     (pkgs.writeScriptBin "nod-update" ''
-      curl -s https://fw13.tail3a4624.ts.net/activate-${arch}.sh | sh
+      ${getExe pkgs.xh} https://fw13.tail3a4624.ts.net/activate-${arch}.sh | sh
     '')
   ];
 }

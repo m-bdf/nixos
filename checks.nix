@@ -21,12 +21,13 @@ let
       enable = true;
       stages = [ "pre-push" ];
       pass_filenames = false;
-      entry = "sh " + builtins.toFile
-        "check-committer-is-author" ''
+      entry = ''
+        /bin/sh -c '
           ! echo %H %{a,c}{n,e,d} |
           git log --format="$(cat)" |
-          grep -Po '^.{40}(?!(.+)\1)'
-        '';
+          grep -Po "^.{40}(?!(.+)\1)"
+        '
+      '';
     };
   };
 
