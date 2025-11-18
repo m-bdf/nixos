@@ -3,21 +3,20 @@
 let
   rustixUseLibcOverlay = _: prev: {
     rustPlatform = prev.rustPlatform.overrideScope (_: prev: {
-      buildRustPackage = args:
-        (prev.buildRustPackage args).overrideAttrs (final: _: {
-          passthru.dev = prev.buildRustPackage args;
+      buildRustPackage = args: with lib;
+      let
+        default = prev.buildRustPackage args;
+        withLibc = default.overrideAttrs {
+          passthru.dev = default;
+          NIX_RUSTFLAGS = "--cfg=rustix_use_libc";
+        };
 
-          NIX_RUSTFLAGS = with lib;
-            optionalDrvAttr (
-              elem "command-line-utilities" (
-                importTOML (final.src + /Cargo.toml)
-              ).package.categories or []
-            &&
-              any (d: d.name == "rustix") (
-                importTOML (final.src + /Cargo.lock)
-              ).package
-            ) "--cfg=rustix_use_libc";
-        });
+        isCLI = elem "command-line-utilities"
+          (importTOML (default.src + /Cargo.toml)).package.categories or [];
+        usesRustix = any (d: d.name == "rustix")
+          (importTOML (default.src + /Cargo.lock)).package;
+      in
+        if isCLI && usesRustix then withLibc else default;
     });
   };
 in
