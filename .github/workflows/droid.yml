@@ -34,7 +34,7 @@ jobs:
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
-          --download-buffer-size $((2**32)) # 4GiB
+          --max-jobs 1
 
       - uses: actions/upload-pages-artifact@main
         with:
