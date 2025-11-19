@@ -47,7 +47,7 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
           --max-jobs 1
-          --store /tmp/store
+          --store local
           --builders '${{github.run_id}} aarch64-linux'
         env:
           NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
