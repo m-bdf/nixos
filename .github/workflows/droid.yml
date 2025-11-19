@@ -7,7 +7,7 @@ on:
 
 env:
   JUMP_HOST: ${{ github.repository }}@ssh-j.com
-  ARM_BUILDER: ${{ github.run_id }}
+  ARM_BUILDER: machine/arm@${{ github.run_id }}
 
 jobs:
   generate-ssh-key:
