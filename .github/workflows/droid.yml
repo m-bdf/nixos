@@ -10,27 +10,27 @@ env:
   ARM_BUILDER: ${{ github.run_id }}
 
 jobs:
-  generate-ssh-key:
+  export-ssh-keys:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
-          sudo cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
-          sudo chmod +r id_rsa
+      - id: export-ssh-keys
+        run: |
+          echo "
+            private-key=$(< /etc/ssh/ssh_host_rsa_key)
+            public-key=$(< /etc/ssh/ssh_host_rsa_key.pub)
+          " >> $GITHUB_OUTPUT
 
-      - uses: actions/upload-artifact@main
-        with:
-          name: ssh-key
-          path: id_rsa*
+    outputs:
+      private-key: ${{ steps.export-ssh-keys.outputs.private-key }}
+      public-key: ${{ steps.export-ssh-keys.outputs.public-key }}
 
   setup-arm-builder:
-    needs: generate-ssh-key
+    needs: export-ssh-keys
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/download-artifact@main
-      - run: |
-          sudo cp id_rsa.pub /root/.ssh/authorized_keys
+      - run: echo > /root/.ssh/authorized_keys
+          ${{ needs.export-ssh-keys.outputs.public-key }}
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -47,25 +47,21 @@ jobs:
             -o StrictHostKeyChecking=no -Nv
 
   build-bootstrap-zips:
-    needs: generate-ssh-key
+    needs: export-ssh-keys
 
     permissions:
       contents: read
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@main
       - run: |
+          echo ${{ needs.export-ssh-keys.outputs.private-key }}
+            > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
+
           echo '
           Host *
             StrictHostKeyChecking no
-          ' > config
-
-          cat id_rsa.pub
-          sudo cat /etc/ssh/ssh_host_rsa_key.pub
-
-          sudo chmod 0600 id_rsa
-          sudo cp * /root/.ssh
+          ' > /root/.ssh/config
 
       # - run: |
       #     sudo apt update
