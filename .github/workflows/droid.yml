@@ -67,7 +67,7 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo -E
+      - run: sudo -i
           nix build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
