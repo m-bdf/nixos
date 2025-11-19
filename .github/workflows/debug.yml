@@ -6,25 +6,45 @@ jobs:
   generate-ssh-key:
     runs-on: ubuntu-latest
     steps:
-      - run: ssh-keygen -t rsa -N '' -f id_rsa
-
       - uses: actions/upload-artifact@main
         with:
-          path: id_rsa
+          path: /etc/ssh
 
-      - id: export-public-key
-        run: echo "public-key=$(cat id_rsa.pub)" >> $GITHUB_OUTPUT
 
-    outputs:
-      public-key: ${{ steps.export-public-key.outputs.public-key }}
+      # - run: |
+      #     ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+      #     cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+      # - uses: actions/upload-artifact@main
+      #   with:
+      #     path: ~/.ssh
+
+
+      # - run: ssh-keygen -t rsa -N '' -f id_rsa
+
+      # - uses: actions/upload-artifact@main
+      #   with:
+      #     path: id_rsa
+
+    #   - id: export-public-key
+    #     run: echo "public-key=$(cat id_rsa.pub)" >> $GITHUB_OUTPUT
+
+    # outputs:
+    #   public-key: ${{ steps.export-public-key.outputs.public-key }}
 
   tmate-aarch64:
     needs: generate-ssh-key
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
-          ${{ needs.generate-ssh-key.outputs.public-key }}
+      - uses: actions/download-artifact@main
+      - run: |
+          mkdir ~/.ssh
+          cp ssh/ssh_host_rsa_key.pub ~/.ssh/authorized_keys
+          cp ssh/ssh_host_rsa_key.pub /etc/ssh/authorized_keys
+
+      # - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
+      #     ${{ needs.generate-ssh-key.outputs.public-key }}
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -44,8 +64,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-        with:
-          path: ~/.ssh
+      - run: |
+          cp -R ssh ~/.ssh
+          cp -R ssh /etc/ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
