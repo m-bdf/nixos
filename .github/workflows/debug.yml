@@ -6,18 +6,12 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          sudo apt update
-          sudo apt remove man-db
-          sudo apt install qemu-user-static
-
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master
