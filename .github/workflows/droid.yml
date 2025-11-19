@@ -10,30 +10,29 @@ env:
   ARM_BUILDER: ${{ github.run_id }}
 
 jobs:
-  export-ssh-keys:
+  export-ssh-dir:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          ls -laR
-          exit 1
-
-      - run: |
-          sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
           cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
+          sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
           sudo chmod +r id_rsa
+
+      - run: echo > config 'Host *
+          StrictHostKeyChecking no'
 
       - uses: actions/upload-artifact@main
         with:
-          name: ssh-keys
-          path: id_rsa*
+          name: .ssh
+          path: .
 
   setup-arm-builder:
-    needs: export-ssh-keys
+    needs: export-ssh-dir
+
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: |
-          sudo cp id_rsa.pub /root/.ssh/authorized_keys
+      - run: sudo cp id_rsa.pub /root/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -50,7 +49,7 @@ jobs:
             -o StrictHostKeyChecking=no -Nv
 
   build-bootstrap-zips:
-    needs: export-ssh-keys
+    needs: export-ssh-dir
 
     permissions:
       contents: read
@@ -58,14 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-      - run: |
-          echo '
-          Host *
-            StrictHostKeyChecking no
-          ' > config
-
-          sudo chmod 0600 id_rsa
-          sudo cp * /root/.ssh
+      - run: sudo chmod 400 id_rsa && sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
