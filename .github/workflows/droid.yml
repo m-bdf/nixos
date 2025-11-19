@@ -34,7 +34,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            always-allow-substitutes = true
+            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
@@ -72,7 +72,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            always-allow-substitutes = true
+            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
