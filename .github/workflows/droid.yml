@@ -26,7 +26,7 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - run: echo >> ~/.ssh/authorized_keys
+      - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
           ${{ needs.generate-ssh-key.outputs.public-key }}
 
       - uses: DeterminateSystems/nix-installer-action@main
