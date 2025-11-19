@@ -34,10 +34,10 @@ in
 
   config = {
     lib.mkPathOption = lib.mkOption {
-      apply = drv: drv.override (prev: {
-        paths = prev.paths ++ lib.concatLists
-          (lib.catAttrs "propagatedBuildInputs" prev.paths);
-      });
+      # apply = drv: drv.override (prev: {
+      #   paths = prev.paths ++ lib.concatLists
+      #     (lib.catAttrs "propagatedBuildInputs" prev.paths);
+      # });
     };
 
     programs = {

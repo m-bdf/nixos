@@ -44,13 +44,13 @@ in
   options.home.activationPackage = config.lib.mkToplevelOption;
 
   config.lib.mkToplevelOption = lib.mkOption {
-    apply = drv:
-      pkgs.replaceDependencies.override {
-        inherit replaceDirectDependencies;
-      } {
-        inherit drv replacements;
-        cutoffPackages = lib.optional (nixosConfig != null)
-          nixosConfig.system.build.initialRamdisk;
-      };
+    # apply = drv:
+    #   pkgs.replaceDependencies.override {
+    #     inherit replaceDirectDependencies;
+    #   } {
+    #     inherit drv replacements;
+    #     cutoffPackages = lib.optional (nixosConfig != null)
+    #       nixosConfig.system.build.initialRamdisk;
+    #   };
   };
 }
