@@ -7,32 +7,34 @@ on:
 
 jobs:
   setup-arm-builder:
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+
     permissions:
-      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: DeterminateSystems/nix-installer-action@main
+      - run: |
+          mkdir tmp
+          curl http://api.ipify.org > tmp/index.html
+
+      - uses: actions/upload-pages-artifact@main
         with:
-          extra-conf: |
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
+          path: tmp
 
-      - uses: actions/checkout@main
-      - uses: cachix/cachix-action@master
-        with:
-          name: m-bdf
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - id: deployment
+        uses: actions/deploy-pages@main
 
-      - id: tmate
-        uses: mxschmitt/action-tmate/detached@master
-
-    outputs:
-      ssh-address: ${{ steps.tmate.outputs.ssh-address }}
+      - run: sleep infinity
 
   build:
-    needs: setup-arm-builder
     permissions:
       contents: read
 
@@ -44,9 +46,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh://${{
-              needs.setup-arm-builder.outputs.ssh-address
-            }} aarch64-linux
 
       - uses: actions/checkout@main
       - uses: cachix/cachix-action@master
@@ -59,6 +58,9 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
           --max-jobs 1
+          --builders "ssh://$(
+            curl https://m-bdf.github.io/nixos
+          ) aarch64-linux"
 
       - uses: actions/upload-pages-artifact@main
         with:
