@@ -4,7 +4,7 @@ on:
 
 jobs:
   debug:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
