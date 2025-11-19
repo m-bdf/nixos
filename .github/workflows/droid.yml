@@ -47,8 +47,7 @@ jobs:
 
       - run:
           ssh $JUMP_HOST
-            -R $ARM_BUILDER:22:localhost:22
-            -o StrictHostKeyChecking=no -Nv
+            -R $ARM_BUILDER:22:localhost:22 -Nv
 
   build-bootstrap-zips:
     needs: export-ssh-dir
