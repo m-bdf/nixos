@@ -3,7 +3,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  debug:
+  tmate-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
+            always-allow-substitutes = true
+            builders-use-substitutes = true
+
+      - uses: actions/checkout@main
+      - uses: mxschmitt/action-tmate@master
+
+  tmate-aarch64:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
@@ -12,6 +27,8 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
+            always-allow-substitutes = true
+            builders-use-substitutes = true
 
       - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master
