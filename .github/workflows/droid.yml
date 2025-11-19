@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
+          cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
           sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
           sudo chmod +r id_rsa
 
@@ -32,7 +32,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: sudo cp id_rsa.pub /root/.ssh/authorized_keys
+      - run: sudo cp config /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -57,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: sudo chmod 0600 id_rsa && sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
