@@ -14,13 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
-          cp id_rsa.pub authorized_keys
-
-          sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
-
-          echo > config 'Host *
-            StrictHostKeyChecking no'
+          sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
+          cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
+          printf 'Host *\n StrictHostKeyChecking no' > config
 
       - uses: actions/upload-artifact@main
         with:
