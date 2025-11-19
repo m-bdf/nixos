@@ -15,6 +15,7 @@ jobs:
     steps:
       - run: |
           sudo ssh-keygen -t rsa -N '' -f id_rsa
+          sudo chmod +r id_rsa
 
       - uses: actions/upload-artifact@main
         with:
