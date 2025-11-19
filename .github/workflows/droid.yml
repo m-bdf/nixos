@@ -13,29 +13,27 @@ jobs:
   export-ssh-keys:
     runs-on: ubuntu-latest
     steps:
-      - id: export-ssh-keys
-        run: |
-          echo "
-            private-key << EOF
-              $(sudo cat /etc/ssh/ssh_host_rsa_key)
-            EOF
+      - run: |
+          ls -laR
+          exit 1
 
-            public-key << EOF
-              $(cat /etc/ssh/ssh_host_rsa_key.pub)
-            EOF
-          " >> $GITHUB_OUTPUT
+      - run: |
+          sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
+          cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
+          sudo chmod +r id_rsa
 
-    outputs:
-      private-key: ${{ steps.export-ssh-keys.outputs.private-key }}
-      public-key: ${{ steps.export-ssh-keys.outputs.public-key }}
+      - uses: actions/upload-artifact@main
+        with:
+          name: ssh-keys
+          path: id_rsa*
 
   setup-arm-builder:
     needs: export-ssh-keys
-
     runs-on: ubuntu-24.04-arm
     steps:
-      - run: echo > /root/.ssh/authorized_keys
-          ${{ needs.export-ssh-keys.outputs.public-key }}
+      - uses: actions/download-artifact@main
+      - run: |
+          sudo cp id_rsa.pub /root/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -59,14 +57,15 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@main
       - run: |
-          echo ${{ needs.export-ssh-keys.outputs.private-key }}
-            > /root/.ssh/id_rsa && chmod 0600 /root/.ssh/id_rsa
-
           echo '
           Host *
             StrictHostKeyChecking no
-          ' > /root/.ssh/config
+          ' > config
+
+          sudo chmod 0600 id_rsa
+          sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
