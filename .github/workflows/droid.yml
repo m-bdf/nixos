@@ -80,7 +80,7 @@ jobs:
       #       --builders "$ARM_BUILDER aarch64-linux - - 2"
 
       - if: always()
-        run: ssh -J $JUMP_HOST $ARM_BUILDER
+        run: sudo ssh -J $JUMP_HOST $ARM_BUILDER
           ssh -S $XDG_RUNTIME_DIR/ssh-%C.lock %j -O exit
 
       - uses: actions/upload-pages-artifact@main
