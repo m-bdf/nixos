@@ -25,7 +25,7 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix build .#nixOnDroidConfigurations.aarch64-linux.activationPackage
+      - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
