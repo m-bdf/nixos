@@ -29,8 +29,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          sudo cp nixremote.pub /root/.ssh/authorized_keys
-          rm -rf ~/.ssh
+          cp nixremote.pub ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -43,7 +42,7 @@ jobs:
             download-buffer-size = 4398046511104
 
       - run:
-          sudo ssh $JUMP_HOST
+          ssh $JUMP_HOST
             -R $ARM_BUILDER:22:localhost:22
             -o StrictHostKeyChecking=no -Nv
 
