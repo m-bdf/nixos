@@ -18,8 +18,8 @@ jobs:
           sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
           sudo chmod +r id_rsa
 
-      - run: echo > config 'Host *
-          StrictHostKeyChecking no'
+          echo > config 'Host *
+            StrictHostKeyChecking no'
 
       - uses: actions/upload-artifact@main
         with:
