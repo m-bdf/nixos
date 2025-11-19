@@ -44,7 +44,7 @@ jobs:
             -o StrictHostKeyChecking=no -Nv
 
   build:
-    # needs: export-ssh-key
+    needs: generate-ssh-key
 
     permissions:
       contents: read

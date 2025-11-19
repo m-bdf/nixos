@@ -39,6 +39,8 @@ jobs:
       - uses: mxschmitt/action-tmate@master
 
   tmate-x86_64:
+    needs: generate-ssh-key
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
