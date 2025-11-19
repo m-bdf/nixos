@@ -30,7 +30,8 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           sudo cp nixremote.pub /root/.ssh/authorized_keys
-          rm -rf ~/.ssh
+          mkdir ~/.ssh
+          cp nixremote.pub ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
