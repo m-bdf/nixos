@@ -9,7 +9,7 @@ jobs:
     steps:
       - run: |
           sudo cp -R /etc/ssh .
-          chmod +w ssh
+          sudo chmod +w ssh
           ssh-keygen -t rsa -N '' -f ssh/id_rsa
 
       - uses: actions/upload-artifact@main
