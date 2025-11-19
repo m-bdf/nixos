@@ -3,9 +3,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  tmate-x86_64:
+  generate-ssh-key:
     runs-on: ubuntu-latest
     steps:
+      - run: ssh-keygen -t rsa -N '' -f id_rsa
+
+      - uses: actions/upload-artifact@main
+        with:
+          path: id_rsa
+
+      - id: export-public-key
+        run: echo "public-key=$(cat id_rsa.pub)" >> $GITHUB_OUTPUT
+
+    outputs:
+      public-key: ${{ steps.export-public-key.outputs.public-key }}
+
+  tmate-aarch64:
+    needs: generate-ssh-key
+
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
+          ${{ needs.generate-ssh-key.outputs.public-key }}
+
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -18,9 +38,13 @@ jobs:
       - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master
 
-  tmate-aarch64:
-    runs-on: ubuntu-24.04-arm
+  tmate-x86_64:
+    runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@main
+        with:
+          path: ~/.ssh
+
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
