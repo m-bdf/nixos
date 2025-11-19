@@ -37,7 +37,7 @@ jobs:
           extra-conf: json-log-path = /var/log/nix-log.json
 
       - run: |
-          sudo ssh -MS $SSH_SOCKET $JUMP_HOST
+          sudo ssh -MS $SSH_SOCKET $JUMP_HOST \
             -R $ARM_BUILDER:22:localhost:22 -N &
           tail -F /var/log/nix-log.json --pid=$!
 
