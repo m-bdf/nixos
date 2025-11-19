@@ -45,14 +45,14 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          sudo cp nixremote* /root/.ssh
-
           echo '
           Host ssh-j.com m-bdf.nixos
             IdentitiesOnly yes
             IdentityFile /root/.ssh/nixremote
             User runner
-          ' > /root/.ssh/config
+          ' > config
+
+          sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
