@@ -23,8 +23,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          mkdir ~/.ssh
-          cat nixremote.pub > ~/.ssh/authorized_keys
+          sudo cp nixremote.pub /root/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -46,13 +45,16 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           echo '
-          Host ssh-j.com m-bdf.nixos
+          Host *
             IdentitiesOnly yes
             IdentityFile /root/.ssh/nixremote
-            User runner
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+            PasswordAuthentication no
           ' > config
 
           sudo cp * /root/.ssh
+          sudo chmod 600 /root/.ssh/nixremote
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
