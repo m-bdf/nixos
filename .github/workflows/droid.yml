@@ -9,9 +9,17 @@ jobs:
   setup-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
+            builders-use-substitutes = true
+
       - run:
           ssh ${{github.repository}}@ssh-j.com
-            -R 22:${{github.run_id}}:22
+            -R ${{github.run_id}}:22:localhost:22
             -No StrictHostKeyChecking=no
 
   build:
@@ -26,6 +34,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
+            always-allow-substitutes = true
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
@@ -39,7 +48,7 @@ jobs:
           --print-build-logs --keep-going
           --max-jobs 1
           --builders '${{github.run_id}} aarch64-linux'
-          --always-allow-substitutes
+          --impure
         env:
           NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
 
