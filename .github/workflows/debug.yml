@@ -45,7 +45,6 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          sudo mkdir /root/.ssh
           sudo cp nixremote* /root/.ssh
 
           echo '
