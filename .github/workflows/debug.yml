@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
+          mkdir ssh
           sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
 
       - uses: actions/upload-artifact@main
