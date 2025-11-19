@@ -37,7 +37,7 @@ jobs:
           extra-conf: json-log-path = /var/log/nix-log.json
 
       - run: tail -F /var/log/nix-log.json &
-      - run: sudo $SSH_CMD -R $ARM_BUILDER:22:localhost:22 -MN
+      - run: sudo ${{ env.SSH_CMD }} -R $ARM_BUILDER:22:localhost:22 -MN
 
       # - run: sudo $SSH_CMD -R $ARM_BUILDER:22:localhost:22 -MNf
       # - run: tail -F /var/log/nix-log.json
