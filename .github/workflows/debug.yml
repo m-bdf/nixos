@@ -8,35 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo cp -R /etc/ssh .
-          sudo chmod -R 777 ssh
-          ssh-keygen -t rsa -N '' -f ssh/id_rsa
+          sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
 
       - uses: actions/upload-artifact@main
         with:
           path: ssh
-
-
-      # - run: |
-      #     ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
-      #     cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
-
-      # - uses: actions/upload-artifact@main
-      #   with:
-      #     path: ~/.ssh
-
-
-      # - run: ssh-keygen -t rsa -N '' -f id_rsa
-
-      # - uses: actions/upload-artifact@main
-      #   with:
-      #     path: id_rsa
-
-    #   - id: export-public-key
-    #     run: echo "public-key=$(cat id_rsa.pub)" >> $GITHUB_OUTPUT
-
-    # outputs:
-    #   public-key: ${{ steps.export-public-key.outputs.public-key }}
 
   tmate-aarch64:
     needs: generate-ssh-key
@@ -46,11 +22,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           mkdir ~/.ssh
-          cat id_rsa.pub ssh_host_rsa_key.pub > ~/.ssh/authorized_keys
-          sudo cp ~/.ssh/authorized_keys /etc/ssh
-
-      # - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
-      #     ${{ needs.generate-ssh-key.outputs.public-key }}
+          cat nixremote.pub > ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -71,8 +43,15 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          cp -R . ~/.ssh
-          sudo cp -R . /etc/ssh
+          sudo mkdir /root/.ssh
+          sudo cp nixremote* /root/.ssh
+
+          echo '
+          Host ssh-j.com m-bdf.nixos
+            IdentitiesOnly yes
+            IdentityFile /root/.ssh/nixremote
+            User runner
+          ' > /root/.ssh/config
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
