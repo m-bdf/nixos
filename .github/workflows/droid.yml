@@ -71,7 +71,7 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo NIX_SSHOPTS='-J $JUMP_HOST'
+      - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
           $(which nix) build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
