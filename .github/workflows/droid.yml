@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
+          mkdir ~/.ssh
           cp nixremote.pub ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
