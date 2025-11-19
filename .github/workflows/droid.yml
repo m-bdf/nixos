@@ -1,6 +1,6 @@
 name: droid
 on:
-  push:
+  # push:
   workflow_dispatch:
   schedule:
     - cron: 42 23 * * *
