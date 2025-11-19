@@ -57,11 +57,7 @@ jobs:
       - run: |
           echo '
           Host *
-            # IdentitiesOnly yes
-            # IdentityFile /root/.ssh/id_rsa
-            StrictHostKeyChecking no
-            # UserKnownHostsFile /dev/null
-            # PasswordAuthentication no
+            # StrictHostKeyChecking no
           ' > config
 
           sudo chmod 0600 id_rsa
