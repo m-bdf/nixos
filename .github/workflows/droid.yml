@@ -14,8 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo ssh-keygen -t rsa -N '' -f id_rsa
-          sudo chmod +r id_rsa
+          cp ~/.ssh/id_rsa* .
 
       - uses: actions/upload-artifact@main
         with:
