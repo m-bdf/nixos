@@ -36,6 +36,7 @@ jobs:
             eval-cores = 0
             always-allow-substitutes = true
             builders-use-substitutes = true
+            download-buffer-size = 4398046511104
 
       - run:
           sudo ssh ${{github.repository}}@ssh-j.com
@@ -57,7 +58,7 @@ jobs:
             IdentitiesOnly yes
             IdentityFile /root/.ssh/nixremote
             StrictHostKeyChecking no
-            UserKnownHostsFile /dev/null
+            # UserKnownHostsFile /dev/null
             PasswordAuthentication no
           ' > config
 
@@ -73,6 +74,7 @@ jobs:
             eval-cores = 0
             always-allow-substitutes = true
             builders-use-substitutes = true
+            download-buffer-size = 4398046511104
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
