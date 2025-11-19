@@ -44,13 +44,11 @@ jobs:
             eval-cores = 0
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
-            json-log-path = /var/log/nix-log.json
 
       - run: ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: tail -f /var/log/nix-log.json
 
   build-bootstrap-zips:
-    needs: export-ssh-dir
+    needs: setup-arm-builder
 
     permissions:
       contents: read
