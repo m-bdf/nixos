@@ -38,11 +38,10 @@ jobs:
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
-      - run: |
+      - run:
           sudo ssh ${{github.repository}}@ssh-j.com
             -R ${{github.run_id}}:22:localhost:22
-            -o StrictHostKeyChecking=no -Nf
-          journalctl -f
+            -o StrictHostKeyChecking=no -Nv
 
   build:
     needs: generate-ssh-key
