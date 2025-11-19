@@ -55,10 +55,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          echo '
-          Host *
-            # StrictHostKeyChecking no
-          ' > config
+          echo "
+          Host $ARM_BUILDER
+            StrictHostKeyChecking no
+          " > config
 
           sudo chmod 0600 id_rsa
           sudo cp * /root/.ssh
