@@ -14,7 +14,6 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: ssh
           path: ssh
 
 
@@ -46,12 +45,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          ls -laR
           mkdir ~/.ssh
-          cat ssh/id_rsa.pub ssh/ssh_host_rsa_key.pub
-            >> ~/.ssh/authorized_keys
-          cat ssh/id_rsa.pub ssh/ssh_host_rsa_key.pub
-            >> /etc/ssh/authorized_keys
+          cat id_rsa.pub ssh_host_rsa_key.pub > ~/.ssh/authorized_keys
+          cat id_rsa.pub ssh_host_rsa_key.pub > /etc/ssh/authorized_keys
 
       # - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
       #     ${{ needs.generate-ssh-key.outputs.public-key }}
@@ -75,9 +71,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          ls -laR
-          cp -R ssh ~/.ssh
-          cp -R ssh /etc/ssh
+          cp -R . ~/.ssh
+          cp -R . /etc/ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
