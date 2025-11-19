@@ -16,8 +16,13 @@ jobs:
       - id: export-ssh-keys
         run: |
           echo "
-            private-key='$(sudo cat /etc/ssh/ssh_host_rsa_key)'
-            public-key='$(cat /etc/ssh/ssh_host_rsa_key.pub)'
+            private-key << EOF
+              $(sudo cat /etc/ssh/ssh_host_rsa_key)'
+            EOF
+
+            public-key << EOF
+              $(cat /etc/ssh/ssh_host_rsa_key.pub)'
+            EOF
           " >> $GITHUB_OUTPUT
 
     outputs:
