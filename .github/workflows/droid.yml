@@ -29,8 +29,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          sudo mv id_rsa.pub /root/.ssh/authorized_keys
-          sudo rm id_rsa
+          sudo cp id_rsa.pub /root/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -66,7 +65,7 @@ jobs:
           ' > config
 
           sudo chmod 0600 id_rsa
-          sudo mv * /root/.ssh
+          sudo cp * /root/.ssh
           rm -rf ~/.ssh
 
       # - run: |
