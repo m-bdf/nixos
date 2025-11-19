@@ -7,35 +7,10 @@ on:
 
 jobs:
   setup-arm-builder:
-    concurrency:
-      group: ${{ github.workflow }}
-      cancel-in-progress: true
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-24.04-arm
     steps:
-      - id: tmate
-        uses: mxschmitt/action-tmate/detached@master
-
-      - run: |
-          mkdir tmp
-          echo ${{steps.tmate.outputs.ssh-address}} > tmp/index.html
-
-      - uses: actions/upload-pages-artifact@main
-        with:
-          path: tmp
-
-      - id: deployment
-        uses: actions/deploy-pages@main
-
-      - run: sleep infinity
+      - run: ssh ${{github.run_id}}@ssh-j.com
+          -NR ${{github.repository}}:22:localhost:22
 
   build:
     permissions:
@@ -61,9 +36,9 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
           --max-jobs 1
-          --builders "ssh://$(
-            curl -L https://m-bdf.github.io/nixos
-          ) aarch64-linux"
+          --builders '${{github.repository}} aarch64-linux'
+        env:
+          NIX_SSHOPTS: -J ${{github.run_id}}@ssh-j.com
 
       - uses: actions/upload-pages-artifact@main
         with:
