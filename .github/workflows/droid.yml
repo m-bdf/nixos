@@ -64,7 +64,8 @@ jobs:
             PasswordAuthentication no
           ' > config
 
-          sudo cp * ~/.ssh
+          sudo chmod 0600 id_rsa
+          sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
