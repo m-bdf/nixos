@@ -54,7 +54,6 @@ jobs:
       - uses: actions/download-artifact@main
         with:
           path: ~/.ssh
-      - run: ls -laR ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -76,7 +75,6 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
           --max-jobs 1
-          --store local
           --builders '${{github.run_id}} aarch64-linux'
         env:
           NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
