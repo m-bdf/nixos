@@ -15,8 +15,7 @@ jobs:
     steps:
       - run: |
           mkdir ssh
-          sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
-          sudo chmod -R 777 ssh
+          ssh-keygen -t rsa -N '' -f ssh/nixremote
 
       - uses: actions/upload-artifact@main
         with:
@@ -94,7 +93,7 @@ jobs:
 
       - run:
           sudo NIX_SSHOPTS="-J $JUMP_HOST"
-            $(command -v nix) build .#nixOnDroidBootstrapZips
+            $(command -v nix) build .#nixOnDroidConfigurations.aarch64-linux.activationPackage
               --accept-flake-config
               --trace-verbose --show-trace
               --print-build-logs --keep-going
