@@ -10,6 +10,7 @@ jobs:
       - run: |
           mkdir ssh
           sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
+          sudo chmod -R 777 ssh
 
       - uses: actions/upload-artifact@main
         with:
