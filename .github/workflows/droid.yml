@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -45,10 +45,10 @@ jobs:
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
-      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nf
+      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nv
 
   build-bootstrap-zips:
-    needs: setup-arm-builder
+    needs: export-ssh-dir
 
     permissions:
       contents: read
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
