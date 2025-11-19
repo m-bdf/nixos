@@ -79,8 +79,6 @@ jobs:
       #       --print-build-logs --keep-going
       #       --builders "$ARM_BUILDER aarch64-linux - - 2"
 
-      - run: sleep 30s
-
       - if: always()
         run: ssh -J $JUMP_HOST $ARM_BUILDER
           ssh -S $XDG_RUNTIME_DIR/ssh-%C.lock %j -O exit
