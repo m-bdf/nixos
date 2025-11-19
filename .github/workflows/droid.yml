@@ -58,15 +58,14 @@ jobs:
           echo '
           Host *
             IdentitiesOnly yes
-            IdentityFile ~/.ssh/id_rsa
+            IdentityFile /root/.ssh/id_rsa
             StrictHostKeyChecking no
             # UserKnownHostsFile /dev/null
             PasswordAuthentication no
           ' > config
 
           sudo chmod 0600 id_rsa
-          mkdir ~/.ssh
-          sudo cp * ~/.ssh
+          sudo cp * /root/.ssh
 
       # - run: |
       #     sudo apt update
