@@ -6,9 +6,27 @@ on:
     - cron: 42 23 * * *
 
 jobs:
+  export-ssh-key:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@main
+        with:
+          path: ~/.ssh/id_rsa
+
+      - id: export-public-key
+        run: echo "public-key=$(cat ~/.ssh/id_rsa.pub)" >> $GITHUB_OUTPUT
+
+    outputs:
+      public-key: ${{ steps.export-public-key.outputs.public-key }}
+
   setup-arm-builder:
+    needs: export-ssh-key
+
     runs-on: ubuntu-24.04-arm
     steps:
+      - run: echo >> ~/.ssh/authorized_keys
+          ${{ needs.export-ssh-key.outputs.public-key }}
+
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -24,11 +42,18 @@ jobs:
             -o StrictHostKeyChecking=no -Nv
 
   build:
+    # needs: export-ssh-key
+
     permissions:
       contents: read
 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@main
+        with:
+          path: ~/.ssh
+      - run: ls -laR ~/.ssh
+
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
