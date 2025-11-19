@@ -27,11 +27,6 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/download-artifact@main
-      - run: |
-          sudo cp nixremote.pub /root/.ssh/authorized_keys
-          rm -rf ~/.ssh
-
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
