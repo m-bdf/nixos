@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo ssh-keygen -t rsa -N '' -f id_rsa
-          sudo chmod +r id_rsa
+          mkdir ssh
+          sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
+          sudo chmod -R 777 ssh
 
       - uses: actions/upload-artifact@main
         with:
-          name: ssh-key
-          path: id_rsa*
+          path: ssh
 
   setup-arm-builder:
     needs: generate-ssh-key
@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          sudo cp id_rsa.pub /root/.ssh/authorized_keys
+          sudo cp nixremote.pub /root/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -58,14 +58,14 @@ jobs:
           echo '
           Host *
             IdentitiesOnly yes
-            IdentityFile /root/.ssh/id_rsa
+            IdentityFile /root/.ssh/nixremote
             StrictHostKeyChecking no
             # UserKnownHostsFile /dev/null
             PasswordAuthentication no
           ' > config
 
-          sudo cp id_rsa /root/.ssh
-          sudo chmod 0600 /root/.ssh/id_rsa
+          sudo cp * /root/.ssh
+          sudo chmod 600 /root/.ssh/nixremote
           rm -rf ~/.ssh
 
       # - run: |
