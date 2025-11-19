@@ -81,7 +81,7 @@ jobs:
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run:
-          sudo NIX_SSHOPTS='-J ${{github.repository}}@ssh-j.com -v'
+          sudo NIX_SSHOPTS='-J ${{github.repository}}@ssh-j.com'
             $(command -v nix) build .#nixOnDroidBootstrapZips
               --accept-flake-config
               --trace-verbose --show-trace
