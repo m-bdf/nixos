@@ -32,11 +32,12 @@ jobs:
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: json-log-path = /var/log/nix-log.json
+        # with:
+        #   extra-conf: json-log-path = /var/log/nix-log.json
 
-      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: tail -f /var/log/nix-log.json
+      - run: sudo ssh -MS $XDG_RUNTIME_DIR/ssh-%C.lock
+          $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N #f
+      # - run: tail -f /var/log/nix-log.json
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -71,15 +72,18 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
-          $(which nix) build .#nixOnDroidBootstrapZips
-            --accept-flake-config
-            --trace-verbose --show-trace
-            --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux - - 2"
+      # - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
+      #     $(which nix) build .#nixOnDroidBootstrapZips
+      #       --accept-flake-config
+      #       --trace-verbose --show-trace
+      #       --print-build-logs --keep-going
+      #       --builders "$ARM_BUILDER aarch64-linux - - 2"
+
+      - run: sleep 30s
 
       - if: always()
-        run: ssh -J $JUMP_HOST $ARM_BUILDER shutdown now
+        run: ssh -J $JUMP_HOST $ARM_BUILDER
+          ssh -S $XDG_RUNTIME_DIR/ssh-%C.lock &j -O exit
 
       - uses: actions/upload-pages-artifact@main
         with:
