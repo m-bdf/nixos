@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          cp ~/.ssh/id_rsa* .
+          sudo cp /root/.ssh/id_rsa* .
+          sudo chmod +r id_rsa
 
       - uses: actions/upload-artifact@main
         with:
