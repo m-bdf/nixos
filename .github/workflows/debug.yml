@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo cp -R /etc/ssh ~/.ssh
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+          sudo cp -R /etc/ssh/* ~/.ssh
 
       - uses: actions/upload-artifact@main
         with:
