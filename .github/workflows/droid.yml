@@ -26,6 +26,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           sudo cp nixremote.pub /root/.ssh/authorized_keys
+          rm -rf ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -62,6 +63,7 @@ jobs:
 
           sudo cp * /root/.ssh
           sudo chmod 600 /root/.ssh/nixremote
+          rm -rf ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -79,14 +81,15 @@ jobs:
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run:
-          sudo $(command -v nix) build .#nixOnDroidBootstrapZips
-            --accept-flake-config
-            --trace-verbose --show-trace
-            --print-build-logs --keep-going
-            --max-jobs 1
-            --builders '${{github.run_id}} aarch64-linux'
-        env:
-          NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
+          sudo NIX_SSHOPTS='-J ${{github.repository}}@ssh-j.com -v'
+            $(command -v nix) build .#nixOnDroidBootstrapZips
+              --accept-flake-config
+              --trace-verbose --show-trace
+              --print-build-logs --keep-going
+              --max-jobs 1
+              --builders '${{github.run_id}} aarch64-linux'
+        # env:
+        #   NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
 
       - uses: actions/upload-pages-artifact@main
         with:
