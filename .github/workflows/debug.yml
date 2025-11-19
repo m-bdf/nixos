@@ -6,9 +6,14 @@ jobs:
   generate-ssh-key:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          sudo cp -R /etc/ssh ~/.ssh
+          ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+
       - uses: actions/upload-artifact@main
         with:
-          path: /etc/ssh
+          name: ssh
+          path: ~/.ssh
 
 
       # - run: |
@@ -40,8 +45,10 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           mkdir ~/.ssh
-          cp ssh/ssh_host_rsa_key.pub ~/.ssh/authorized_keys
-          cp ssh/ssh_host_rsa_key.pub /etc/ssh/authorized_keys
+          cat ssh/id_rsa.pub ssh/ssh_host_rsa_key.pub
+            >> ~/.ssh/authorized_keys
+          cat ssh/id_rsa.pub ssh/ssh_host_rsa_key.pub
+            >> /etc/ssh/authorized_keys
 
       # - run: mkdir ~/.ssh && echo > ~/.ssh/authorized_keys
       #     ${{ needs.generate-ssh-key.outputs.public-key }}
