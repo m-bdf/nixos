@@ -1,11 +1,24 @@
 name: droid
 on:
-  workflow_run:
-    workflows: [arm]
-    types: [completed]
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: 42 23 * * *
 
 jobs:
+  setup-arm-builder:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - id: tmate
+        uses: mxschmitt/action-tmate@master
+        with:
+          detached: true
+
+    outputs:
+      ssh-address: ${{ steps.tmate.outputs.ssh-address }}
+
   build:
+    needs: setup-arm-builder
     permissions:
       contents: read
 
@@ -17,6 +30,9 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
+            builders = ssh://${{
+              needs.setup-arm-builder.outputs.ssh-address
+            }} aarch64-linux
 
       - uses: actions/checkout@main
       - uses: cachix/cachix-action@master
