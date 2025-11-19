@@ -6,7 +6,7 @@ on:
     - cron: 42 23 * * *
 
 env:
-  SSH_SOCKET: /run/ssh-%C.sock
+  SSH_CMD: ssh -S /run/ssh-%C.sock $JUMP_HOST
   JUMP_HOST: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
@@ -36,10 +36,12 @@ jobs:
         with:
           extra-conf: json-log-path = /var/log/nix-log.json
 
-      - run: |
-          sudo ssh -MS $SSH_SOCKET $JUMP_HOST \
-            -R $ARM_BUILDER:22:localhost:22 -N &
-          tail -F /var/log/nix-log.json --pid=$!
+      - run: tail -F /var/log/nix-log.json &
+      - run: sudo $SSH_CMD -R $ARM_BUILDER:22:localhost:22 -MN
+
+      # - run: sudo $SSH_CMD -R $ARM_BUILDER:22:localhost:22 -MNf
+      # - run: tail -F /var/log/nix-log.json
+      #     --pid=$($SSH_CMD -O check |& grep -o [0-9]*)
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -83,7 +85,7 @@ jobs:
 
       - if: always()
         run: sudo ssh -J $JUMP_HOST $ARM_BUILDER
-          ssh -S $SSH_SOCKET $JUMP_HOST -O exit || true
+          $SSH_CMD -O exit || true
 
       - uses: actions/upload-pages-artifact@main
         with:
