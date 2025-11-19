@@ -32,7 +32,11 @@ jobs:
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N
+        with:
+          extra-conf: json-log-path = /var/log/nix-log.json
+
+      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nf
+      - run: tail -f /var/log/nix-log.json
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -50,7 +54,7 @@ jobs:
       #     sudo apt remove man-db
       #     sudo apt install qemu-user-static
 
-      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
