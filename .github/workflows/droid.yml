@@ -15,7 +15,8 @@ jobs:
     steps:
       - run: |
           mkdir ssh
-          ssh-keygen -t rsa -N '' -f ssh/nixremote
+          sudo ssh-keygen -t rsa -N '' -f ssh/nixremote
+          sudo chmod -R 777 ssh
 
       - uses: actions/upload-artifact@main
         with:
@@ -29,8 +30,6 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           sudo cp nixremote.pub /root/.ssh/authorized_keys
-          mkdir ~/.ssh
-          cp nixremote.pub ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
