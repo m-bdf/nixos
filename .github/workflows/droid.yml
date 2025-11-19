@@ -6,7 +6,7 @@ on:
     - cron: 42 23 * * *
 
 env:
-  SSH_SOCKET: $XDG_RUNTIME_DIR/ssh-%C.lock
+  SSH_SOCKET: /run/ssh-%C.sock
   JUMP_HOST: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
@@ -36,8 +36,8 @@ jobs:
         # with:
         #   extra-conf: json-log-path = /var/log/nix-log.json
 
-      - run: sudo ssh -MS ${{ env.SSH_SOCKET }}
-          $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N #f
+      - run: sudo ssh -MS $SSH_SOCKET $JUMP_HOST
+          -R $ARM_BUILDER:22:localhost:22 -N #f
       # - run: tail -f /var/log/nix-log.json
 
   build-bootstrap-zips:
