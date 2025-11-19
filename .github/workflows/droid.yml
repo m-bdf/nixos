@@ -45,12 +45,10 @@ jobs:
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
-      - run:
-          sudo ssh $JUMP_HOST
-            -R $ARM_BUILDER:22:localhost:22 -Nv
+      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -Nf
 
   build-bootstrap-zips:
-    needs: export-ssh-dir
+    needs: setup-arm-builder
 
     permissions:
       contents: read
