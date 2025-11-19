@@ -6,26 +6,29 @@ on:
     - cron: 42 23 * * *
 
 jobs:
-  export-ssh-key:
+  generate-ssh-key:
     runs-on: ubuntu-latest
     steps:
+      - run: ssh-keygen
+
       - uses: actions/upload-artifact@main
         with:
           path: ~/.ssh/id_rsa
 
       - id: export-public-key
-        run: echo "public-key=$(cat ~/.ssh/id_rsa.pub)" >> $GITHUB_OUTPUT
+        run: echo >> $GITHUB_OUTPUT
+          "public-key=$(cat ~/.ssh/id_rsa.pub)"
 
     outputs:
       public-key: ${{ steps.export-public-key.outputs.public-key }}
 
   setup-arm-builder:
-    needs: export-ssh-key
+    needs: generate-ssh-key
 
     runs-on: ubuntu-24.04-arm
     steps:
       - run: echo >> ~/.ssh/authorized_keys
-          ${{ needs.export-ssh-key.outputs.public-key }}
+          ${{ needs.generate-ssh-key.outputs.public-key }}
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
