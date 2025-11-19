@@ -36,7 +36,7 @@ jobs:
         # with:
         #   extra-conf: json-log-path = /var/log/nix-log.json
 
-      - run: sudo ssh -MS ${{ env.SSH_SOCKET }}
+      - run: sudo ssh -MS $SSH_SOCKET
           $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N #f
       # - run: tail -f /var/log/nix-log.json
 
