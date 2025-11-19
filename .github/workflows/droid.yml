@@ -92,7 +92,7 @@ jobs:
               --accept-flake-config
               --trace-verbose --show-trace
               --print-build-logs --keep-going
-              --builders '${{github.run_id}} aarch64-linux'
+              --builders '${{github.run_id}} aarch64-linux - - 8'
         # env:
         #   NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
 
