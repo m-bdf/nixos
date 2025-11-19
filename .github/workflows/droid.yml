@@ -33,7 +33,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
@@ -65,10 +64,10 @@ jobs:
           sudo chmod 600 /root/.ssh/nixremote
           rm -rf ~/.ssh
 
-      - run: |
-          sudo apt update
-          sudo apt remove man-db
-          sudo apt install qemu-user-static
+      # - run: |
+      #     sudo apt update
+      #     sudo apt remove man-db
+      #     sudo apt install qemu-user-static
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -77,10 +76,9 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
-            extra-platforms = aarch64-linux
+            # extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
