@@ -1,10 +1,10 @@
 { inputs, ... }:
 
 {
-  # disabledModules = [ "system/boot/resolved.nix" ];
-  # imports = [
-  #   (inputs.resolved + /nixos/modules/system/boot/resolved.nix)
-  # ];
+  disabledModules = [ "system/boot/resolved.nix" ];
+  imports = [
+    (inputs.resolved + /nixos/modules/system/boot/resolved.nix)
+  ];
 
   networking = {
     useNetworkd = true;
@@ -35,8 +35,8 @@
         DNSStubListenerExtra=0.0.0.0
       '';
 
-      # mdns.enable = false;
-      # llmnr.enable = false;
+      mdns.enable = false;
+      llmnr.enable = false;
     };
 
     avahi = {
