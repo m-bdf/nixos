@@ -18,7 +18,6 @@ jobs:
           cp id_rsa.pub authorized_keys
 
           sudo cp /etc/ssh/ssh_host_rsa_key id_rsa
-          sudo chmod +r id_rsa
 
           echo > config 'Host *
             StrictHostKeyChecking no'
