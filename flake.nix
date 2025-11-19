@@ -184,15 +184,13 @@
     packages =
       mapAttrs (platform: droidPkgs: {
         nixOnDroidBootstrapZips =
-          (pkgsFor platform).symlinkJoin rec {
+          (pkgsFor platform).symlinkJoin {
             name = "nix-on-droid-bootstrap-zips";
-            paths = attrValues bootstrapZips;
-            bootstrapZips =
-              mapAttrs (targetPlatform: system:
-                (system.config.build.extendModules {
-                  specialArgs = { inherit droidPkgs; };
-                }).config.build.bootstrapZip
-              ) self.nixOnDroidConfigurations;
+            paths = mapAttrsToList (targetPlatform: system:
+              (system.config.build.extendModules {
+                specialArgs = { inherit droidPkgs; };
+              }).config.build.bootstrapZip
+            ) self.nixOnDroidConfigurations;
           };
       }) nix-on-droid.packages;
 
