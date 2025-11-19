@@ -33,12 +33,13 @@ jobs:
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-        # with:
-        #   extra-conf: json-log-path = /var/log/nix-log.json
+        with:
+          extra-conf: json-log-path = /var/log/nix-log.json
 
-      - run: sudo ssh -MS $SSH_SOCKET $JUMP_HOST
-          -R $ARM_BUILDER:22:localhost:22 -N #f
-      # - run: tail -f /var/log/nix-log.json
+      - run: |
+          sudo ssh -MS $SSH_SOCKET $JUMP_HOST
+            -R $ARM_BUILDER:22:localhost:22 -N &
+          tail -F /var/log/nix-log.json --pid=$!
 
   build-bootstrap-zips:
     needs: export-ssh-dir
