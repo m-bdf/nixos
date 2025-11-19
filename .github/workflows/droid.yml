@@ -18,7 +18,7 @@ jobs:
             builders-use-substitutes = true
 
       - run:
-          sudo ssh ${{github.repository}}@ssh-j.com
+          ssh ${{github.repository}}@ssh-j.com
             -R ${{github.run_id}}:22:localhost:22
             -No StrictHostKeyChecking=no
 
@@ -42,14 +42,13 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run:
-          sudo nix build .#nixOnDroidBootstrapZips
-            --accept-flake-config
-            --trace-verbose --show-trace
-            --print-build-logs --keep-going
-            --max-jobs 1
-            --store local
-            --builders '${{github.run_id}} aarch64-linux'
+      - run: nix build .#nixOnDroidBootstrapZips
+          --accept-flake-config
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
+          --max-jobs 1
+          --store /tmp/store
+          --builders '${{github.run_id}} aarch64-linux'
         env:
           NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
 
