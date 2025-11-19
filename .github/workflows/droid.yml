@@ -38,11 +38,11 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            always-allow-substitutes = true
+            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
-      - run: |
+      - run:
           sudo ssh $JUMP_HOST
             -R $ARM_BUILDER:22:localhost:22
             -o StrictHostKeyChecking=no -Nv
@@ -81,7 +81,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            always-allow-substitutes = true
+            # always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
             extra-platforms = aarch64-linux
