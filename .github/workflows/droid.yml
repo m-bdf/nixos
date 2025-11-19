@@ -9,8 +9,10 @@ jobs:
   setup-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
-      - run: ssh ${{github.run_id}}@ssh-j.com
-          -NR ${{github.repository}}:22:localhost:22
+      - run:
+          ssh ${{github.run_id}}@ssh-j.com
+            -R 22:${{github.repository}}:22
+            -No StrictHostKeyChecking=no
 
   build:
     permissions:
