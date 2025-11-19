@@ -65,6 +65,11 @@ jobs:
           sudo chmod 600 /root/.ssh/nixremote
           rm -rf ~/.ssh
 
+      - run: |
+          sudo apt update
+          sudo apt remove man-db
+          sudo apt install qemu-user-static
+
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -73,6 +78,7 @@ jobs:
             eval-cores = 0
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
+            extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
