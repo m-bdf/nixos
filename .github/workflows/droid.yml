@@ -5,10 +5,6 @@ on:
   schedule:
     - cron: 42 23 * * *
 
-env:
-  JUMP_HOST: ${{ github.repository }}@ssh-j.com
-  ARM_BUILDER: machine/arm@${{ github.run_id }}
-
 jobs:
   generate-ssh-key:
     runs-on: ubuntu-latest
@@ -38,14 +34,15 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            # always-allow-substitutes = true
+            always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
 
-      - run:
-          sudo ssh $JUMP_HOST
-            -R $ARM_BUILDER:22:localhost:22
-            -o StrictHostKeyChecking=no -Nv
+      - run: |
+          sudo ssh ${{github.repository}}@ssh-j.com
+            -R ${{github.run_id}}:22:localhost:22
+            -o StrictHostKeyChecking=no -Nf
+          journalctl -f
 
   build:
     needs: generate-ssh-key
@@ -81,7 +78,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            # always-allow-substitutes = true
+            always-allow-substitutes = true
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
             extra-platforms = aarch64-linux
@@ -93,14 +90,14 @@ jobs:
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run:
-          sudo NIX_SSHOPTS="-J $JUMP_HOST"
+          sudo NIX_SSHOPTS='-J ${{github.repository}}@ssh-j.com'
             $(command -v nix) build .#nixOnDroidBootstrapZips
               --accept-flake-config
               --trace-verbose --show-trace
               --print-build-logs --keep-going
-              --builders "$ARM_BUILDER aarch64-linux - - 8"
+              --builders '${{github.run_id}} aarch64-linux - - 8'
         # env:
-        #   NIX_SSHOPTS: -J $JUMP_HOST
+        #   NIX_SSHOPTS: -J ${{github.repository}}@ssh-j.com
 
       - uses: actions/upload-pages-artifact@main
         with:
