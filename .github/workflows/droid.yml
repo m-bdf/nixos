@@ -60,7 +60,7 @@ jobs:
             lazy-trees = true
             eval-cores = 0
             max-jobs = 0
-            builders = $ARM_BUILDER aarch64-linux
+            builders = ${{ env.ARM_BUILDER }} aarch64-linux
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
             extra-platforms = aarch64-linux
