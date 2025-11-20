@@ -76,7 +76,7 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo (command -v nix)
+      - run: sudo $(command -v nix)
           build nixpkgs#legacyPackages.aarch64-linux.hello
             --accept-flake-config
             --trace-verbose --show-trace
