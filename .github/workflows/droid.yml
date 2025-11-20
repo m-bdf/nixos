@@ -39,7 +39,8 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
       - run: mkdir ~/.ssh && cp * ~/.ssh
-      - run: sed -i 's/root/runner/g' ~/.ssh/*
+      - run: sed -i 's/root/runner/g' ~/.ssh/id_rsa.pub
+      - run: cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -55,7 +56,8 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
       - run: mkdir ~/.ssh && cp * ~/.ssh
-      - run: sed -i 's/root/runner/g' ~/.ssh/*
+      - run: sed -i 's/root/runner/g' ~/.ssh/id_rsa.pub
+      - run: cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
       # - run: |
       #     sudo apt update
