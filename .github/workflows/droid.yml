@@ -36,6 +36,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
+      - run: sudo cp authorized_keys /root/.ssh
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
@@ -83,7 +84,7 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "runner@$ARM_BUILDER aarch64-linux"
+            --builders "$ARM_BUILDER aarch64-linux"
 
       - if: always()
         run: ssh $ARM_BUILDER shutdown now
