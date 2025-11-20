@@ -87,7 +87,7 @@ jobs:
             --builders "$ARM_BUILDER aarch64-linux"
 
       - if: always()
-        run: ssh $ARM_BUILDER shutdown now
+        run: sudo ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
