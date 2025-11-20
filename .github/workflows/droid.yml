@@ -15,7 +15,8 @@ jobs:
     steps:
       - run: |
           sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
-          cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
+          cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
+          cp id_rsa.pub authorized_keys
 
           echo > config "
           Host *
@@ -36,8 +37,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo cp authorized_keys /root/.ssh
-      - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: mkdir ~/.ssh && cp * ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -52,7 +53,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
+      - run: mkdir ~/.ssh && cp * ~/.ssh
 
       # - run: |
       #     sudo apt update
@@ -88,9 +89,7 @@ jobs:
 
       - if: always()
         run: |
-          sudo cp /root/.ssh/id_rsa .
-          sudo chown runner id_rsa
-          ssh -v -i id_rsa $ARM_BUILDER shutdown now
+          ssh -i ~/.ssh/id_rsa $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
