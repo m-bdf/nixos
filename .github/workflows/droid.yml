@@ -15,7 +15,7 @@ jobs:
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
-          sudo cp --no-preserve=ownership /etc/ssh/ssh_host_rsa_key* .
+          sudo cp --no-preserve=mode /etc/ssh/ssh_host_rsa_key* .
           cat id_rsa.pub ssh_host_rsa_key.pub > authorized_keys
 
           echo > ssh_config "
