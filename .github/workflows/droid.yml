@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: chmod 400 id_rsa && sudo cp id_rsa authorized_keys config /root/.ssh
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
