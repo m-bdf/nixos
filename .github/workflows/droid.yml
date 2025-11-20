@@ -36,11 +36,11 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: sudo cp authorized_keys /root/.ssh
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
+      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -76,8 +76,8 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run:
-          nix build nixpkgs#legacyPackages.aarch64-linux.hello
+      - run: sudo (command -v nix)
+          build nixpkgs#legacyPackages.aarch64-linux.hello
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
@@ -85,7 +85,7 @@ jobs:
             --rebuild
 
       - if: always()
-        run: ssh $ARM_BUILDER shutdown now
+        run: sudo ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
