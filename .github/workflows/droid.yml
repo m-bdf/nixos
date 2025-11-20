@@ -16,7 +16,14 @@ jobs:
       - run: |
           sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
           cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
-          printf 'Host *\n StrictHostKeyChecking no' > config
+
+          echo > config "
+          Host *
+            StrictHostKeyChecking no
+
+          Host $ARM_BUILDER
+            ProxyJump $JUMP_HOST
+          '
 
       - uses: actions/upload-artifact@main
         with:
@@ -30,7 +37,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: mkdir ~/.ssh && cp authorized_keys ~/.ssh
+      - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N
@@ -45,7 +52,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: mkdir ~/.ssh && cp authorized_keys ~/.ssh
+      - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       # - run: |
       #     sudo apt update
