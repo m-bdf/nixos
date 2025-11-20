@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
+          sudo cp --no-preserve=mode \
+            /etc/ssh/ssh_host_rsa_key* .
           ssh-keygen -t rsa -N '' -f id_rsa
-          sudo cp /etc/ssh/ssh_host_rsa_key* .
-          sudo chown $USER ssh_host_rsa_key
           cat *.pub > authorized_keys
 
           echo > ssh_config "
@@ -38,9 +38,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          mkdir ~/.ssh
-          cp authorized_keys ~/.ssh
           sudo cp ssh_config /etc/ssh
+          sudo mkdir ~/.ssh /root/.ssh
+          cp ssh_config ~/.ssh/config
+          sudo cp ssh_config /root/.ssh/config
+          cp authorized_keys ~/.ssh
+          sudo cp authorized_keys /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -55,10 +58,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          mkdir ~/.ssh
-          cp id_rsa* ~/.ssh
           sudo cp ssh_* /etc/ssh
-          sudo chmod 400 ~/.ssh/id_rsa /etc/ssh/ssh_host_rsa_key
+          sudo mkdir ~/.ssh /root/.ssh
+          cp id_rsa* ~/.ssh
+          cp ssh_config ~/.ssh/config
+          sudo cp ssh_config /root/.ssh/config
+          sudo chmod 400 /etc/ssh/ssh_host_rsa_key ~/.ssh/id_rsa
 
       # - run: |
       #     sudo apt update
@@ -91,6 +96,8 @@ jobs:
             --trace-verbose --show-trace
             --print-build-logs --keep-going
             --builders "$USER@$ARM_BUILDER aarch64-linux"
+        env:
+          NIX_SSHOPTS: -v
 
       - if: always()
         run: ssh $ARM_BUILDER shutdown now
