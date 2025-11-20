@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
-          cp /etc/ssh/ssh_host_rsa_key.pub id_rsa.pub
-          cp id_rsa.pub authorized_keys
+          cp /etc/ssh/ssh_host_rsa_key* .
+          ssh-keygen -t rsa -N '' -f id_rsa
+          cat ssh_host_rsa_key.pub id_rsa.pub > authorized_keys
 
-          echo > config "
+          echo > ssh_config "
           Host *
             StrictHostKeyChecking no
 
@@ -37,10 +37,10 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: mkdir ~/.ssh && cp * ~/.ssh
-      - run: sed -i 's/root/runner/g' ~/.ssh/id_rsa.pub
-      - run: cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+      - run: |
+          mkdir ~/.ssh
+          cp authorized_keys ~/.ssh
+          sudo cp ssh_config /etc/ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -54,10 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: mkdir ~/.ssh && cp * ~/.ssh
-      - run: sed -i 's/root/runner/g' ~/.ssh/id_rsa.pub
-      - run: cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+      - run: sudo cp ssh_* /etc/ssh
 
       # - run: |
       #     sudo apt update
@@ -89,11 +86,10 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux"
+            --builders "runner@$ARM_BUILDER aarch64-linux"
 
       - if: always()
-        run: |
-          ssh -i ~/.ssh/id_rsa $ARM_BUILDER shutdown now
+        run: ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
