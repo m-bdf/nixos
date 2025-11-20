@@ -74,9 +74,9 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "
-              $ARM_BUILDER aarch64-linux ;
-            "
+            --builders "$ARM_BUILDER aarch64-linux"
+        env:
+          NIX_SSHOPTS: -J $JUMP_HOST
 
       - if: always()
         run: ssh -J $JUMP_HOST $ARM_BUILDER shutdown now
