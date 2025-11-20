@@ -16,7 +16,14 @@ jobs:
       - run: |
           sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
           cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
-          printf 'Host *\n StrictHostKeyChecking no' > config
+
+          echo > config "
+          Host *
+            StrictHostKeyChecking no
+
+          Host $ARM_BUILDER
+            ProxyJump $JUMP_HOST
+          "
 
       - uses: actions/upload-artifact@main
         with:
@@ -67,8 +74,8 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
-          $(which nix) build .#nixOnDroidBootstrapZips
+      - run: sudo $(which nix)
+          build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
@@ -79,7 +86,7 @@ jobs:
             "
 
       - if: always()
-        run: sudo ssh -J $JUMP_HOST $ARM_BUILDER shutdown now
+        run: sudo ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
