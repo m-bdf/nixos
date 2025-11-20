@@ -50,6 +50,8 @@ jobs:
 
   build-bootstrap-zips:
     needs: export-ssh-dir
+    env:
+      NIX_SSHOPTS: -v
 
     permissions:
       contents: read
@@ -96,8 +98,6 @@ jobs:
             --trace-verbose --show-trace
             --print-build-logs --keep-going
             --builders "$USER@$ARM_BUILDER aarch64-linux"
-        env:
-          NIX_SSHOPTS: -v
 
       - if: always()
         run: ssh $ARM_BUILDER shutdown now
