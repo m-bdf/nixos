@@ -80,7 +80,7 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux"
+            --builders "runner@$ARM_BUILDER aarch64-linux"
 
       - if: always()
         run: ssh $ARM_BUILDER shutdown now
