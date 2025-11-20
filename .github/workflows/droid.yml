@@ -36,8 +36,6 @@ jobs:
 
   build-bootstrap-zips:
     needs: export-ssh-dir
-    env:
-      NIX_SSHOPTS: -J $JUMP_HOST
 
     permissions:
       contents: read
@@ -59,8 +57,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            max-jobs = 0
-            builders = ${{ env.ARM_BUILDER }} aarch64-linux
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
             extra-platforms = aarch64-linux
@@ -71,11 +67,13 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo --preserve-env=NIX_SSHOPTS
+      - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
           $(which nix) build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
+            --builders "$ARM_BUILDER aarch64-linux"
+            --max-jobs 0
 
       - if: always()
         run: sudo ssh -J $JUMP_HOST $ARM_BUILDER shutdown now
