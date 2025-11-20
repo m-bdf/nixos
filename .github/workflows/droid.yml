@@ -40,7 +40,7 @@ jobs:
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: sudo ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N
+      - run: ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N
 
   build-bootstrap-zips:
     needs: export-ssh-dir
