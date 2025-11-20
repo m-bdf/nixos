@@ -44,11 +44,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-
-      - run: |
-          mkdir ~/.ssh
-          ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
-          sudo cp ~/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+      - run: mkdir ~/.ssh && cp authorized_keys ~/.ssh
 
       - run: |
           sudo apt update
