@@ -23,7 +23,7 @@ jobs:
 
           Host $ARM_BUILDER
             ProxyJump $JUMP_HOST
-          '
+          "
 
       - uses: actions/upload-artifact@main
         with:
