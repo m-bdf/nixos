@@ -6,7 +6,7 @@ on:
     - cron: 42 23 * * *
 
 env:
-  JUMP_HOST: ${{ github.repository }}@ssh-j.com
+  JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
             StrictHostKeyChecking no
 
           Host $ARM_BUILDER
-            ProxyJump $JUMP_HOST
+            ProxyJump $JUMP_PROXY
           "
 
       - uses: actions/upload-artifact@main
@@ -40,7 +40,7 @@ jobs:
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: ssh $JUMP_HOST -R $ARM_BUILDER:22:localhost:22 -N
+      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -82,11 +82,9 @@ jobs:
             --trace-verbose --show-trace
             --print-build-logs --keep-going
             --builders "$ARM_BUILDER aarch64-linux"
-        env:
-          NIX_SSHOPTS: -J $JUMP_HOST
 
       - if: always()
-        run: ssh -J $JUMP_HOST $ARM_BUILDER shutdown now
+        run: ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
