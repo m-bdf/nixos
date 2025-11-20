@@ -51,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
+      - run: sudo cp config /root/.ssh
       - run: mkdir ~/.ssh && cp authorized_keys config ~/.ssh
 
       # - run: |
