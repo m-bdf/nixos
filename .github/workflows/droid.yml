@@ -88,7 +88,7 @@ jobs:
 
       - if: always()
         run: |
-          sudp cp /root/.ssh/id_rsa .
+          sudo cp /root/.ssh/id_rsa .
           sudo chown runner id_rsa
           ssh -i id_rsa $ARM_BUILDER shutdown now
 
