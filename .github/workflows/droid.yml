@@ -50,8 +50,6 @@ jobs:
 
   build-bootstrap-zips:
     needs: export-ssh-dir
-    env:
-      NIX_SSHOPTS: -v
 
     permissions:
       contents: read
@@ -91,17 +89,18 @@ jobs:
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run:
-          nix build --impure --expr '
-            (import <nixpkgs> { system = "aarch64-linux"; })
-              .hello.overrideAttrs { foo = "bar"; }
-          '
-            --accept-flake-config
-            --trace-verbose --show-trace
-            --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux"
+          sleep 10
+          # nix build --impure --expr '
+          #   (import <nixpkgs> { system = "aarch64-linux"; })
+          #     .hello.overrideAttrs { foo = "bar"; }
+          # '
+          #   --accept-flake-config
+          #   --trace-verbose --show-trace
+          #   --print-build-logs --keep-going
+          #   --builders "$ARM_BUILDER aarch64-linux"
 
       - if: always()
-        run: ssh $ARM_BUILDER shutdown now
+        run: ssh -v $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
