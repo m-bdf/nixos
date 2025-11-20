@@ -78,8 +78,8 @@ jobs:
 
       - run:
           nix build --impure --expr '
-            let pkgs = import <nixpkgs> {};
-            in pkgs.hello.overrideAttrs { foo = "bar"; }
+            (import <nixpkgs> { system = "aarch64-linux"; })
+              .hello.overrideAttrs { foo = "bar"; }
           '
             --accept-flake-config
             --trace-verbose --show-trace
