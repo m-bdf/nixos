@@ -58,7 +58,7 @@ jobs:
           mkdir ~/.ssh
           cp id_rsa* ~/.ssh
           sudo cp ssh_* /etc/ssh
-          chmod 400 ~/.ssh/id_rsa /etc/ssh/ssh_host_rsa_key
+          sudo chmod 400 ~/.ssh/id_rsa /etc/ssh/ssh_host_rsa_key
 
       # - run: |
       #     sudo apt update
