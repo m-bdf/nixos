@@ -74,8 +74,8 @@ jobs:
             --print-build-logs --keep-going
             --max-jobs 0
             --builders "
-              local x86_64-linux
-              $ARM_BUILDER aarch64-linux
+              local x86_64-linux ;
+              $ARM_BUILDER aarch64-linux ;
             "
 
       - if: always()
