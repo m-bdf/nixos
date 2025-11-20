@@ -36,6 +36,8 @@ jobs:
 
   build-bootstrap-zips:
     needs: export-ssh-dir
+    env:
+      NIX_SSHOPTS: -J $JUMP_HOST
 
     permissions:
       contents: read
@@ -69,7 +71,7 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sudo NIX_SSHOPTS="-J $JUMP_HOST"
+      - run: sudo --preserve-env=NIX_SSHOPTS
           $(which nix) build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
