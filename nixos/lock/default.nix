@@ -1,10 +1,10 @@
 { inputs, lib, ... }:
 
 {
-  disabledModules = [ "security/pam.nix" ];
-  imports = [
-    (inputs.fprintd + /nixos/modules/security/pam.nix)
-  ];
+  # disabledModules = [ "security/pam.nix" ];
+  # imports = [
+  #   (inputs.fprintd + /nixos/modules/security/pam.nix)
+  # ];
 
   home.programs.hyprlock = {
     enable = true;
@@ -36,7 +36,7 @@
 
   security.pam = {
     services.hyprlock.nodelay = true;
-    fprintd.enable = false;
+    # fprintd.enable = false;
   };
 
   home.xdg.stateFile.fprint.persist = true;
