@@ -4,7 +4,7 @@
     trace-import-from-derivation = true;
 
     extra-substituters = [
-      # "https://m-bdf.cachix.org"
+      "https://m-bdf.cachix.org"
       "https://install.determinate.systems"
       "https://nix-on-droid.cachix.org"
     ];
@@ -75,14 +75,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
+    resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
 
     dnshack = {
       url = "github:ettom/dnshack";
       flake = false;
     };
 
-    # fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
+    fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
