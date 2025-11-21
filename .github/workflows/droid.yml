@@ -68,10 +68,12 @@ jobs:
 
           sudo cp ssh_host_rsa_key /root/.ssh/id_rsa
           sudo cp ssh_host_rsa_key.pub /root/.ssh/id_rsa.pub
+          sudo chown root:root /root/.ssh/id_rsa
           sudo chmod 600 /root/.ssh/id_rsa
           sudo cp ssh_config /root/.ssh/config
 
           sudo cp ssh_* /etc/ssh
+          sudo chown root:root /etc/ssh/ssh_host_rsa_key
           sudo chmod 600 /etc/ssh/ssh_host_rsa_key
 
       # - run: |
