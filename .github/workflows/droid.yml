@@ -15,17 +15,17 @@ jobs:
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
-
-          echo "environment=NIX_CONFIG='
-            download-buffer-size = $((2 ** 42))
-          '" $(< id_rsa.pub) > authorized_keys
+          cp id_rsa.pub authorized_keys
 
           echo > config "
             Host *
               StrictHostKeyChecking no
+
             Host $ARM_BUILDER
               ProxyJump $JUMP_PROXY
-              PermitUserEnvironment yes
+              SetEnv NIX_CONFIG='
+                download-buffer-size = $((2 ** 42))
+              '
           "
 
       - uses: actions/upload-artifact@main
