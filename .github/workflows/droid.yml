@@ -44,6 +44,8 @@ jobs:
           cp authorized_keys ~/.ssh
           cp ssh_config ~/.ssh/config
 
+          ls -lRa ~
+
           sudo chown root:root authorized_keys ssh_config
 
           sudo cp authorized_keys /root/.ssh
