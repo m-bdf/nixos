@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - run: |
-          mkdir -p .config/nix .ssh
+          mkdir -p .ssh .config/nix
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           cp .ssh/id_rsa.pub .ssh/authorized_keys
 
@@ -23,9 +23,10 @@ jobs:
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
-          echo > .config/nix/nix.conf "
+          printf > .config/nix/nix.conf "
             builders = $ARM_BUILDER aarch64-linux - 4 2
             builders-use-substitutes = true
+            download-buffer-size = $((1024 ** 3)) # 1 GiB
           "
 
       - uses: actions/upload-artifact@main
