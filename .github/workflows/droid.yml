@@ -8,7 +8,6 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
-  NIX_CONFIG: download-buffer-size = $((2 ** 42))
 
 jobs:
   export-ssh-dir:
@@ -16,15 +15,18 @@ jobs:
     steps:
       - run: |
           mkdir -p .config/nix .ssh
-          echo > .config/nix/nix.conf \
-            download-buffer-size = $((2 ** 42))
-
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           cp .ssh/id_rsa.pub .ssh/authorized_keys
 
           printf > .ssh/config "
             Host * \n StrictHostKeyChecking no
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+          "
+
+          echo > .config/nix/nix.conf "
+            builders = $ARM_BUILDER aarch64-linux - 4 2
+            builders-use-substitutes = true
+            download-buffer-size = $((2 ** 42))
           "
 
       - uses: actions/upload-artifact@main
@@ -39,15 +41,9 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-        with:
-          path: /root
-      # - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: chmod 400 .ssh/id_rsa && sudo cp * /root
 
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            download-buffer-size = 4398046511104
-
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nv
 
   build-bootstrap-zips:
@@ -59,9 +55,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-        with:
-          path: /root
-      # - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+      - run: chmod 400 .ssh/id_rsa && sudo cp * /root
 
       - run: sleep 20 && sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
 
@@ -72,8 +66,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders-use-substitutes = true
-            download-buffer-size = 4398046511104
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
