@@ -15,20 +15,21 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - run: |
-          ssh-keygen -t rsa -N '' -f id_rsa
-          cp id_rsa.pub authorized_keys
+          mkdir -p .config/nix .ssh
+          echo > .config/nix/nix.conf \
+            download-buffer-size = $((2 ** 42))
 
-          echo > config "
-            Host *
-              StrictHostKeyChecking no
+          ssh-keygen -t rsa -N '' -f .ssh/id_rsa
+          cp .ssh/id_rsa.pub .ssh/authorized_keys
 
-            Host $ARM_BUILDER
-              ProxyJump $JUMP_PROXY
+          printf > .ssh/config "
+            Host * \n StrictHostKeyChecking no
+            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
       - uses: actions/upload-artifact@main
         with:
-          name: .ssh
+          name: home
           path: .
 
   setup-arm-builder:
@@ -37,7 +38,9 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+        with:
+          path: /root
+      # - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -55,7 +58,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+        with:
+          path: /root
+      # - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - run: sleep 20 && sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
 
