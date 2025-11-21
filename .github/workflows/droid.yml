@@ -43,6 +43,8 @@ jobs:
           cp authorized_keys ~/.ssh
           cp ssh_config ~/.ssh/config
 
+          sudo chown root:root authorized_keys ssh_config
+
           sudo cp authorized_keys /root/.ssh
           sudo cp ssh_config /root/.ssh/config
 
@@ -66,15 +68,14 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           cp ssh_config ~/.ssh/config
 
+          sudo chown root:root ssh_*
+          sudo chmod 600 ssh_host_rsa_key
+
           sudo cp ssh_host_rsa_key /root/.ssh/id_rsa
           sudo cp ssh_host_rsa_key.pub /root/.ssh/id_rsa.pub
-          sudo chown root:root /root/.ssh/id_rsa
-          sudo chmod 600 /root/.ssh/id_rsa
           sudo cp ssh_config /root/.ssh/config
 
           sudo cp ssh_* /etc/ssh
-          sudo chown root:root /etc/ssh/ssh_host_rsa_key
-          sudo chmod 600 /etc/ssh/ssh_host_rsa_key
 
       # - run: |
       #     sudo apt update
