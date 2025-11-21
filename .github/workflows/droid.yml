@@ -11,18 +11,16 @@ env:
 
 jobs:
   export-ssh-dir:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - run: |
           sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
           cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
 
-          echo > config "
-          Host *
-            StrictHostKeyChecking no
-          Host $ARM_BUILDER
-            ProxyJump $JUMP_PROXY
-          "
+          printf "
+            Host * \n StrictHostKeyChecking no
+            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+          " > config
 
       - uses: actions/upload-artifact@main
         with:
@@ -47,7 +45,7 @@ jobs:
     permissions:
       contents: read
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
@@ -74,12 +72,13 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      - run: nix config show max-jobs
       - run:
           nix build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux"
+            --builders "$ARM_BUILDER aarch64-linux - - 2"
 
       - if: always()
         run: sudo ssh -v $ARM_BUILDER shutdown now
