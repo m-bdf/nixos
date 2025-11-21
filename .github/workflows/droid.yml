@@ -42,16 +42,16 @@ jobs:
       - run: |
           mkdir ~/.ssh
           cp authorized_keys ~/.ssh
-          # cp ssh_config ~/.ssh/config
+          cp ssh_config ~/.ssh/config
 
           sudo chown root:root authorized_keys ssh_config
 
           sudo cp authorized_keys /root/.ssh
-          # sudo cp ssh_config /root/.ssh/config
+          sudo cp ssh_config /root/.ssh/config
 
-          # sudo cp ssh_config /etc/ssh
+          sudo cp ssh_config /etc/ssh
 
-          sudo systemctl restart ssh
+          sudo systemctl restart sshd
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -80,7 +80,7 @@ jobs:
 
           sudo cp ssh_* /etc/ssh
 
-          sudo systemctl restart ssh
+          sudo systemctl restart sshd
 
       # - run: |
       #     sudo apt update
