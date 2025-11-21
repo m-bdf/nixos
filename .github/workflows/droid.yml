@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 ssh/ssh_host_rsa_key
-      - run: sudo cp -R ssh /etc
+      - run: sudo cp -R . /etc
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 ssh/ssh_host_rsa_key
-      - run: sudo cp -R ssh /etc
+      - run: sudo cp -R . /etc
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
