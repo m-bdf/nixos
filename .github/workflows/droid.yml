@@ -26,7 +26,6 @@ jobs:
           echo > .config/nix/nix.conf "
             builders = $ARM_BUILDER aarch64-linux - 4 2
             builders-use-substitutes = true
-            download-buffer-size = $((2 ** 42))
           "
 
       - uses: actions/upload-artifact@main
