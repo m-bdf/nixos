@@ -24,7 +24,7 @@ jobs:
           "
 
           printf > .config/nix/nix.conf "
-            builders = $ARM_BUILDER aarch64-linux - $(nproc --all)
+            builders = $ARM_BUILDER aarch64-linux - $(nproc)
             builders-use-substitutes = true
             download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
           "
