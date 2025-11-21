@@ -14,16 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          ssh-keygen -t rsa -N '' -f id_rsa
-          sudo cp --no-preserve=mode \
-            /etc/ssh/ssh_host_rsa_key* .
-          cat *.pub > authorized_keys
-          cat authorized_keys
+          sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
+          cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
 
-          echo > ssh_config "
+          echo > config "
           Host *
             StrictHostKeyChecking no
-
           Host $ARM_BUILDER
             ProxyJump $JUMP_PROXY
           "
@@ -39,26 +35,10 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: |
-          mkdir ~/.ssh
-          cp authorized_keys ~/.ssh
-          cp ssh_config ~/.ssh/config
-
-          chmod 755 ~
-          ls -la ~
-          ls -la ~/.ssh
-
-          sudo cp ssh_config /etc/ssh
-
-          sudo sh -c 'echo "
-            SyslogFacility AUTH
-            LogLevel DEBUG
-          " >> /etc/ssh/sshd_config'
-          sudo systemctl restart ssh
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: sudo tail -f /var/log/auth.log
+      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -69,21 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
-      - run: |
-          # mkdir ~/.ssh
-          # cp id_rsa* ~/.ssh
-          # chmod 600 ~/.ssh/id_rsa
-          # cp ssh_config ~/.ssh/config
-
-          sudo chown root:root ssh_*
-          sudo chmod 600 ssh_host_rsa_key
-
-          sudo cp ssh_host_rsa_key /root/.ssh/id_rsa
-          sudo cp ssh_host_rsa_key.pub /root/.ssh/id_rsa.pub
-          sudo cp ssh_config /root/.ssh/config
-
-          sudo cp ssh_* /etc/ssh
-
+      - run: chmod 400 id_rsa && sudo cp * /root/.ssh
       # - run: |
       #     sudo apt update
       #     sudo apt remove man-db
@@ -114,10 +80,10 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "$USER@$ARM_BUILDER aarch64-linux"
+            --builders "$ARM_BUILDER aarch64-linux"
 
       - if: always()
-        run: ssh $ARM_BUILDER shutdown now
+        run: sudo ssh $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
