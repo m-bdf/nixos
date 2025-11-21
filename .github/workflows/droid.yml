@@ -68,9 +68,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .config ~
+      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
