@@ -44,7 +44,8 @@ jobs:
       - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nv
+      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
+      - run: sleep infinity
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -57,7 +58,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
-      - run: sleep 20 && sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
+      - run: sleep 20 && sudo ssh $ARM_BUILDER nix config show
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
