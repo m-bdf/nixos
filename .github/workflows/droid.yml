@@ -57,7 +57,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
-      - run: sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
+      - run: sleep 10 && sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
