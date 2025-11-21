@@ -10,7 +10,7 @@ env:
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
 jobs:
-  export-ssh-dir:
+  export-home-dir:
     runs-on: ubuntu-slim
     steps:
       - run: |
@@ -32,29 +32,22 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: home
-          path: .
-          include-hidden-files: true
+          path: .*
 
   setup-arm-builder:
-    needs: export-ssh-dir
+    needs: export-home-dir
 
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
-
-      - run: sudo cat /root/.config/nix/nix.conf
+      - run: sudo cp -R . /root
 
       - uses: DeterminateSystems/nix-installer-action@main
-
-      - run: sudo cat /root/.config/nix/nix.conf
-      - run: nix config show
-
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: sleep infinity
 
   build-bootstrap-zips:
-    needs: export-ssh-dir
+    needs: export-home-dir
 
     permissions:
       contents: read
@@ -62,9 +55,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
-
-      - run: sudo cat /root/.config/nix/nix.conf
+      - run: sudo cp -R . /root
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -73,11 +64,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-
-      - run: sudo cat /root/.config/nix/nix.conf
-      - run: nix config show
-
-      - run: sudo ssh $ARM_BUILDER nix config show
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
@@ -97,7 +83,7 @@ jobs:
         with:
           path: result
 
-  deploy:
+  deploy-bootstrap-zips:
     needs: build-bootstrap-zips
     concurrency:
       group: ${{ github.workflow }}
