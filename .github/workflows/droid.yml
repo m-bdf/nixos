@@ -44,6 +44,7 @@ jobs:
           cp authorized_keys ~/.ssh
           cp ssh_config ~/.ssh/config
 
+          chmod 755 ~
           ls -la ~
           ls -la ~/.ssh
 
@@ -79,6 +80,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           cp ssh_config ~/.ssh/config
 
+          chmod 755 ~
           ls -la ~
           ls -la ~/.ssh
 
