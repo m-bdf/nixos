@@ -72,7 +72,6 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix config show max-jobs
       - run:
           nix build .#nixOnDroidBootstrapZips
             --accept-flake-config
