@@ -43,8 +43,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .config ~
+      - run: sudo cp -R .* /root
+      - run: cp -R .* ~
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -69,8 +69,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .config ~
+      - run: sudo cp -R .* /root
+      - run: cp -R .* ~
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
