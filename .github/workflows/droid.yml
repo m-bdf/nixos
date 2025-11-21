@@ -15,12 +15,18 @@ jobs:
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
-          cp id_rsa.pub authorized_keys
 
-          printf "
-            Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
-          " > config
+          echo "environment=NIX_CONFIG='
+            download-buffer-size = $((2 ** 42))
+          '" $(< id_rsa.pub) > authorized_keys
+
+          echo > config "
+            Host *
+              StrictHostKeyChecking no
+            Host $ARM_BUILDER
+              ProxyJump $JUMP_PROXY
+              PermitUserEnvironment yes
+          "
 
       - uses: actions/upload-artifact@main
         with:
@@ -34,7 +40,6 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      - run: pwd
 
       - uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -53,6 +58,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
+
+      - run: sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
