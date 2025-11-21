@@ -39,6 +39,7 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
+        continue-on-error: true
 
   build-bootstrap-zips:
     needs: export-ssh-dir
@@ -50,12 +51,13 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
-      # - run: |
-      #     sudo apt update
-      #     sudo apt remove man-db
-      #     sudo apt install qemu-user-static
 
-      # - uses: wimpysworld/nothing-but-nix@main
+      - run: |
+          sudo apt update
+          sudo apt remove man-db
+          sudo apt install qemu-user-static
+
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -64,7 +66,7 @@ jobs:
             eval-cores = 0
             builders-use-substitutes = true
             download-buffer-size = 4398046511104
-            # extra-platforms = aarch64-linux
+            extra-platforms = aarch64-linux
 
       - uses: actions/checkout@main
       # - uses: cachix/cachix-action@master
@@ -73,10 +75,7 @@ jobs:
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run:
-          nix build --impure --expr '
-            (import <nixpkgs> { system = "aarch64-linux"; })
-              .hello.overrideAttrs { foo = "bar"; }
-          '
+          nix build .#nixOnDroidBootstrapZips
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
@@ -84,6 +83,7 @@ jobs:
 
       - if: always()
         run: sudo ssh -v $ARM_BUILDER shutdown now
+        continue-on-error: true
 
       - uses: actions/upload-pages-artifact@main
         with:
