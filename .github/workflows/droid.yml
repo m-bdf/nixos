@@ -59,7 +59,6 @@ jobs:
       - uses: actions/download-artifact@main
       - run: sudo cp -R . /root
 
-      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
