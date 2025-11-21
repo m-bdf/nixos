@@ -38,7 +38,7 @@ jobs:
       - run: chmod 400 id_rsa && sudo cp * /root/.ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
+      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
 
   build-bootstrap-zips:
     needs: export-ssh-dir
