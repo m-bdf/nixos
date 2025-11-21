@@ -58,7 +58,8 @@ jobs:
           sudo systemctl restart ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
+      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
+      - run: sudo tail -f /var/log/auth.log
 
   build-bootstrap-zips:
     needs: export-ssh-dir
