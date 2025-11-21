@@ -50,8 +50,8 @@ jobs:
           sudo cp ssh_config /root/.ssh/config
 
           sudo cp ssh_config /etc/ssh
-
-          sudo systemctl restart sshd
+          sudo cat /etc/ssh/sshd_config
+          sudo systemctl restart ssh
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
@@ -79,8 +79,8 @@ jobs:
           sudo cp ssh_config /root/.ssh/config
 
           sudo cp ssh_* /etc/ssh
-
-          sudo systemctl restart sshd
+          sudo cat /etc/ssh/sshd_config
+          sudo systemctl restart ssh
 
       # - run: |
       #     sudo apt update
