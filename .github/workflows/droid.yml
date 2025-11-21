@@ -11,7 +11,7 @@ env:
 
 jobs:
   export-home-dir:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04
     steps:
       - run: |
           mkdir -p .ssh .config/nix
