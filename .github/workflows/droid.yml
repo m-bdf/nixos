@@ -46,7 +46,6 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
       - run: sudo cat /root/.config/nix/nix.conf
       - run: nix config show
-      - run: sudo nix config show
 
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: sleep infinity
@@ -64,7 +63,6 @@ jobs:
 
       - run: sudo cat /root/.config/nix/nix.conf
       - run: nix config show
-      - run: sudo nix config show
       - run: sleep 20 && sudo ssh $ARM_BUILDER nix config show
 
       - uses: wimpysworld/nothing-but-nix@main
