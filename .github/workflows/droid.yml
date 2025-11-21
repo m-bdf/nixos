@@ -14,16 +14,16 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - run: |
-          mkdir -p .ssh .config/nix
-          ssh-keygen -t rsa -N '' -f .ssh/id_rsa
-          cp .ssh/id_rsa.pub .ssh/authorized_keys
+          mkdir ssh nix
+          ssh-keygen -t rsa -N '' -f ssh/ssh_host_rsa_key
+          cp ssh/ssh_host_rsa_key.pub ssh/authorized_keys
 
-          printf > .ssh/config "
+          printf > ssh/ssh_config "
             Host * \n StrictHostKeyChecking no
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
-          printf > .config/nix/nix.conf "
+          printf > nix/nix.conf "
             builders = $ARM_BUILDER aarch64-linux - 4 2
             builders-use-substitutes = true
             download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
@@ -31,10 +31,10 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: home
+          name: etc
           path: .
-          include-hidden-files: true
-          if-no-files-found: error
+          # include-hidden-files: true
+          # if-no-files-found: error
 
   setup-arm-builder:
     needs: export-home-dir
@@ -42,9 +42,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .config ~
+      - run: chmod 400 ssh/ssh_host_rsa_key
+      - run: sudo cp -R ssh /etc
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -68,7 +67,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
+      - run: chmod 400 ssh/ssh_host_rsa_key
+      - run: sudo cp -R ssh /etc
 
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
