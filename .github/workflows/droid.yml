@@ -48,11 +48,6 @@ jobs:
           ls -la ~
           ls -la ~/.ssh
 
-          # sudo chown root:root authorized_keys ssh_config
-
-          # sudo cp authorized_keys /root/.ssh
-          # sudo cp ssh_config /root/.ssh/config
-
           sudo cp ssh_config /etc/ssh
 
           sudo sh -c 'echo "
@@ -75,10 +70,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          mkdir ~/.ssh
-          cp id_rsa* ~/.ssh
-          chmod 600 ~/.ssh/id_rsa
-          cp ssh_config ~/.ssh/config
+          # mkdir ~/.ssh
+          # cp id_rsa* ~/.ssh
+          # chmod 600 ~/.ssh/id_rsa
+          # cp ssh_config ~/.ssh/config
 
           sudo chown root:root ssh_*
           sudo chmod 600 ssh_host_rsa_key
