@@ -110,7 +110,7 @@ jobs:
             --builders "$USER@$ARM_BUILDER aarch64-linux"
 
       - if: always()
-        run: ssh $ARM_BUILDER shutdown now
+        run: ssh -vvvvv $ARM_BUILDER shutdown now
 
       - uses: actions/upload-pages-artifact@main
         with:
