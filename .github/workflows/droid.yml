@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa && sudo cp * /root
+      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
       - uses: DeterminateSystems/nix-installer-action@main
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nv
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/download-artifact@main
-      - run: chmod 400 .ssh/id_rsa && sudo cp * /root
+      - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
       - run: sleep 20 && sudo ssh $ARM_BUILDER 'echo $NIX_CONFIG'
 
