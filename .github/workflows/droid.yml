@@ -11,12 +11,11 @@ env:
 
 jobs:
   export-ssh-dir:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     steps:
       - run: |
-          sudo ls -la /root/.ssh
-          sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
-          cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
+          ssh-keygen -t rsa -N '' -f id_rsa
+          cp id_rsa.pub authorized_keys
 
           printf "
             Host * \n StrictHostKeyChecking no
@@ -79,7 +78,7 @@ jobs:
             --accept-flake-config
             --trace-verbose --show-trace
             --print-build-logs --keep-going
-            --builders "$ARM_BUILDER aarch64-linux - - 2"
+            --builders "$ARM_BUILDER aarch64-linux - 4 2"
 
       - if: always()
         run: sudo ssh -v $ARM_BUILDER shutdown now
