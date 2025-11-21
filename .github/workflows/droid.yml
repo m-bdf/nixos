@@ -8,6 +8,7 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
+  NIX_CONFIG: download-buffer-size = $((2 ** 42))
 
 jobs:
   export-ssh-dir:
@@ -23,9 +24,6 @@ jobs:
 
             Host $ARM_BUILDER
               ProxyJump $JUMP_PROXY
-              SetEnv NIX_CONFIG='
-                download-buffer-size = $((2 ** 42))
-              '
           "
 
       - uses: actions/upload-artifact@main
