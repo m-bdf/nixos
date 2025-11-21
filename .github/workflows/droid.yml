@@ -44,7 +44,8 @@ jobs:
           cp authorized_keys ~/.ssh
           cp ssh_config ~/.ssh/config
 
-          ls -lRa ~
+          ls -la ~
+          ls -la ~/.ssh
 
           sudo chown root:root authorized_keys ssh_config
 
@@ -77,6 +78,9 @@ jobs:
           cp id_rsa* ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           cp ssh_config ~/.ssh/config
+
+          ls -la ~
+          ls -la ~/.ssh
 
           sudo chown root:root ssh_*
           sudo chmod 600 ssh_host_rsa_key
