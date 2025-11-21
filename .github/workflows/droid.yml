@@ -47,6 +47,11 @@ jobs:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: sleep infinity
 
