@@ -26,7 +26,7 @@ jobs:
           printf > .config/nix/nix.conf "
             builders = $ARM_BUILDER aarch64-linux - 4 2
             builders-use-substitutes = true
-            download-buffer-size = $((2 ** 32)) # 4 GiB
+            download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
           "
 
       - uses: actions/upload-artifact@main
@@ -44,7 +44,9 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
+
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: sleep infinity
 
@@ -59,6 +61,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa && sudo cp -R . /root
 
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
