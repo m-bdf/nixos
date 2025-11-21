@@ -27,6 +27,7 @@ let
           sed -i '/weak_alias/d' sysdeps/posix/isatty.c
           cat ${./isatty.c} >> sysdeps/posix/isatty.c
         '';
+        makeFlags = "--silent";
       };
 
       coreutils = uutils-coreutils-noprefix;
