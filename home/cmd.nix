@@ -1,8 +1,12 @@
 { config, lib, ... }:
 
 let
-  rustixUseLibcOverlay = _: prev: {
+  rustixUseLibcOverlay = final: prev: {
     rustPlatform = prev.rustPlatform.overrideScope (_: prev: {
+      importCargoLock = prev.importCargoLock.override {
+        runCommand = final.runCommandLocal;
+      };
+
       buildRustPackage = args: with lib;
       let
         default = prev.buildRustPackage args;
