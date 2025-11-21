@@ -11,9 +11,10 @@ env:
 
 jobs:
   export-ssh-dir:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04
     steps:
       - run: |
+          sudo ls -la /root/.ssh
           sudo cat /etc/ssh/ssh_host_rsa_key > id_rsa
           cp /etc/ssh/ssh_host_rsa_key.pub authorized_keys
 
