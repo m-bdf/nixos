@@ -1,16 +1,11 @@
 { config, lib, ... }:
 
 let
-  rustixUseLibcOverlay = final: prev: {
+  rustixUseLibcOverlay = _: prev: {
     rustPlatform = prev.rustPlatform.overrideScope (_: prev: {
       buildRustPackage = args: with lib;
       let
-        default = prev.buildRustPackage.override (prev: {
-          importCargoLock = prev.importCargoLock.override {
-            runCommand = final.runCommandLocal;
-          };
-        }) args;
-
+        default = prev.buildRustPackage args;
         withLibc = default.overrideAttrs {
           passthru.dev = default;
           NIX_RUSTFLAGS = "--cfg=rustix_use_libc";
