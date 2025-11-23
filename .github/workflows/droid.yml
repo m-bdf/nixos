@@ -56,8 +56,12 @@ jobs:
 
       - run: nix config show
 
-      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: sleep infinity
+      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N -vvvvv
+      - if: always()
+        run: history
+      - if: always()
+        run: sudo history
+      # - run: sleep infinity
 
   build-bootstrap-zips:
     needs: export-home-dir
