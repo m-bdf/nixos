@@ -39,6 +39,7 @@ jobs:
             sudo cat /root/.config/nix/nix.conf
             sudo cat /etc/nix/nix.conf
             sudo cat /etc/nix/nix.custom.conf
+            nix config show
           post: sudo ssh $ARM_BUILDER pkill ssh
 
       - uses: cachix/cachix-action@master
