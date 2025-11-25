@@ -54,16 +54,10 @@ jobs:
       #     name: m-bdfe; done
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix config show
+      # - run: nix config show
 
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: |
-          sudo execsnoop-bpfcc -l source-stdenv.sh |
-          while read _ pid _; do
-            echo $pid
-            ls -l /proc/$pid/environ
-            grep -saPo '(?<=out=)[^\0]+' /proc/$pid/environ
-          done
+      - run: sudo execsnoop-bpfcc -l source-stdenv.sh | while read _ pid _; do grep -saPo '(?<=out=)[^\0]+' /proc/$pid/environ; done
 
   build-bootstrap-zips:
     needs: export-home-dir
@@ -91,12 +85,12 @@ jobs:
       #     name: m-bdf
       #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: sleep 10
-      - run: nix config show
-      - run: sudo ssh $ARM_BUILDER nix config show
+      # - run: sleep 10
+      # - run: nix config show
+      # - run: sudo ssh $ARM_BUILDER nix config show
 
       - uses: actions/checkout@main
-      - run: nix build .#nixOnDroidBootstrapZips
+      - run: nix build .#nixOnDroidConfigurations.aarch64-linux.activationPackage
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
