@@ -56,7 +56,7 @@ jobs:
 
       # - run: nix config show
 
-      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
+      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: |
           sudo execsnoop-bpfcc -l source-stdenv.sh |
           while read _ pid _
