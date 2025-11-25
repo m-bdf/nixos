@@ -58,7 +58,7 @@ jobs:
 
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: |
-          sudo execsnoop-bpfcc
+          sudo execsnoop-bpfcc -l source-stdenv.sh
 
   build-bootstrap-zips:
     needs: export-home-dir
