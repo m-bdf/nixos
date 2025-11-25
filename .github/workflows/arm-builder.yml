@@ -49,7 +49,7 @@ jobs:
       - run: |
           sudo cp -R ~/.ssh ~/.config /root
           sudo chown -R root:root /root
-          sudo cp /root/.config/nix/nix.conf /etc/nix/nix.custom.conf
+          cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf
 
       - run: |
           cat ~/.config/nix/nix.conf
