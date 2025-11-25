@@ -45,6 +45,5 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - run: |
-          sudo cp -R ~/.ssh ~/.config /root
-          sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+      - run: sudo cp -R ~/.ssh ~/.config /root
+      - run: sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22

@@ -39,7 +39,7 @@ jobs:
       - run: |
           chmod 400 .ssh/id_rsa
           cp -R . ~
-          cp -R . /root
+          sudo cp -R . /root
 
       - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
