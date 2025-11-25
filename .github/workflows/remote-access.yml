@@ -34,9 +34,11 @@ jobs:
             cp -R .ssh .config ~
             sudo cp -R .ssh .config /root
             sudo chown -R root:root /root
+
             cat ~/.config/nix/nix.conf
             sudo cat /root/.config/nix/nix.conf
             sudo cat /etc/nix/nix.conf
+            sudo cat /etc/nix/nix.custom.conf
           post: sudo ssh $ARM_BUILDER pkill ssh
 
       - uses: cachix/cachix-action@master
