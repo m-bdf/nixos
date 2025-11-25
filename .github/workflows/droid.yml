@@ -56,12 +56,9 @@ jobs:
 
       # - run: nix config show
 
-      - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
-      - run: |
-          sudo execsnoop-bpfcc -l source-stdenv.sh |
-          while read _ pid _
-            do sudo sed -zEn 's/out=(.*)/\1\n/p' /proc/$pid/environ
-          done
+      - run: sudo ssh -MS /tmp/ssh-socket
+          $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+
 
   build-bootstrap-zips:
     needs: export-home-dir
@@ -100,7 +97,8 @@ jobs:
           --print-build-logs --keep-going
 
       - if: always()
-        run: sudo ssh $ARM_BUILDER pkill execsnoop-bpfcc
+        run: sudo ssh $ARM_BUILDER ssh -S /tmp/ssh-socket -O exit
+        continue-on-error: true
 
       - uses: actions/upload-pages-artifact@main
         with:
