@@ -18,8 +18,7 @@ jobs:
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           cp .ssh/id_rsa.pub .ssh/authorized_keys
           printf > .ssh/config "
-            Host * \n StrictHostKeyChecking no
-            Host $JUMP_PROXY \n ServerAliveInterval 15
+            Host * \n StrictHostKeyChecking no \n ServerAliveInterval 15
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
