@@ -9,9 +9,6 @@ env:
 
 jobs:
   setup-arm-builder:
-    permissions:
-      contents: read
-
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main

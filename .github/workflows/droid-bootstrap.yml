@@ -9,13 +9,9 @@ env:
 
 jobs:
   setup-arm-builder:
-    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   build-bootstrap-zips:
-    permissions:
-      contents: read
-
     runs-on: ubuntu-latest
     steps:
       - uses: wimpysworld/nothing-but-nix@main
