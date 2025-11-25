@@ -22,6 +22,7 @@ jobs:
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
+      - uses: DeterminateSystems/nix-installer-action@main
       - run: |
           printf > .config/nix/nix.conf "
             builders = ssh-ng://$ARM_BUILDER %s - %s - %s
