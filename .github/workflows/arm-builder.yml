@@ -58,4 +58,4 @@ jobs:
             sudo cat /etc/nix/nix.custom.conf
             nix config show
           post:
-            sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+            ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
