@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main
+        with:
+          nix-permission-edict: true
       - uses: nixbuild/nix-quick-install-action@master
 
       - uses: actions/checkout@main
