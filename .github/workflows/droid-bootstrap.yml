@@ -1,0 +1,74 @@
+name: Build NixOnDroid bootstrap files
+on:
+  workflow_call:
+  workflow_dispatch:
+
+env:
+  JUMP_PROXY: ${{ github.repository }}@ssh-j.com
+  ARM_BUILDER: arm-builder-${{ github.run_id }}
+
+jobs:
+  setup-arm-builder:
+    uses: ./.github/workflows/arm-builder.yml
+
+  build-bootstrap-zips:
+    permissions:
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
+
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: while ! gn run download; do sleep 5; done
+
+      - run: sudo mkdir /root/.config/nix ~/.config/nix
+      - run: sudo cp nix.conf /root/.config/nix
+      - run: cp nix.conf ~/.config/nix
+
+      - run: chmod 400 .ssh/id_rsa
+      - run: sudo cp -R .ssh /root
+      - run: cp -R .ssh ~
+
+      - uses: actions/checkout@main
+      - run: nix build .#nixOnDroidBootstrapZips
+          --accept-flake-config
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
+
+      - if: always()
+        run: sudo ssh $ARM_BUILDER pkill ssh
+        continue-on-error: true
+
+      - uses: actions/upload-pages-artifact@main
+        with:
+          path: result
+
+  deploy-bootstrap-zips:
+    needs: build-bootstrap-zips
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@main

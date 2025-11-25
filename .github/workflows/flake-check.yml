@@ -1,16 +1,23 @@
-name: check
+name: Run nix flake check
 on:
-  workflow_run:
-    workflows: [droid]
-    types: [completed]
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: 42 23 * * *
 
 jobs:
-  check:
+  droid-bootstrap:
+    uses: ./.github/workflows/droid-bootstrap.yml
+
+  nix-flake-check:
+    needs: droid-bootstrap
+
     permissions:
       contents: read
 
     runs-on: ubuntu-latest
     steps:
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
@@ -29,8 +36,8 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
-  chore:
-    needs: check
+  respository-chore:
+    needs: nix-flake-check
 
     permissions:
       deployments: write
