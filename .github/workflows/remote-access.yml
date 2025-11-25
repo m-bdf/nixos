@@ -9,6 +9,7 @@ jobs:
 
   setup-remote-access:
     permissions:
+      actions: read
       contents: read
 
     runs-on: ubuntu-latest
