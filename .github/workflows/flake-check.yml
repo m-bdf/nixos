@@ -31,6 +31,9 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
+      - run: |
+          sudo cp /root/.config/nix/nix.conf /etc/nix/nix.custom.conf
+
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
@@ -41,6 +44,7 @@ jobs:
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
+          --download-buffer-size $((64 * 1024 ** 3)) # 64 GiB
 
   respository-chore:
     needs: nix-flake-check

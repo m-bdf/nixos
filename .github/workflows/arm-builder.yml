@@ -22,15 +22,15 @@ jobs:
           cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
 
           printf > ~/.ssh/config "
-            Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+          Host * \n StrictHostKeyChecking no
+          Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
       - run: |
           printf > ~/.config/nix/nix.conf "
-            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
-            builders-use-substitutes = true
-            download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
+          builders = ssh-ng://$ARM_BUILDER %s - %s - %s
+          builders-use-substitutes = true
+          download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
           " \
             $(nix config show --json | jq -r '
               (."system".value, ."max-jobs".value),
@@ -49,6 +49,7 @@ jobs:
       - run: |
           sudo cp -R ~/.ssh ~/.config /root
           sudo chown -R root:root /root
+          sudo cp /root/.config/nix/nix.conf /etc/nix/nix.custom.conf
 
       - run: |
           cat ~/.config/nix/nix.conf

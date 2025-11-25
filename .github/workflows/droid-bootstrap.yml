@@ -37,6 +37,7 @@ jobs:
           cp -R .ssh .config ~
           sudo cp -R .ssh .config /root
           sudo chown -R root:root /root
+          sudo cp /root/.config/nix/nix.conf /etc/nix/nix.custom.conf
 
       - run: |
           cat ~/.config/nix/nix.conf
@@ -62,6 +63,7 @@ jobs:
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
+          --download-buffer-size $((64 * 1024 ** 3)) # 64 GiB
 
       - if: always()
         run: sudo ssh $ARM_BUILDER pkill ssh
