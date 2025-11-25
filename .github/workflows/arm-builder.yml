@@ -39,9 +39,9 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: home
-          path: ~/.ssh, ~/.config
-          include-hidden-files: true
-          if-no-files-found: error
+          path: |
+            ~/.ssh
+            ~/.config
 
       - run: |
           sudo cp -R ~/.ssh ~/.config /root

@@ -26,6 +26,7 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      - uses: actions/checkout@main
       - run: while ! gh run download; do sleep 5; done
         env:
           GH_TOKEN: ${{ github.token }}
@@ -35,5 +36,4 @@ jobs:
           cp -R . ~
           cp -R . /root
 
-      - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master
