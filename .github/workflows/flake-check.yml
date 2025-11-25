@@ -7,6 +7,10 @@ on:
 
 jobs:
   droid-bootstrap:
+    permissions:
+      pages: write
+      id-token: write
+
     uses: ./.github/workflows/droid-bootstrap.yml
 
   nix-flake-check:
