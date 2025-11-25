@@ -60,7 +60,7 @@ jobs:
       - run: |
           sudo execsnoop-bpfcc -l source-stdenv.sh |
           while read _ pid _
-            do sudo grep -zPo '(?<=out=).*' /proc/$pid/environ
+            do grep -szPo '(?<=out=).*' /proc/$pid/environ
           done
 
   build-bootstrap-zips:
