@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: home
-          path: ~/.ssh ~/.config
+          path: ~/.ssh, ~/.config
           include-hidden-files: true
           if-no-files-found: error
 
