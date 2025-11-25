@@ -56,7 +56,7 @@ jobs:
 
       # - run: nix config show
 
-      - run: sudo ssh -MS /tmp/ssh-socket
+      - run: sudo ssh -MS /run/ssh-%C.sock
           $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
 
 
@@ -97,7 +97,8 @@ jobs:
           --print-build-logs --keep-going
 
       - if: always()
-        run: sudo ssh $ARM_BUILDER ssh -S /tmp/ssh-socket -O exit
+        run: sudo ssh $ARM_BUILDER
+          ssh -S /run/ssh-%C.sock $JUMP_PROXY -O exit
         continue-on-error: true
 
       - uses: actions/upload-pages-artifact@main
