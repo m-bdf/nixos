@@ -8,6 +8,7 @@ on:
 jobs:
   droid-bootstrap:
     permissions:
+      contents: read
       pages: write
       id-token: write
 

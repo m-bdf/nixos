@@ -3,6 +3,7 @@ on:
   workflow_call:
   workflow_dispatch:
 
+permissions: {}
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
