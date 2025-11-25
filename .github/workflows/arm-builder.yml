@@ -46,16 +46,15 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - uses: gacts/run-and-post-run@main
-        with:
-          run: |
-            sudo cp -R ~/.ssh ~/.config /root
-            sudo chown -R root:root /root
+      - run: |
+          sudo cp -R ~/.ssh ~/.config /root
+          sudo chown -R root:root /root
 
-            cat ~/.config/nix/nix.conf
-            sudo cat /root/.config/nix/nix.conf
-            sudo cat /etc/nix/nix.conf
-            sudo cat /etc/nix/nix.custom.conf
-            nix config show
-          post:
-            ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+      - run: |
+          cat ~/.config/nix/nix.conf
+          sudo cat /root/.config/nix/nix.conf
+          sudo cat /etc/nix/nix.conf
+          sudo cat /etc/nix/nix.custom.conf
+          nix config show
+
+      - run: ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22

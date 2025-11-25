@@ -38,6 +38,7 @@ jobs:
           sudo cp -R .ssh .config /root
           sudo chown -R root:root /root
 
+      - run: |
           cat ~/.config/nix/nix.conf
           sudo cat /root/.config/nix/nix.conf
           sudo cat /etc/nix/nix.conf
@@ -48,6 +49,13 @@ jobs:
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: |
+          cat ~/.config/nix/nix.conf
+          sudo cat /root/.config/nix/nix.conf
+          sudo cat /etc/nix/nix.conf
+          sudo cat /etc/nix/nix.custom.conf
+          nix config show
 
       - uses: actions/checkout@main
       - run: nix build .#nixOnDroidBootstrapZips
