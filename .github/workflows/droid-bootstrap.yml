@@ -14,6 +14,7 @@ jobs:
 
   build-bootstrap-zips:
     permissions:
+      actions: read
       contents: read
 
     runs-on: ubuntu-latest
@@ -26,12 +27,11 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
-      - uses: Wandalen/wretry.action@master
+      - uses: yogeshlonkar/wait-for-jobs@main
         with:
-          action: actions/download-artifact@main
-          attempt_limit: 10
-          attempt_delay: 5000
+          jobs: setup-arm-builder
 
+      - uses: actions/download-artifact@main
       - run: |
           chmod 400 .ssh/id_rsa
           cp -R .ssh .config ~

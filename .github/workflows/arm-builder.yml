@@ -3,13 +3,14 @@ on:
   workflow_call:
   workflow_dispatch:
 
-permissions: {}
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
 jobs:
   setup-arm-builder:
+    permissions: {}
+
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main
