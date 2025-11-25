@@ -9,9 +9,13 @@ env:
 
 jobs:
   setup-arm-builder:
+    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   build-bootstrap-zips:
+    permissions:
+      contents: read
+
     runs-on: ubuntu-latest
     steps:
       - uses: wimpysworld/nothing-but-nix@main
@@ -21,10 +25,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-
-      - uses: actions/checkout@main
-      - run: nix run home-manager -- switch
-          --flake .#$(nix config show system)
 
       - uses: Wandalen/wretry.action@master
         with:
@@ -43,6 +43,7 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      - uses: actions/checkout@main
       - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
           --trace-verbose --show-trace

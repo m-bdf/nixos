@@ -9,6 +9,8 @@ env:
 
 jobs:
   setup-arm-builder:
+    permissions: {}
+
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main
@@ -18,12 +20,6 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-
-      - uses: actions/checkout@main
-      - run: nix run home-manager -- switch
-          --flake .#$(nix config show system)
-          --option accept-flake-config true
-          --show-trace --print-build-logs --keep-going
 
       - run: |
           mkdir -p ~/.ssh
