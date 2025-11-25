@@ -46,8 +46,10 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - run: |
-          sudo cp -R ~/.ssh ~/.config /root
-          sudo chown -R root:root /root
-
-      - run: sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+      - uses: gacts/run-and-post-run@main
+        with:
+          run: |
+            sudo cp -R ~/.ssh ~/.config /root
+            sudo chown -R root:root /root
+          post:
+            sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22

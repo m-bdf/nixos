@@ -28,11 +28,14 @@ jobs:
           suffix: true
 
       - uses: actions/download-artifact@main
-      - run: |
-          chmod 400 .ssh/id_rsa
-          cp -R .ssh .config ~
-          sudo cp -R .ssh .config /root
-          sudo chown -R root:root /root
+      - uses: gacts/run-and-post-run@main
+        with:
+          run: |
+            chmod 400 .ssh/id_rsa
+            cp -R .ssh .config ~
+            sudo cp -R .ssh .config /root
+            sudo chown -R root:root /root
+          post: sudo ssh $ARM_BUILDER pkill ssh
 
       - uses: cachix/cachix-action@master
         with:
