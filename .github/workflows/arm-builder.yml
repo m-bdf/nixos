@@ -9,53 +9,36 @@ env:
 
 jobs:
   setup-arm-builder:
-    permissions: {}
+    permissions:
+      contents: read
 
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: nixbuild/nix-quick-install-action@master
+
+      - uses: actions/checkout@main
+      - run: nix run home-manager -- switch
+          --flake .#$(nix config show system)
 
       - run: |
-          mkdir -p ~/.ssh ~/.config/nix
+          mkdir -p ~/.ssh
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
 
           printf > ~/.ssh/config "
-          Host * \n StrictHostKeyChecking no
-          Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+            Host * \n StrictHostKeyChecking no
+            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
-      - run: |
-          printf > ~/.config/nix/nix.conf "
-          builders = ssh-ng://$ARM_BUILDER %s - %s - %s
-          builders-use-substitutes = true
-          download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
+          sudo cp -R ~/.ssh /root
+          sudo chown -R root:root /root/.ssh
 
       - uses: actions/upload-artifact@main
         with:
-          name: home
-          path: |
-            ~/.ssh
-            ~/.config
+          name: .ssh
+          path: ~/.ssh
           include-hidden-files: true
           if-no-files-found: error
-
-      - run: |
-          sudo cp -R ~/.ssh ~/.config /root
-          sudo chown -R root:root /root
-          sudo sh -c 'cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf'
-
-      - run: |
-          cat ~/.config/nix/nix.conf
-          sudo cat /root/.config/nix/nix.conf
-          sudo cat /etc/nix/nix.conf
-          sudo cat /etc/nix/nix.custom.conf
-          nix config show
 
       - run: ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22

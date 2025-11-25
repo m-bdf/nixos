@@ -19,12 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
+      - uses: nixbuild/nix-quick-install-action@master
+
+      - uses: actions/checkout@main
+      - run: nix run home-manager -- switch
+          --flake .#$(nix config show system)
 
       - uses: Wandalen/wretry.action@master
         with:
@@ -33,37 +32,20 @@ jobs:
           attempt_delay: 5000
 
       - run: |
-          chmod 400 .ssh/id_rsa
-          cp -R .ssh .config ~
-          sudo cp -R .ssh .config /root
-          sudo chown -R root:root /root
-          sudo sh -c 'cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf'
-
-      - run: |
-          cat ~/.config/nix/nix.conf
-          sudo cat /root/.config/nix/nix.conf
-          sudo cat /etc/nix/nix.conf
-          sudo cat /etc/nix/nix.custom.conf
-          nix config show
+          chmod 400 id_rsa
+          cp -R . ~/.ssh
+          sudo cp -R . /root/.ssh
+          sudo chown -R root:root /root/.ssh
 
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: |
-          cat ~/.config/nix/nix.conf
-          sudo cat /root/.config/nix/nix.conf
-          sudo cat /etc/nix/nix.conf
-          sudo cat /etc/nix/nix.custom.conf
-          nix config show
-
-      - uses: actions/checkout@main
       - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
-          --download-buffer-size $((64 * 1024 ** 3)) # 64 GiB
 
       - if: always()
         run: sudo ssh $ARM_BUILDER pkill ssh
