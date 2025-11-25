@@ -96,7 +96,7 @@ jobs:
       # - run: sudo ssh $ARM_BUILDER nix config show
 
       - uses: actions/checkout@main
-      - run: nix build .#nixOnDroidConfigurations.aarch64-linux.activationPackage
+      - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
