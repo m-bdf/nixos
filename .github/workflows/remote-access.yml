@@ -35,5 +35,6 @@ jobs:
           chmod 400 .ssh/id_rsa
           cp -R . ~
           sudo cp -R . /root
+          sudo chown -R root:root /root
 
       - uses: mxschmitt/action-tmate@master
