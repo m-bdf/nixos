@@ -18,7 +18,7 @@ jobs:
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           cp .ssh/id_rsa.pub .ssh/authorized_keys
           printf > .ssh/config "
-            Host * \n StrictHostKeyChecking no \n ServerAliveInterval 15
+            Host * \n StrictHostKeyChecking no
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
@@ -94,10 +94,9 @@ jobs:
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
-      # - if: always()
-      #   run: sudo ssh $ARM_BUILDER
-      #     ssh -S /run/ssh-%C.sock $JUMP_PROXY -O exit
-      #   continue-on-error: true
+      - if: always()
+        run: sudo ssh $ARM_BUILDER pkill ssh
+        continue-on-error: true
 
       - uses: actions/upload-pages-artifact@main
         with:
