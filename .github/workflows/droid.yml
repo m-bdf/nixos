@@ -59,8 +59,10 @@ jobs:
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nf
       - run: |
           sudo execsnoop-bpfcc -l source-stdenv.sh |
-          while read _ pid _
-            do grep -saPo '(?<=out=)[^\0]+' /proc/$pid/environ
+          while read _ pid _ do
+            echo $pid
+            ls -l /proc/$pid/environ
+            grep -saPo '(?<=out=)[^\0]+' /proc/$pid/environ
           done
 
   build-bootstrap-zips:
