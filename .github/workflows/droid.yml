@@ -11,23 +11,27 @@ env:
 
 jobs:
   export-home-dir:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     steps:
       - run: |
           mkdir -p .ssh .config/nix
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           cp .ssh/id_rsa.pub .ssh/authorized_keys
-
           printf > .ssh/config "
             Host * \n StrictHostKeyChecking no
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
+      - run: |
           printf > .config/nix/nix.conf "
-            builders = ssh-ng://$ARM_BUILDER aarch64-linux - $(nproc)
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
             download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
-          "
+          " \
+            $(nix config show --json | jq -r '
+              (."system".value, ."max-jobs".value),
+              (."system-features".value | join(","))
+            ')
 
       - uses: actions/upload-artifact@main
         with:
@@ -66,7 +70,7 @@ jobs:
     permissions:
       contents: read
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
       - run: chmod 400 .ssh/id_rsa
