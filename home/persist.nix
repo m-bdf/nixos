@@ -26,7 +26,8 @@ in
     home.file = persistableFilesOption // {
       apply = mapAttrs (name: cfg: cfg //
         optionalAttrs (!hasPrefix "/" cfg.target) {
-          target = "${config.home.homeDirectory}/${cfg.target}";
+          target = removePrefix "/" # make `force` work
+            "${config.home.homeDirectory}/${cfg.target}";
         }
       );
     };
