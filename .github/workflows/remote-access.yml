@@ -29,6 +29,8 @@ jobs:
       - uses: Wandalen/wretry.action@master
         with:
           action: actions/download-artifact@main
+          attempt_limit: 10
+          attempt_delay: 5000
 
       - run: |
           chmod 400 .ssh/id_rsa
