@@ -30,7 +30,7 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: while ! gn run download; do sleep 5; done
+      - run: while ! gh run download; do sleep 5; done
 
       - run: sudo mkdir /root/.config/nix ~/.config/nix
       - run: sudo cp nix.conf /root/.config/nix
