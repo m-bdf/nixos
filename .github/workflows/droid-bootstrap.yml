@@ -9,6 +9,7 @@ env:
 
 jobs:
   setup-arm-builder:
+    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   build-bootstrap-zips:
@@ -31,14 +32,10 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: while ! gh run download; do sleep 5; done
-
-      - run: sudo mkdir /root/.config/nix ~/.config/nix
-      - run: sudo cp nix.conf /root/.config/nix
-      - run: cp nix.conf ~/.config/nix
-
-      - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .ssh ~
+      - run: |
+          chmod 400 .ssh/id_rsa
+          cp -R . ~
+          sudo ln -s ~/.* /root
 
       - uses: actions/checkout@main
       - run: nix build .#nixOnDroidBootstrapZips

@@ -9,14 +9,29 @@ env:
   ARM_BUILDER: arm-builder-${{ github.run_id }}
 
 jobs:
-  setup-nix:
+  setup-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
       - run: |
-          printf > nix.conf "
+          mkdir ~/.ssh
+          sudo ln -s ~/.ssh /root
+
+          ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
+          cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+
+          printf > ~/.ssh/config "
+            Host * \n StrictHostKeyChecking no
+            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+          "
+
+      - run: |
+          mkdir -p ~/.config/nix
+          sudo ln -s ~/.config /root
+
+          printf > ~/.config/nix/nix.conf "
             builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
             download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
@@ -28,26 +43,9 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: nix.conf
-          path: nix.conf
-
-  setup-ssh:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - run: |
-          ssh-keygen -t rsa -N '' -f id_rsa
-          cp id_rsa.pub authorized_keys
-
-          printf > config "
-            Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
-          "
-
-          sudo cp -R . /root/.ssh && cp -R . ~/.ssh
-
-      - uses: actions/upload-artifact@main
-        with:
-          name: .ssh
-          path: .
+          name: home
+          path: ~
+          include-hidden-files: true
+          if-no-files-found: error
 
       - run: sudo ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22

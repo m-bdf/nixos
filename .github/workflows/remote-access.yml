@@ -4,6 +4,7 @@ on:
 
 jobs:
   setup-arm-builder:
+    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   setup-remote-access:
@@ -20,20 +21,16 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
-      - run: while ! gn run download; do sleep 5; done
-
-      - run: sudo mkdir /root/.config/nix ~/.config/nix
-      - run: sudo cp nix.conf /root/.config/nix
-      - run: cp nix.conf ~/.config/nix
-
-      - run: chmod 400 .ssh/id_rsa
-      - run: sudo cp -R .ssh /root
-      - run: cp -R .ssh ~
-
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: while ! gh run download; do sleep 5; done
+      - run: |
+          chmod 400 .ssh/id_rsa
+          cp -R . ~
+          sudo ln -s ~/.* /root
 
       - uses: actions/checkout@main
       - uses: mxschmitt/action-tmate@master
