@@ -37,7 +37,7 @@ jobs:
           cp -R .ssh .config ~
           sudo cp -R .ssh .config /root
           sudo chown -R root:root /root
-          cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf
+          sudo -s 'cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf'
 
       - run: |
           cat ~/.config/nix/nix.conf

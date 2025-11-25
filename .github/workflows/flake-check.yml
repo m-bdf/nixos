@@ -32,7 +32,7 @@ jobs:
             eval-cores = 0
 
       - run: |
-          cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf
+          sudo -s 'cat ~/.config/nix/nix.conf >> /etc/nix/nix.custom.conf'
 
       - uses: cachix/cachix-action@master
         with:
