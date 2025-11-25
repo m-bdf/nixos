@@ -57,11 +57,11 @@ jobs:
       # - run: nix config show
 
       - run: sudo ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
-      # - run: |
-      #     sudo execsnoop-bpfcc -l source-stdenv.sh |
-      #     while read _ pid _
-      #       do sudo grep -szPo '(?<=out=).*' /proc/$pid/environ
-      #     done
+      - run: |
+          sudo execsnoop-bpfcc -l source-stdenv.sh |
+          while read _ pid _
+            do sudo sed -zEn 's/out=(.*)/\1\n/p' /proc/$pid/environ
+          done
 
   build-bootstrap-zips:
     needs: export-home-dir
