@@ -27,6 +27,9 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: while ! gh run download; do sleep 5; done
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - run: |
           chmod 400 .ssh/id_rsa
           cp -R . ~
