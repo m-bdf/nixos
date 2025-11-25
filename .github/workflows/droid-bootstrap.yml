@@ -14,7 +14,6 @@ jobs:
 
   build-bootstrap-zips:
     permissions:
-      actions: read
       contents: read
 
     runs-on: ubuntu-latest
@@ -27,12 +26,12 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
-      - uses: yogeshlonkar/wait-for-jobs@main
+      - uses: Wandalen/wretry.action@master
         with:
-          jobs: setup-arm-builder
-          suffix: true
+          action: actions/download-artifact@main
+          attempt_limit: 10
+          attempt_delay: 5000
 
-      - uses: actions/download-artifact@main
       - uses: gacts/run-and-post-run@main
         with:
           run: |
