@@ -22,13 +22,13 @@ let
 
   replacements = with pkgs;
     lib.mapAttrsToList mkReplacement {
-      glibc = glibc.overrideAttrs {
+      glibc = glibc.overrideAttrs (prev: {
         prePatch = ''
           sed -i '/weak_alias/d' sysdeps/posix/isatty.c
           cat ${./isatty.c} >> sysdeps/posix/isatty.c
         '';
-        makeFlags = "--silent";
-      };
+        makeFlags = prev.makeFlags or [] ++ [ "--silent" ];
+      });
 
       coreutils = uutils-coreutils-noprefix;
       diffutils = uutils-diffutils.overrideAttrs {
