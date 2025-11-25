@@ -15,9 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
         with:
-          nix-permission-edict: true
-      - uses: nixbuild/nix-quick-install-action@master
+          extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
 
       - uses: actions/checkout@main
       - run: nix run home-manager -- switch
