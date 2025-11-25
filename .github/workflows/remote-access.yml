@@ -25,6 +25,7 @@ jobs:
       - uses: yogeshlonkar/wait-for-jobs@main
         with:
           jobs: setup-arm-builder
+          suffix: true
 
       - uses: actions/download-artifact@main
       - run: |
