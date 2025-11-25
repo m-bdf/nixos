@@ -24,7 +24,7 @@ jobs:
           "
 
           printf > .config/nix/nix.conf "
-            builders = $ARM_BUILDER aarch64-linux - $(nproc)
+            builders = ssh-ng://$ARM_BUILDER aarch64-linux - $(nproc)
             builders-use-substitutes = true
             download-buffer-size = $((64 * 1024 ** 3)) # 64 GiB
           "
@@ -49,10 +49,10 @@ jobs:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      # - uses: cachix/cachix-action@master
-      #   with:
-      #     name: m-bdf
-      #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix config show
 
@@ -80,10 +80,10 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
-      # - uses: cachix/cachix-action@master
-      #   with:
-      #     name: m-bdf
-      #     authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: sleep 10
       - run: nix config show
