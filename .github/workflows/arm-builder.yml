@@ -35,9 +35,7 @@ jobs:
           sudo chown -R root:root /root/.ssh
 
       - run: |
-          ls -la ~ ~/.ssh ~/.config /config/nix
-
-          printf >> ~/.config/nix/nix.conf "
+          printf >> nix.conf "
             builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
@@ -51,7 +49,7 @@ jobs:
           name: .ssh
           path: |
             ~/.ssh
-            ~/.config
+            nix.conf
           include-hidden-files: true
           if-no-files-found: error
 

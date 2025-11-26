@@ -25,9 +25,10 @@ jobs:
 
       - run: |
           chmod 400 .ssh/id_rsa
-          cp -R . ~
-          sudo cp -R . /root
+          cp -R .ssh ~
+          sudo cp -R .ssh /root
           sudo chown -R root:root /root
+          sudo cp nix.conf /etc/nix
 
       - uses: cachix/cachix-action@master
         with:
