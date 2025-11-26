@@ -6,10 +6,6 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
-  NIX_CONFIG: |
-    lazy-locks = true
-    lazy-trees = true
-    eval-cores = 0
 
 jobs:
   setup-arm-builder:
