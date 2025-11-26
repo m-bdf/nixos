@@ -17,7 +17,10 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
 
       - run: |
-          ls -la ~
+          echo '=========='
+          nix config show lazy-locks
+          echo '=========='
+
           mkdir -p .ssh .config/nix
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           mv .ssh/id_rsa.pub .ssh/authorized_keys
