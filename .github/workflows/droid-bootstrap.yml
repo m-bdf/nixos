@@ -29,6 +29,7 @@ jobs:
           attempt_delay: 5000
 
       - run: |
+          ls -la . ~
           chmod 400 .ssh/id_rsa
           cp -R .ssh ~
           sudo cp -R .ssh /root
