@@ -48,7 +48,7 @@ jobs:
 
       - run: |
           cp -R . ~
-          sudo chmod 755 ~
+          chmod 755 ~
           sudo cp -R . /root
           sudo chown -R root:root /root
 

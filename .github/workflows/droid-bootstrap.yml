@@ -32,6 +32,7 @@ jobs:
       - run: |
           chmod 400 .ssh/id_rsa
           cp -R . ~
+          chmod 755 ~
           sudo cp -R . /root
           sudo chown -R root:root /root
 
