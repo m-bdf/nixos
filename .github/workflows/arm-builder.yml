@@ -31,7 +31,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh-ng://$USER@$ARM_BUILDER %s - %s - %s
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
