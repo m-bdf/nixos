@@ -38,7 +38,7 @@ jobs:
       - run: nix config show
 
       - run: nix build nixpkgs#legacyPackages.aarch64-linux.hello
-          --rebuild --show-trace --print-build-logs
+          --rebuild --show-trace --print-build-logs -vvv
 
       - uses: cachix/cachix-action@master
         with:
