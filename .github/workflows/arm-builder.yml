@@ -13,6 +13,8 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
+      - run: sudo cat /etc/ssh/ssh_host_rsa_key.pub
+
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
