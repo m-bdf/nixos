@@ -40,7 +40,7 @@ jobs:
           nix build --impure --expr '
             (import <nixpkgs> {
               system = "aarch64-linux";
-            }).overrideAttrs { foo = "bar"; }
+            }).hello.overrideAttrs { foo = "bar"; }
           ' --show-trace --print-build-logs
 
       - uses: cachix/cachix-action@master
