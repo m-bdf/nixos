@@ -13,20 +13,13 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - run: sudo cat /etc/ssh/ssh_host_rsa_key.pub
-
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
 
       - run: |
-          mkdir ~/.ssh
+          mkdir -p ~/.ssh ~/.config/nix
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
-          cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
+          mv ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
 
           printf > ~/.ssh/config "
             Host * \n StrictHostKeyChecking no
@@ -34,25 +27,25 @@ jobs:
           "
 
           sudo cp -R ~/.ssh /root
-          sudo chown -R root:root /root/.ssh
+          sudo chown -R root:root /root
 
       - run: |
-          printf >> nix.conf "
+          printf "
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
             builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
               (."system".value, ."max-jobs".value),
               (."system-features".value | join(","))
-            ')
+            ') > ~/.config/nix/nix.conf
 
       - uses: actions/upload-artifact@main
         with:
           name: home
-          path: |
-            ~/.ssh
-            nix.conf
+          path: ~/.*
           include-hidden-files: true
-          if-no-files-found: error
 
       - run: ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
