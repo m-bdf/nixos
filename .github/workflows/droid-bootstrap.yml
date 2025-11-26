@@ -38,8 +38,9 @@ jobs:
 
       - run: |
           nix build --impure --expr '
-            with import <nixpkgs> {};
-            hello.overrideAttrs { foo = "bar"; }
+            (import <nixpkgs> {
+              system = "aarch64-linux";
+            }).overrideAttrs { foo = "bar"; }
           ' --show-trace --print-build-logs
 
       - uses: cachix/cachix-action@master
