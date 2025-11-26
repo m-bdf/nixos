@@ -17,10 +17,6 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
 
       - run: |
-          echo '=========='
-          nix config show lazy-locks
-          echo '=========='
-
           mkdir -p .ssh .config/nix
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           mv .ssh/id_rsa.pub .ssh/authorized_keys
@@ -35,7 +31,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh-ng://$USER@$ARM_BUILDER %s - %s - %s
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
@@ -55,4 +51,4 @@ jobs:
           sudo cp -R . /root
           sudo chown -R root:root /root
 
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nv
+      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
