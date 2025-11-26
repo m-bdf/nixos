@@ -21,7 +21,7 @@ jobs:
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: Wandalen/wretry.action@master
+      - uses: Wandalen/wretry.action/main@master
         with:
           action: actions/download-artifact@main
           with: 'name: home'
