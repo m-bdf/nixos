@@ -40,6 +40,7 @@ jobs:
 
       - run: nix build nixpkgs#legacyPackages.aarch64-linux.hello
           --rebuild --show-trace --print-build-logs -vvv
+          --builders "ssh-ng://$ARM_BUILDER aarch64-linux - 4"
 
       - uses: cachix/cachix-action@master
         with:
