@@ -46,7 +46,7 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: .ssh
+          name: home
           path: |
             ~/.ssh
             nix.conf
