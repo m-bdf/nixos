@@ -17,15 +17,14 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
 
       - run: |
+          ls -la ~
           mkdir -p .ssh .config/nix
           ssh-keygen -t rsa -N '' -f .ssh/id_rsa
           mv .ssh/id_rsa.pub .ssh/authorized_keys
 
           printf > .ssh/config "
             Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER
-              ProxyJump $JUMP_PROXY
-              User $USER
+            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
       - run: |
@@ -33,7 +32,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
+            builders = ssh-ng://$USER@$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
@@ -49,6 +48,7 @@ jobs:
 
       - run: |
           cp -R . ~
+          sudo chmod 755 ~
           sudo cp -R . /root
           sudo chown -R root:root /root
 
