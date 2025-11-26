@@ -20,11 +20,6 @@ jobs:
     steps:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
 
       - uses: Wandalen/wretry.action@master
         with:
@@ -33,10 +28,10 @@ jobs:
           attempt_delay: 5000
 
       - run: |
-          chmod 400 id_rsa
-          cp -R . ~/.ssh
-          sudo cp -R . /root/.ssh
-          sudo chown -R root:root /root/.ssh
+          chmod 400 .ssh/id_rsa
+          cp -R . ~
+          sudo cp -R . /root
+          sudo chown -R root:root /root
 
       - uses: cachix/cachix-action@master
         with:

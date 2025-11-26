@@ -34,10 +34,22 @@ jobs:
           sudo cp -R ~/.ssh /root
           sudo chown -R root:root /root/.ssh
 
+      - run: |
+          printf >> ~/.config/nix/nix.conf "
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
+            builders-use-substitutes = true
+          " \
+            $(nix config show --json | jq -r '
+              (."system".value, ."max-jobs".value),
+              (."system-features".value | join(","))
+            ')
+
       - uses: actions/upload-artifact@main
         with:
           name: .ssh
-          path: ~/.ssh
+          path: |
+            ~/.ssh
+            ~/.config
           include-hidden-files: true
           if-no-files-found: error
 
