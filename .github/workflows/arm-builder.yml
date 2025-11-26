@@ -23,7 +23,9 @@ jobs:
 
           printf > .ssh/config "
             Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+            Host $ARM_BUILDER
+              ProxyJump $JUMP_PROXY
+              User $USER
           "
 
       - run: |
