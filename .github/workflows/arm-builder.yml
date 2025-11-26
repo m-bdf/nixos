@@ -22,7 +22,7 @@ jobs:
             eval-cores = 0
 
       - run: |
-          mkdir -p ~/.ssh
+          mkdir ~/.ssh
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           cp ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys
 
@@ -35,6 +35,8 @@ jobs:
           sudo chown -R root:root /root/.ssh
 
       - run: |
+          ls -la ~ ~/.ssh ~/.config /config/nix
+
           printf >> ~/.config/nix/nix.conf "
             builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
