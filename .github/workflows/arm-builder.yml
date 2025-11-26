@@ -52,4 +52,4 @@ jobs:
           sudo cp -R . /root
           sudo chown -R root:root /root
 
-      - run: ssh $JUMP_PROXY -NR $ARM_BUILDER:22:localhost:22
+      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nv
