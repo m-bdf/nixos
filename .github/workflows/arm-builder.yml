@@ -37,7 +37,7 @@ jobs:
             $(nix config show --json | jq -r '
               (."system".value, ."max-jobs".value),
               (."system-features".value | join(","))
-            ') > ~/.config/nix/nix.conf
+            ') > .config/nix/nix.conf
 
       - uses: actions/upload-artifact@main
         with:
