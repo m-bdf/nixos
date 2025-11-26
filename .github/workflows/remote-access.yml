@@ -16,12 +16,12 @@ jobs:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: actions/download-artifact@main
-      - run: |
-          chmod 400 .ssh/id_rsa
-          cp -R . ~
-          sudo cp -R . /root
-          sudo chown -R root:root /root
+      - uses: Wandalen/wretry.action@master
+        with:
+          action: actions/download-artifact@main
+          with: 'name: home'
+          attempt_limit: 10
+          attempt_delay: 5000
 
       - uses: cachix/cachix-action@master
         with:
