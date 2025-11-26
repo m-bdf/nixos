@@ -35,13 +35,15 @@ jobs:
           sudo cp -R . /root
           sudo chown -R root:root /root
 
+      - run: nix config show
+
+      - run: nix build nixpkgs#legacyPackages.aarch64-linux.hello
+          --rebuild --show-trace --print-build-logs
+
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-      - run: nix build nixpkgs#legacyPackages.aarch64-linux.hello
-          --rebuild --show-trace --print-build-logs
 
       - uses: actions/checkout@main
       - run: nix build .#nixOnDroidBootstrapZips
