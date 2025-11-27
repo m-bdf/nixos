@@ -43,9 +43,11 @@ jobs:
             }).symlinkJoin {
               name = "hello";
               paths = [
-                (import <nixpkgs> {
+                ((import <nixpkgs> {
                   system = "aarch64-linux";
-                }).hello
+                }).hello.overrideAttrs {
+                  foo = "bar";
+                })
               ];
             }
           ' --show-trace --print-build-logs
