@@ -39,8 +39,15 @@ jobs:
       - run: |
           nix build --impure --expr '
             (import <nixpkgs> {
-              system = "aarch64-linux";
-            }).hello.overrideAttrs { foo = "bar"; }
+              system = "x86_64-linux";
+            }).symlinkJoin {
+              name = "hello";
+              paths = [
+                (import <nixpkgs> {
+                  system = "aarch64-linux";
+                }).hello
+              ];
+            }
           ' --show-trace --print-build-logs
 
       - uses: cachix/cachix-action@master
