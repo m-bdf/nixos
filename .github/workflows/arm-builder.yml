@@ -50,9 +50,9 @@ jobs:
       - run: |
           cp -R . ~
           chmod 755 ~
-          rm ~/.config/nix/nix.conf
           sudo cp -R . /root
           sudo chown -R root:root /root
-          sudo rm /root/.config/nix/nix.conf
 
-      - run: ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
+      - run: |
+          sudo chsh -s $SHELL
+          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
