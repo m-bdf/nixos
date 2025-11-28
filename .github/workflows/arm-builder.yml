@@ -16,7 +16,7 @@ jobs:
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
 
-          printf > ~/.ssh/config "
+          echo > ~/.ssh/config "
             Host *
               BatchMode yes
               StrictHostKeyChecking no
@@ -29,8 +29,8 @@ jobs:
               ExitOnForwardFailure yes
 
             Host arm-builder
-              HostName %h-${{ github.run_id }}
               ProxyJump proxy-jump
+              HostName ${{ github.run_id }}.%h
               User $USER
           "
 
