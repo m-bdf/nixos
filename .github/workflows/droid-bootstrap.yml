@@ -31,7 +31,7 @@ jobs:
           sudo cp * ~/.ssh
 
       - run: |
-          export NIX_SSHOPTS="-F $HOME/.ssh/config -i $HOME/.ssh/id_rsa"
+          export NIX_SSHOPTS="-F $HOME/.ssh/config"
 
           nix build --expr 'derivation {
             name = "test";
