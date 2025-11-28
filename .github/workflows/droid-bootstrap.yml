@@ -15,12 +15,12 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           chmod 755 ~
-          sudo chsh $USER -s /bin/bash
+          # sudo chsh $USER -s /bin/bash
           chmod 400 .ssh/id_rsa
           mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: nixbuild/nix-quick-install-action@master
 
       - run: ssh proxy-jump -N
 

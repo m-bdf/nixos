@@ -20,7 +20,7 @@ jobs:
           mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: nixbuild/nix-quick-install-action@master
 
       - run: ssh proxy-jump -N
 

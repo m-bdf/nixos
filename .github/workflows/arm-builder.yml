@@ -21,53 +21,13 @@ jobs:
               (."system-features".value | join(","))
             ')
 
-          cat nix.conf
-
       - uses: actions/upload-artifact@main
         with:
           name: nix
           path: .
 
-  setup-nix-config-cachix:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: cachix/install-nix-action@master
-      - run: |
-          printf > nix.conf "
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
-            builders-use-substitutes = true
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
-
-          cat nix.conf
-
-  setup-nix-config-quick:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - uses: nixbuild/nix-quick-install-action@master
-      - run: |
-          printf > nix.conf "
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
-            builders-use-substitutes = true
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
-
-          cat nix.conf
-
   setup-ssh-config:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
@@ -87,7 +47,7 @@ jobs:
 
           Host arm-builder
             ProxyJump proxy-jump
-            User $(whoami)
+            User $USER
           "
 
       - uses: actions/upload-artifact@main
