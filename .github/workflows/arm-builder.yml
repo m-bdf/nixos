@@ -55,4 +55,4 @@ jobs:
 
       - run: |
           sudo chsh $USER -s /bin/bash
-          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
+          ssh $JUMP_PROXY -R $USER@$ARM_BUILDER:22:localhost:22 -Nvvv
