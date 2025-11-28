@@ -11,7 +11,7 @@ jobs:
     if: github.event_name != 'repository_dispatch'
 
     permissions:
-      contents: read
+      contents: write
 
     uses: ./.github/workflows/arm-builder.yml
 
