@@ -35,7 +35,7 @@ jobs:
             builders = %s %s - %s - %s
             builders-use-substitutes = true
           " \
-            ssh-ng://$USER@$ARM_BUILDER \
+            ssh://$USER@$ARM_BUILDER \
             $(nix config show --json | jq -r '
               (."system".value, ."max-jobs".value),
               (."system-features".value | join(","))
