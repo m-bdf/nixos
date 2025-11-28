@@ -30,8 +30,8 @@ jobs:
           attempt_delay: 5000
 
       - run: |
-          chmod 400 .ssh/id_rsa
-          sudo mv .ssh/* /root/.ssh
+          chmod 400 id_rsa
+          sudo mv * /root/.ssh
 
       - run: |
           nix build --expr 'derivation {
