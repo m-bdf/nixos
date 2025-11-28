@@ -15,6 +15,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
+          ls -laR
           chmod 400 id_rsa
           sudo cp * /root/.ssh
 
