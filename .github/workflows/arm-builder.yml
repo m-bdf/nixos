@@ -32,7 +32,7 @@ jobs:
       - uses: actions/download-artifact@main
       - uses: cachix/install-nix-action@master
         with:
-          install_url: file://${{ github.workspace }}
+          install_url: file://.
 
       - run: |
           printf > nix.conf "
