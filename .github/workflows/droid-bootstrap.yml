@@ -25,14 +25,12 @@ jobs:
           attempt_delay: 5000
 
       - run: |
-          mkdir ~/.config/nix ~/.ssh
+          mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
           chmod 400 id_rsa
-          sudo cp * ~/.ssh
+          sudo cp * /root/.ssh
 
       - run: |
-          export NIX_SSHOPTS="-F $HOME/.ssh/config"
-
           nix build --expr 'derivation {
             name = "test";
             system = "aarch64-linux";
