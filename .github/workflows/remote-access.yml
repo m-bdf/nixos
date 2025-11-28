@@ -19,6 +19,7 @@ jobs:
           sudo cp -R . /root/.ssh
 
       # - uses: wimpysworld/nothing-but-nix@main
+      - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
       - run: sudo ssh proxy-jump -N
@@ -38,6 +39,7 @@ jobs:
           sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
+      - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
       - uses: cachix/cachix-action@master
@@ -45,7 +47,6 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - uses: actions/checkout@main
       - uses: owenthereal/action-upterm@main
 
       - if: always()

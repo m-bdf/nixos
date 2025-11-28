@@ -20,6 +20,7 @@ jobs:
           sudo cp -R . /root/.ssh
 
       # - uses: wimpysworld/nothing-but-nix@main
+      - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
       - run: sudo ssh proxy-jump -N
@@ -39,6 +40,7 @@ jobs:
           sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
+      - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
       - uses: cachix/cachix-action@master
@@ -54,7 +56,6 @@ jobs:
             args = [ "-c" "echo > $out" ];
           }' --show-trace --print-build-logs
 
-      # - uses: actions/checkout@main
       # - run: nix build .#nixOnDroidBootstrapZips
       #     --accept-flake-config
       #     --trace-verbose --show-trace
