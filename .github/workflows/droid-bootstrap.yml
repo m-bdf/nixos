@@ -20,9 +20,9 @@ jobs:
       - uses: Wandalen/wretry.action/main@master
         with:
           action: actions/download-artifact@main
-          with: 'name: .ssh'
-          attempt_limit: 10
+          retry_condition: steps._this.outputs.download-path
           attempt_delay: 5000
+          attempt_limit: 10
 
       - run: |
           mkdir ~/.config/nix
