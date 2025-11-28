@@ -15,11 +15,11 @@ jobs:
       - uses: actions/download-artifact@main
         with:
           name: nix-install-${{ runner.arch }}
-          path: /tmp/nix-install
+          path: /nix
 
       - uses: cachix/install-nix-action@master
         with:
-          install_url: file:///tmp/nix-install
+          install_url: file:///nix/install
 
       - run: |
           printf > nix.conf "
