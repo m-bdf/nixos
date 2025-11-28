@@ -33,7 +33,7 @@ jobs:
           mv nix.conf ~/.config/nix
           chmod 400 id_rsa
           sudo cp * /root/.ssh
-          mv * ~/.ssh
+          mv . ~/.ssh
 
       - run: |
           nix build --expr 'derivation {
