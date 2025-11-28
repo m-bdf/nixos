@@ -14,6 +14,7 @@ runs:
       uses: DeterminateSystems/nix-installer-action@main
 
     - if: steps.fetch-nix-install.outcome == 'failure'
+      shell: bash
       run: |
         flake='https://flakehub.com/f/DeterminateSystems/nix-src'
         nix build $flake/*#binaryTarball
@@ -22,6 +23,7 @@ runs:
         rm result
 
     - if: steps.fetch-nix-install.outcome == 'failure'
+      shell: bash
       run: /nix/nix-installer uninstall
 
     - if: steps.fetch-nix-install.outcome == 'failure'
