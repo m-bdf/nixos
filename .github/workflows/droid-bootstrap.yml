@@ -31,7 +31,7 @@ jobs:
 
       - run: |
           chmod 400 .ssh/id_rsa
-          sudo mv .ssh/id_rsa /root/.ssh
+          sudo mv .ssh /root
           cp -R . ~/.config/nix
 
       - run: |
