@@ -12,38 +12,36 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
-
       - uses: actions/download-artifact@main
       - run: |
-          mv nix ~/.config
+          chmod 755 ~
           chmod 400 .ssh/id_rsa
-          sudo cp -R .ssh /root
           mv .ssh ~
 
-      - run: ssh proxy-jump -Nf
-      - run: tail -f /var/log/auth.log
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: ssh proxy-jump -N
 
   build-bootstrap-zips:
     needs: setup-arm-builder
 
-    env:
-      NIX_SSHOPTS: -vvvv
-
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
-
       - uses: actions/download-artifact@main
       - run: |
+          chmod 755 ~
           mv nix ~/.config
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
-          sudo ls -la /root/.ssh
           mv .ssh ~
 
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
