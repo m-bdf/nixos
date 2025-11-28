@@ -14,7 +14,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
+          mv nix ~/.config
           chmod 400 .ssh/id_rsa
+          sudo cp -R .ssh /root
           mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main

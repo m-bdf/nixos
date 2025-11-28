@@ -35,20 +35,19 @@ jobs:
 
       - run: |
           echo > config "
-            Host *
-              BatchMode yes
-              StrictHostKeyChecking no
-              PasswordAuthentication no
+            BatchMode yes
+            StrictHostKeyChecking no
+            PasswordAuthentication no
 
-            Host proxy-jump
-              HostName ssh-j.com
-              User ${{ github.repository }}/${{ github.run_id }}
-              RemoteForward arm-builder:22 localhost:22
-              ExitOnForwardFailure yes
+          Host proxy-jump
+            HostName ssh-j.com
+            User ${{ github.repository }}/${{ github.run_id }}
+            RemoteForward arm-builder:22 localhost:22
+            ExitOnForwardFailure yes
 
-            Host arm-builder
-              ProxyJump proxy-jump
-              User $USER
+          Host arm-builder
+            ProxyJump proxy-jump
+            User $USER
           "
 
       - uses: actions/upload-artifact@main
