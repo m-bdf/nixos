@@ -16,7 +16,6 @@ jobs:
 
       - uses: actions/checkout@main
       - run: |
-          nix flake prefetch-inputs
           nix build --inputs-from . nix#binaryTarball
           tar -xf result/nix-*.tar.xz
 
