@@ -13,14 +13,13 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
-
       - uses: actions/download-artifact@main
       - run: |
           chmod 400 id_rsa
           sudo cp * /root/.ssh
 
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
@@ -36,15 +35,19 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
-
       - uses: actions/download-artifact@main
       - run: |
           mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
           chmod 400 id_rsa
           sudo cp * /root/.ssh
+
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: |
           nix build --expr 'derivation {
@@ -53,11 +56,6 @@ jobs:
             builder = "/bin/sh";
             args = [ "-c" "echo > $out" ];
           }' --show-trace --print-build-logs
-
-      - uses: cachix/cachix-action@master
-        with:
-          name: m-bdf
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       # - uses: actions/checkout@main
       # - run: nix build .#nixOnDroidBootstrapZips
