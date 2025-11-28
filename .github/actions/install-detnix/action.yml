@@ -22,6 +22,9 @@ runs:
         mv nix-* /tmp/nix
         rm result
 
+        echo '/tmp/nix/install' > /tmp/nix/install.sh
+        chmod +x /tmp/nix/install.sh
+
     - if: steps.fetch-nix-install.outcome == 'failure'
       uses: actions/upload-artifact@main
       with:
@@ -35,5 +38,4 @@ runs:
 
     - uses: cachix/install-nix-action@master
       with:
-        install_url: file:///tmp/nix/install
-        install_options: --daemon
+        install_url: file:///tmp/nix/install.sh
