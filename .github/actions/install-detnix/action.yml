@@ -23,14 +23,15 @@ runs:
         rm result
 
     - if: steps.fetch-nix-install.outcome == 'failure'
-      shell: bash
-      run: /nix/nix-installer uninstall --no-confirm
-
-    - if: steps.fetch-nix-install.outcome == 'failure'
       uses: actions/upload-artifact@main
       with:
         name: nix-install-${{ runner.arch }}
         path: /tmp/nix
+        include-hidden-files: true
+
+    - if: steps.fetch-nix-install.outcome == 'failure'
+      shell: bash
+      run: /nix/nix-installer uninstall --no-confirm
 
     - uses: cachix/install-nix-action@master
       with:
