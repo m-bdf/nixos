@@ -22,7 +22,8 @@ jobs:
           sudo cp -R .ssh /root
           mv .ssh ~
 
-      - run: ssh proxy-jump -Nvvvv
+      - run: ssh proxy-jump -Nf
+      - run: tail -f /var/log/auth.log
 
   build-bootstrap-zips:
     needs: setup-arm-builder
