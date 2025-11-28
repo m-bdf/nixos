@@ -4,27 +4,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  fetch-nix-install:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: DeterminateSystems/nix-installer-action@main
-      - run: |
-          nix build https://flakehub.com/f/DeterminateSystems/nix-src/*#binaryTarball
-          tar -xf result/nix-*.tar.xz
-
-      - uses: actions/upload-artifact@main
-        with:
-          name: nix-install
-          path: nix-*
+  install-detnix:
+    uses: ./.github/workflows/detnix-install.yml
 
   setup-nix-config:
-    needs: fetch-nix-install
+    needs: install-detnix
 
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
         with:
-          name: nix-install
+          name: nix-install-${{ runner.arch }}
           path: /tmp/nix-install
 
       - uses: cachix/install-nix-action@master

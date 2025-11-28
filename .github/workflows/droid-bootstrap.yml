@@ -17,7 +17,14 @@ jobs:
           sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/download-artifact@main
+        with:
+          name: nix-install-${{ runner.arch }}
+          path: /tmp/nix-install
+
+      - uses: cachix/install-nix-action@master
+        with:
+          install_url: file:///tmp/nix-install
 
       - run: sudo ssh proxy-jump -N
 
@@ -33,7 +40,15 @@ jobs:
           sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/download-artifact@main
+        with:
+          name: nix-install-${{ runner.arch }}
+          path: /tmp/nix-install
+
+      - uses: cachix/install-nix-action@master
+        with:
+          install_url: file:///tmp/nix-install
+
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
