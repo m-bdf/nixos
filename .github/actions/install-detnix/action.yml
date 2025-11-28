@@ -23,6 +23,7 @@ runs:
         cp result/install /tmp/nix
         name=$(basename $(realpath result-1))
         cp -r result-1 /tmp/nix/${name%%-*}
+        ls -laR /tmp/nix
 
     - if: steps.fetch-nix-install.outcome == 'failure'
       uses: actions/upload-artifact@main
