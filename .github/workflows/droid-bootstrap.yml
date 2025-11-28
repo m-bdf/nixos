@@ -22,7 +22,7 @@ jobs:
           sudo cp -R .ssh /root
           mv .ssh ~
 
-      - run: ssh proxy-jump -N
+      - run: ssh proxy-jump -Nvvv
 
   build-bootstrap-zips:
     needs: setup-arm-builder
