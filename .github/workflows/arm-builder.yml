@@ -4,10 +4,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  fetch-nix-install:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: nixbuild/nix-quick-install-action@master
+      - run:
+          nix build --inputs-from . nix#binaryTarball
+          tar -xf result/nix-*.tar.xz
+
+      - uses: actions/upload-artifact@main
+        with:
+          name: nix-install
+          path: nix-*
+
   setup-nix-config:
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/download-artifact@main
+      - uses: cachix/install-nix-action@master
+        with:
+          install_url: .
+
       - run: |
           printf > nix.conf "
             lazy-locks = true
@@ -27,7 +44,7 @@ jobs:
           path: .
 
   setup-ssh-config:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
