@@ -20,7 +20,7 @@ jobs:
       - uses: Wandalen/wretry.action/main@master
         with:
           action: actions/download-artifact@main
-          retry_condition: hashFiles('.') == ''
+          retry_condition: hashFiles(steps._this.outputs.download-path) == ''
           attempt_delay: 5000
           attempt_limit: 10
 
