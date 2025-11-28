@@ -31,6 +31,7 @@ jobs:
 
       - run: |
           chmod 400 .ssh/id_rsa
+          sudo chown -R root:root .ssh
           sudo cp -R .ssh /root
           mv nix.conf ~/.config/nix
 
