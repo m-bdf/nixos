@@ -32,7 +32,6 @@ jobs:
           mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
           chmod 400 id_rsa
-          sudo cp * /root/.ssh
           cp -R . ~/.ssh
 
       - run: |
