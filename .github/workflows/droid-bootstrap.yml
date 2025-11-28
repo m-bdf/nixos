@@ -30,6 +30,7 @@ jobs:
           attempt_delay: 5000
 
       - run: |
+          chmod 400 .ssh/id_rsa
           sudo mv .ssh/id_rsa /root/.ssh
           mv nix.conf ~/.config/nix
 
