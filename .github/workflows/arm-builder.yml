@@ -55,4 +55,5 @@ jobs:
 
       - run: |
           chmod 755 ~
+          sudo chsh $USER -s /bin/bash
           ssh proxy-jump -N
