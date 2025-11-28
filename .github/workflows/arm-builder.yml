@@ -42,7 +42,9 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: .ssh
-          path: ~/.ssh/*
+          path: ~/.ssh
+          include-hidden-files: true
+          if-no-files-found: error
 
       - run: |
           chmod 755 ~
