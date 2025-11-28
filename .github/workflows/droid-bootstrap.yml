@@ -55,7 +55,7 @@ jobs:
       #     --print-build-logs --keep-going
 
       - if: always()
-        run: ssh $ARM_BUILDER 'kill $PPID'
+        run: ssh $ARM_BUILDER killall ssh
         continue-on-error: true
 
       - uses: actions/upload-pages-artifact@main
