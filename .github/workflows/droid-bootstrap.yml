@@ -30,8 +30,9 @@ jobs:
           attempt_delay: 5000
 
       - run: |
+          cp -R .config ~
           chmod 400 .ssh/id_rsa
-          cp -R .ssh .config ~
+          sudo chown -R root:root .ssh
 
       - run: |
           nix build --impure --expr '
