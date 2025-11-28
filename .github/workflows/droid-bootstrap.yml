@@ -25,7 +25,7 @@ jobs:
       - uses: Wandalen/wretry.action/main@master
         with:
           action: actions/download-artifact@main
-          with: 'name: home'
+          with: 'name: .ssh'
           attempt_limit: 10
           attempt_delay: 5000
 
