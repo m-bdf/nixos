@@ -30,8 +30,7 @@ jobs:
           attempt_delay: 5000
 
       - run: |
-          chmod 400 .ssh/id_rsa
-          sudo mv .ssh /root
+          sudo mv .ssh/id_rsa /root
           mv .config ~
 
       - run: |
