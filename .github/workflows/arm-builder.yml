@@ -54,5 +54,5 @@ jobs:
           if-no-files-found: error
 
       - run: |
-          sudo chsh $USER -s /bin/bash
+          chmod 755 ~
           ssh proxy-jump -N
