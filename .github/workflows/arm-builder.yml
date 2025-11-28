@@ -64,9 +64,9 @@ jobs:
 
       - run: |
           echo > config "
-            # BatchMode yes
-            # StrictHostKeyChecking no
-            # PasswordAuthentication no
+            BatchMode yes
+            StrictHostKeyChecking no
+            PasswordAuthentication no
 
           Host proxy-jump
             HostName ssh-j.com
