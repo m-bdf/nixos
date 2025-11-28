@@ -14,7 +14,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
       - uses: Wandalen/wretry.action/main@master
@@ -30,24 +30,24 @@ jobs:
           chmod 400 id_rsa
           sudo cp * /root/.ssh
 
-      - run: |
-          nix build --expr 'derivation {
-            name = "test";
-            system = "aarch64-linux";
-            builder = "/bin/sh";
-            args = [ "-c" "echo > $out" ];
-          }' --show-trace --print-build-logs
+      # - run: |
+      #     nix build --expr 'derivation {
+      #       name = "test";
+      #       system = "aarch64-linux";
+      #       builder = "/bin/sh";
+      #       args = [ "-c" "echo > $out" ];
+      #     }' --show-trace --print-build-logs
 
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      # - uses: actions/checkout@main
-      # - run: nix build .#nixOnDroidBootstrapZips
-      #     --accept-flake-config
-      #     --trace-verbose --show-trace
-      #     --print-build-logs --keep-going
+      - uses: actions/checkout@main
+      - run: nix build .#nixOnDroidBootstrapZips
+          --accept-flake-config
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
 
       - if: always()
         run: sudo ssh arm-builder -f killall ssh
