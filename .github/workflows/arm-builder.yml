@@ -21,13 +21,15 @@ jobs:
               (."system-features".value | join(","))
             ')
 
+          cat nix.conf
+
       - uses: actions/upload-artifact@main
         with:
           name: nix
-          path: nix.conf
+          path: .
 
   setup-ssh-config:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - run: |
           ssh-keygen -t rsa -N '' -f id_rsa
