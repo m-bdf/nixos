@@ -44,7 +44,7 @@ jobs:
           name: home
           path: |
             ~/.ssh
-            ~/.config
+            ~/nix.conf
           include-hidden-files: true
 
       - run: |
