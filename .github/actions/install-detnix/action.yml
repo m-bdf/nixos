@@ -16,14 +16,13 @@ runs:
     - if: steps.fetch-nix-install.outcome == 'failure'
       shell: bash
       run: |
-        flake='https://flakehub.com/f/DeterminateSystems/nix-src'
-        nix build $flake/*#binaryTarball
-        tar -xf result/nix-*.tar.xz
-        mv nix-* /tmp/nix
-        rm result
+        flake='https://flakehub.com/f/DeterminateSystems/nix-src/*'
+        nix build $flake#installerScriptForGHA $flake#binaryTarball
 
-        echo 'sh /tmp/nix/install' > /tmp/nix/install.sh
-        chmod +x /tmp/nix/install.sh
+        mkdir /tmp/nix
+        cp result/install /tmp/nix
+        name=$(basename $(realpath result-1))
+        cp -r result-1 /tmp/nix/${name%%-*}
 
     - if: steps.fetch-nix-install.outcome == 'failure'
       uses: actions/upload-artifact@main
@@ -38,4 +37,4 @@ runs:
 
     - uses: cachix/install-nix-action@master
       with:
-        install_url: file:///tmp/nix/install.sh
+        install_url: file:///tmp/nix/install
