@@ -8,12 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
-
       - run: |
           nix build https://flakehub.com/f/DeterminateSystems/nix-src/*#binaryTarball
           tar -xf result/nix-*.tar.xz
