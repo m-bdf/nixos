@@ -34,6 +34,7 @@ jobs:
           mv nix ~/.config
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
+          sudo ls -la /root/.ssh
           mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
