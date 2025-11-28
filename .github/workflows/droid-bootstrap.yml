@@ -32,9 +32,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
         with:
-          pattern: |
-            nix
-            .ssh
+          pattern: '{nix,.ssh}'
 
       - run: |
           mv nix ~/.config
