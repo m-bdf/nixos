@@ -42,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: .ssh
-          path: ~/.ssh
+          path: ~/.ssh/*
 
       - run: |
           chmod 755 ~
