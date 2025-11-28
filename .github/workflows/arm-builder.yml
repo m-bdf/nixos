@@ -48,10 +48,8 @@ jobs:
           include-hidden-files: true
 
       - run: |
-          cp -R . ~
           chmod 755 ~
-          sudo cp -R . /root
-          sudo chown -R root:root /root
+          cp -R .ssh ~
 
       - run: |
           sudo chsh $USER -s /bin/bash
