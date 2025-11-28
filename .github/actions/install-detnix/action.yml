@@ -36,4 +36,4 @@ runs:
     - uses: cachix/install-nix-action@master
       with:
         install_url: file:///tmp/nix/install
-        install_options: --determinate
+        install_options: --daemon
