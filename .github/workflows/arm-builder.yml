@@ -23,7 +23,7 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: nix.conf
+          name: nix
           path: nix.conf
 
   setup-ssh-config:

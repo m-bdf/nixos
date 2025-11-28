@@ -33,8 +33,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          mkdir ~/.config/nix
-          mv nix.conf ~/.config/nix
+          mv nix ~/.config
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
           mv .ssh ~
