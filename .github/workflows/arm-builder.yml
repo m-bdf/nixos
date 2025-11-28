@@ -7,9 +7,15 @@ jobs:
   fetch-nix-install:
     runs-on: ubuntu-latest
     steps:
-      - uses: nixbuild/nix-quick-install-action@master
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
+
       - uses: actions/checkout@main
-      - run:
+      - run: |
           nix build --inputs-from . nix#binaryTarball
           tar -xf result/nix-*.tar.xz
 
