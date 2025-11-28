@@ -74,6 +74,12 @@ jobs:
           mv id_rsa.pub authorized_keys
 
       - run: |
+          echo ===
+          echo $USER
+          echo ===
+          whoami
+          echo ===
+
           echo > config "
             BatchMode yes
             StrictHostKeyChecking no
