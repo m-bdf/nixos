@@ -6,35 +6,45 @@ on:
     - cron: 42 23 * * *
 
 jobs:
-  droid-bootstrap:
+  build-bootstrap-zips:
     permissions:
       contents: read
+    uses: ./.github/workflows/droid-bootstrap.yml
+
+  deploy-bootstrap-zips:
+    needs: build-bootstrap-zips
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+
+    permissions:
       pages: write
       id-token: write
 
-    uses: ./.github/workflows/droid-bootstrap.yml
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@main
 
   nix-flake-check:
-    needs: droid-bootstrap
+    needs: build-bootstrap-zips
 
     permissions:
       contents: read
 
     runs-on: ubuntu-latest
     steps:
-      - uses: wimpysworld/nothing-but-nix@main
+      # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: Wandalen/wretry.action/main@master
+      - uses: actions/download-artifact@main
         with:
-          action: actions/download-artifact@main
-          with: 'name: .ssh'
-          attempt_limit: 10
-          attempt_delay: 5000
-
-      - run: |
-          mkdir ~/.config/nix
-          mv nix.conf ~/.config/nix
+          name: nix.conf
+          path: ~/.config/nix
 
       - uses: cachix/cachix-action@master
         with:
@@ -46,17 +56,3 @@ jobs:
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
-
-  respository-chore:
-    needs: nix-flake-check
-
-    permissions:
-      actions: write
-      deployments: write
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: int128/delete-deployments-action@v1
-      - uses: Mattraks/delete-workflow-runs@main
-        with:
-          retain_days: 0

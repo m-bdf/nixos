@@ -4,14 +4,35 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-arm-builder:
+  setup-nix-config:
     permissions: {}
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
+      - run: |
+          printf > nix.conf "
+            lazy-locks = true
+            lazy-trees = true
+            eval-cores = 0
+            builders = ssh-ng://arm-builder %s - %s - %s
+            builders-use-substitutes = true
+          " \
+            $(nix config show --json | jq -r '
+              (."system".value, ."max-jobs".value),
+              (."system-features".value | join(","))
+            ')
 
+      - uses: actions/upload-artifact@main
+        with:
+          name: nix.conf
+          path: nix.conf
+
+  setup-ssh-config:
+    permissions: {}
+
+    runs-on: ubuntu-latest
+    steps:
       - run: |
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
@@ -34,27 +55,8 @@ jobs:
               User $USER
           "
 
-      - run: |
-          printf > ~/.ssh/nix.conf "
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
-            builders-use-substitutes = true
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
-
       - uses: actions/upload-artifact@main
         with:
           name: .ssh
           path: ~/.ssh
           include-hidden-files: true
-          if-no-files-found: error
-
-      - run: |
-          chmod 755 ~
-          sudo chsh $USER -s /bin/bash
-          ssh proxy-jump -N

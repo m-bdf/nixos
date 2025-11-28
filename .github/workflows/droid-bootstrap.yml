@@ -8,7 +8,29 @@ jobs:
     permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
+  start-arm-builder:
+    needs: setup-arm-builder
+
+    runs-on: ubuntu-24.04-arm
+    steps:
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+
+      - uses: actions/download-artifact@main
+      - run: |
+          chmod 400 id_rsa
+          sudo cp * /root/.ssh
+
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: ssh proxy-jump -N
+
   build-bootstrap-zips:
+    needs: setup-arm-builder
+
     permissions:
       contents: read
 
@@ -17,13 +39,7 @@ jobs:
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: Wandalen/wretry.action/main@master
-        with:
-          action: actions/download-artifact@main
-          with: 'name: .ssh'
-          attempt_delay: 5000
-          attempt_limit: 10
-
+      - uses: actions/download-artifact@main
       - run: |
           mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
@@ -55,22 +71,3 @@ jobs:
       - uses: actions/upload-pages-artifact@main
         with:
           path: result
-
-  deploy-bootstrap-zips:
-    needs: build-bootstrap-zips
-    concurrency:
-      group: ${{ github.workflow }}
-      cancel-in-progress: true
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@main

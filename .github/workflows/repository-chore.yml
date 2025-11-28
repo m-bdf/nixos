@@ -1,0 +1,17 @@
+name: Cleanup repository
+on:
+  workflow_run:
+  workflow_dispatch:
+
+jobs:
+  respository-chore:
+    permissions:
+      actions: write
+      deployments: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: int128/delete-deployments-action@main
+      - uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 0

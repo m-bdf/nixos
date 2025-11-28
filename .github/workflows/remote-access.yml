@@ -13,16 +13,10 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: wimpysworld/nothing-but-nix@main
+      # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: Wandalen/wretry.action/main@master
-        with:
-          action: actions/download-artifact@main
-          with: 'name: .ssh'
-          attempt_limit: 10
-          attempt_delay: 5000
-
+      - uses: actions/download-artifact@main
       - run: |
           mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
