@@ -19,6 +19,8 @@ jobs:
           path: nix-*
 
   setup-nix-config:
+    needs: fetch-nix-install
+
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
