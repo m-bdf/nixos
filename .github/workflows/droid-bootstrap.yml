@@ -31,7 +31,6 @@ jobs:
 
       - run: |
           cp -R .config ~
-          chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
 
       - run: |
