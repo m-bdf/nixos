@@ -4,23 +4,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-detnix:
-    uses: ./.github/workflows/detnix-install.yml
-
   setup-nix-config:
-    needs: install-detnix
-
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/download-artifact@main
-        with:
-          name: nix-install-${{ runner.arch }}
-          path: /nix
-
-      - uses: cachix/install-nix-action@master
-        with:
-          install_url: file:///nix/install
-
+      - uses: ./.github/actions/install-detnix
       - run: |
           printf > nix.conf "
             lazy-locks = true

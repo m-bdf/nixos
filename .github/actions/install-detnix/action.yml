@@ -1,0 +1,35 @@
+name: Install Determinate Nix
+
+runs:
+  using: "composite"
+  steps:
+    - id: fetch-nix-install
+      uses: actions/download-artifact@main
+      with:
+        name: nix-install-${{ runner.arch }}
+        path: /tmp/nix
+      continue-on-error: true
+
+    - if: steps.fetch-nix-install.outcome == 'failure'
+      uses: DeterminateSystems/nix-installer-action@main
+
+    - if: steps.fetch-nix-install.outcome == 'failure'
+      run: |
+        flake='https://flakehub.com/f/DeterminateSystems/nix-src'
+        nix build $flake/*#binaryTarball
+        tar -xf result/nix-*.tar.xz
+        mv nix-* /tmp/nix
+        rm result
+
+    - if: steps.fetch-nix-install.outcome == 'failure'
+      run: /nix/nix-installer uninstall
+
+    - if: steps.fetch-nix-install.outcome == 'failure'
+      uses: actions/upload-artifact@main
+      with:
+        name: nix-install-${{ runner.arch }}
+        path: /tmp/nix
+
+    - uses: cachix/install-nix-action@master
+      with:
+        install_url: file:///tmp/nix/install

@@ -12,18 +12,14 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/download-artifact@main
+        with:
+          name: .ssh
+
       - run: |
-          sudo cp -R .ssh /root
+          sudo cp -R . /root/.ssh
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: actions/download-artifact@main
-        with:
-          name: nix-install-${{ runner.arch }}
-          path: /nix
-
-      - uses: cachix/install-nix-action@master
-        with:
-          install_url: file:///nix/install
+      - uses: ./.github/actions/install-detnix
 
       - run: sudo ssh proxy-jump -N
 
@@ -33,20 +29,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
+        with:
+          pattern: nix|.ssh
+
       - run: |
           mv nix ~/.config
           chmod 600 .ssh/id_rsa
           sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
-      - uses: actions/download-artifact@main
-        with:
-          name: nix-install-${{ runner.arch }}
-          path: /nix
-
-      - uses: cachix/install-nix-action@master
-        with:
-          install_url: file:///nix/install
+      - uses: ./.github/actions/install-detnix
 
       - uses: cachix/cachix-action@master
         with:
