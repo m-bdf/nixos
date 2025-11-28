@@ -9,7 +9,10 @@ on:
 jobs:
   setup-arm-builder:
     if: github.event_name != 'repository_dispatch'
-    permissions: {}
+
+    permissions:
+      contents: read
+
     uses: ./.github/workflows/arm-builder.yml
 
   build-bootstrap-zips:
