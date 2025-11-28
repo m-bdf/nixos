@@ -28,7 +28,7 @@ jobs:
             Host proxy-jump
               HostName ssh-j.com
               User ${{ github.repository }}
-              RemoteForward $ARM_BUILDER:22 localhost:22
+              RemoteForward arm-builder:22 localhost:22
               ExitOnForwardFailure yes
 
             Host arm-builder
