@@ -58,7 +58,7 @@ jobs:
       - uses: peter-evans/repository-dispatch@main
         with:
           event-type: arm-builder-ssh-config-uploaded
-          client-payload: ${{ steps.upload-ssh-config.outputs }}
+          client-payload: ${{ toJson(steps.upload-ssh-config.outputs) }}
 
       - run: |
           chmod 755 ~
