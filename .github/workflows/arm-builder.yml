@@ -17,17 +17,18 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
 
       - run: |
-          mkdir -p .ssh .config/nix
-          ssh-keygen -t rsa -N '' -f .ssh/id_rsa
-          mv .ssh/id_rsa.pub .ssh/authorized_keys
+          ssh-keygen -t rsa -N ''
+          mv ~/.ssh/{id_rsa.pub,authorized_keys}
 
-          printf > .ssh/config "
+          printf > ~/.ssh/config "
             Host * \n StrictHostKeyChecking no
             Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
           "
 
       - run: |
-          printf > .config/nix/nix.conf "
+          mkdir -p ~/.config/nix
+
+          printf > ~/.config/nix/nix.conf "
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
@@ -43,13 +44,12 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: home
-          path: .
+          path: |
+            ~/.ssh
+            ~/.config
           include-hidden-files: true
 
       - run: |
           chmod 755 ~
-          cp -R .ssh ~
-
-      - run: |
           sudo chsh $USER -s /bin/bash
           ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
