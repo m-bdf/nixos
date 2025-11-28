@@ -7,7 +7,7 @@ jobs:
   fetch-nix-install:
     runs-on: ubuntu-latest
     steps:
-      - uses: nixbuild/nix-quick-install-action@master
+      - uses: cachix/install-nix-action@master
       - uses: actions/checkout@main
       - run: |
           nix build --inputs-from . nix#binaryTarball
