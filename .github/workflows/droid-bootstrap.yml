@@ -33,7 +33,6 @@ jobs:
           cp -R .config ~
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
-          sudo chown -R root:root /root
 
       - run: |
           nix build --impure --expr '
