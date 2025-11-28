@@ -3,9 +3,6 @@ on:
   workflow_call:
   workflow_dispatch:
 
-env:
-  ARM_BUILDER: arm-builder-${{ github.run_id }}
-
 jobs:
   setup-arm-builder:
     permissions: {}
@@ -18,6 +15,8 @@ jobs:
       - run: |
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
+
+          ARM_BUILDER='arm-builder-${{ github.run_id }}'
 
           echo > ~/.ssh/config "
             Host *

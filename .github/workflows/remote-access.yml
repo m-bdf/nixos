@@ -28,7 +28,6 @@ jobs:
           mv nix.conf ~/.config/nix
           chmod 400 id_rsa
           sudo cp * /root/.ssh
-          cp -R . ~/.ssh
 
       - uses: cachix/cachix-action@master
         with:
@@ -39,4 +38,4 @@ jobs:
       - uses: mxschmitt/action-tmate@master
 
       - if: always()
-        run: ssh $ARM_BUILDER -f killall ssh
+        run: sudo ssh arm-builder -f killall ssh
