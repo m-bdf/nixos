@@ -47,7 +47,6 @@ jobs:
 
           Host arm-builder
             ProxyJump proxy-jump
-            User $USER
           "
 
       - uses: actions/upload-artifact@main
