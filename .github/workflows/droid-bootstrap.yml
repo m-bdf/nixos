@@ -15,7 +15,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           chmod 755 ~
-          chsh $USER -s /bin/bash
+          sudo chsh $USER -s /bin/bash
           chmod 400 .ssh/id_rsa
           mv .ssh ~
 
