@@ -32,6 +32,7 @@ jobs:
       - run: |
           cp -R .config ~
           chmod 400 .ssh/id_rsa
+          sudo chown -R root:root .ssh
           sudo cp -R .ssh $HOME
 
       - run: |
