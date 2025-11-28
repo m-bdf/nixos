@@ -1,13 +1,19 @@
 name: Provide remote access for debugging
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types:
+      - arm-builder-ssh-config-uploaded
 
 jobs:
   setup-arm-builder:
+    if: github.event_name != 'repository_dispatch'
     permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   setup-remote-access:
+    if: github.event_name == 'repository_dispatch'
+
     permissions:
       contents: read
 
@@ -16,12 +22,9 @@ jobs:
       - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - uses: Wandalen/wretry.action/main@master
+      - uses: actions/download-artifact@main
         with:
-          action: actions/download-artifact@main
-          with: 'name: .ssh'
-          attempt_limit: 10
-          attempt_delay: 5000
+          artifact-ids: ${{ github.event.client_payload.artifact-id }}
 
       - run: |
           mkdir ~/.config/nix
