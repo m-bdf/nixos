@@ -20,7 +20,7 @@ jobs:
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
 
-      - run: ssh proxy-jump -N
+      - run: sudo ssh proxy-jump -N
 
   setup-remote-access:
     needs: setup-arm-builder
