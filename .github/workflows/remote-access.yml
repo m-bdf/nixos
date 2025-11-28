@@ -19,16 +19,16 @@ jobs:
       - uses: Wandalen/wretry.action/main@master
         with:
           action: actions/download-artifact@main
-          with: 'name: home'
+          with: 'name: .ssh'
           attempt_limit: 10
           attempt_delay: 5000
 
       - run: |
-          chmod 400 .ssh/id_rsa
-          cp -R . ~
-          chmod 755 ~
-          sudo cp -R . /root
-          sudo chown -R root:root /root
+          mkdir ~/.config/nix
+          mv nix.conf ~/.config/nix
+          chmod 400 id_rsa
+          sudo cp * /root/.ssh
+          cp -R . ~/.ssh
 
       - uses: cachix/cachix-action@master
         with:
@@ -39,5 +39,4 @@ jobs:
       - uses: mxschmitt/action-tmate@master
 
       - if: always()
-        run: sudo ssh $ARM_BUILDER pkill ssh
-        continue-on-error: true
+        run: ssh $ARM_BUILDER -f killall ssh
