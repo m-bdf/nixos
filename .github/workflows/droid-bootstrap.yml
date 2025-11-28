@@ -31,7 +31,9 @@ jobs:
 
       - run: |
           sudo mv .ssh/id_rsa /root
+          nix config show
           mv nix.conf ~/.config/nix
+          nix config show
 
       - run: |
           nix build --impure --expr '
