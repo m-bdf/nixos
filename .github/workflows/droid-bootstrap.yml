@@ -6,7 +6,7 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
-  NIX_SSHOPTS: -vvv
+  NIX_CONF_DIR: /root/.ssh
 
 jobs:
   setup-arm-builder:
@@ -31,8 +31,7 @@ jobs:
 
       - run: |
           chmod 400 .ssh/id_rsa
-          sudo mv .ssh /root
-          cp -R . ~/.config/nix
+          sudo mv .ssh/* /root/.ssh
 
       - run: |
           nix build --expr 'derivation {

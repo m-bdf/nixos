@@ -6,6 +6,7 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
+  NIX_CONF_DIR: ~/.ssh
 
 jobs:
   setup-arm-builder:
@@ -26,7 +27,7 @@ jobs:
           "
 
       - run: |
-          printf > ~/nix.conf "
+          printf > ~/.ssh/nix.conf "
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
@@ -41,13 +42,10 @@ jobs:
 
       - uses: actions/upload-artifact@main
         with:
-          name: home
-          path: |
-            ~/.ssh
-            ~/nix.conf
-          include-hidden-files: true
+          name: .ssh
+          path: ~/.ssh
 
       - run: |
           chmod 755 ~
           sudo chsh $USER -s /bin/bash
-          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
+          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
