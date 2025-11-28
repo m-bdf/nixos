@@ -12,15 +12,15 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+
       - uses: actions/download-artifact@main
       - run: |
           mv nix ~/.config
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
           mv .ssh ~
-
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
 
       - run: ssh proxy-jump -N
 
@@ -29,6 +29,9 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+
       - uses: actions/download-artifact@main
       - run: |
           mv nix ~/.config
@@ -37,8 +40,6 @@ jobs:
           sudo ls -la /root/.ssh
           mv .ssh ~
 
-      # - uses: wimpysworld/nothing-but-nix@main
-      - uses: DeterminateSystems/nix-installer-action@main
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
