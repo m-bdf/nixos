@@ -5,8 +5,7 @@ on:
 
 jobs:
   setup-arm-builder:
-    permissions:
-      contents: write
+    permissions: {}
 
     runs-on: ubuntu-24.04-arm
     steps:
@@ -48,18 +47,12 @@ jobs:
               (."system-features".value | join(","))
             ')
 
-      - id: upload-ssh-config
-        uses: actions/upload-artifact@main
+      - uses: actions/upload-artifact@main
         with:
           name: .ssh
           path: ~/.ssh
           include-hidden-files: true
           if-no-files-found: error
-
-      - uses: peter-evans/repository-dispatch@main
-        with:
-          event-type: arm-builder-ssh-config-uploaded
-          client-payload: ${{ toJson(steps.upload-ssh-config.outputs) }}
 
       - run: |
           chmod 755 ~
