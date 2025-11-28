@@ -7,29 +7,30 @@ jobs:
   fetch-nix-install:
     runs-on: ubuntu-latest
     steps:
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: nixbuild/nix-quick-install-action@master
       - uses: actions/checkout@main
       - run: |
           nix build --inputs-from . nix#binaryTarball
           tar -xf result/nix-*.tar.xz
 
-      - id: upload-nix-install
-        uses: actions/upload-artifact@main
+      - uses: actions/upload-artifact@main
         with:
           name: nix-install
           path: nix-*
-
-    outputs:
-      nix-install-url: ${{ steps.upload-nix-install.outputs.artifact-url }}
 
   setup-nix-config:
     needs: fetch-nix-install
 
     runs-on: ubuntu-24.04-arm
     steps:
+      - uses: actions/download-artifact@main
+        with:
+          name: nix-install
+          path: /tmp/nix-install
+
       - uses: cachix/install-nix-action@master
         with:
-          install_url: ${{ needs.fetch-nix-install.outputs.nix-install-url }}
+          install_url: file:///tmp/nix-install
 
       - run: |
           printf > nix.conf "
