@@ -14,9 +14,8 @@ jobs:
             lazy-trees = true
             eval-cores = 0
 
-      - uses: actions/checkout@main
       - run: |
-          nix build --inputs-from . nix#binaryTarball
+          nix build https://flakehub.com/f/DeterminateSystems/nix-src/*#binaryTarball
           tar -xf result/nix-*.tar.xz
 
       - uses: actions/upload-artifact@main
