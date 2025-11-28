@@ -3,6 +3,10 @@ on:
   workflow_call:
   workflow_dispatch:
 
+env:
+  JUMP_PROXY: ${{ github.repository }}@ssh-j.com
+  ARM_BUILDER: arm-builder-${{ github.run_id }}
+
 jobs:
   setup-arm-builder:
     permissions: {}
@@ -16,21 +20,13 @@ jobs:
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
 
-          echo > ~/.ssh/config "
+          printf > ~/.ssh/config "
             Host *
-              BatchMode yes
               StrictHostKeyChecking no
-              PasswordAuthentication no
-
-            Host proxy-jump
-              HostName ssh-j.com
-              User ${{ github.repository }}
-              RemoteForward arm-builder:22 localhost:22
               ExitOnForwardFailure yes
 
-            Host arm-builder
-              ProxyJump proxy-jump
-              HostName %h-${{ github.run_id }}
+            Host $ARM_BUILDER
+              ProxyJump $JUMP_PROXY
               User $USER
           "
 
@@ -39,7 +35,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
@@ -57,4 +53,4 @@ jobs:
       - run: |
           chmod 755 ~
           sudo chsh $USER -s /bin/bash
-          ssh proxy-jump -N
+          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
