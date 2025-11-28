@@ -4,12 +4,29 @@ on:
 
 jobs:
   setup-arm-builder:
-    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
+  start-arm-builder:
+    needs: setup-arm-builder
+
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/download-artifact@main
+      - run: |
+          chmod 400 .ssh/id_rsa
+          mv .ssh ~
+
+      # - uses: wimpysworld/nothing-but-nix@main
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: cachix/cachix-action@master
+        with:
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: ssh proxy-jump -N
+
   setup-remote-access:
-    permissions:
-      contents: read
+    needs: setup-arm-builder
 
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +36,7 @@ jobs:
           mv nix.conf ~/.config/nix
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
+          mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -31,4 +49,4 @@ jobs:
       - uses: mxschmitt/action-tmate@master
 
       - if: always()
-        run: sudo ssh arm-builder -f killall ssh
+        run: ssh arm-builder -f killall ssh

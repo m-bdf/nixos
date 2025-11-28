@@ -7,8 +7,6 @@ on:
 
 jobs:
   build-bootstrap-zips:
-    permissions:
-      contents: read
     uses: ./.github/workflows/droid-bootstrap.yml
 
   deploy-bootstrap-zips:
@@ -32,9 +30,6 @@ jobs:
 
   nix-flake-check:
     needs: build-bootstrap-zips
-
-    permissions:
-      contents: read
 
     runs-on: ubuntu-latest
     steps:

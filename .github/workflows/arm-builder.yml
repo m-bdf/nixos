@@ -5,8 +5,6 @@ on:
 
 jobs:
   setup-nix-config:
-    permissions: {}
-
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: DeterminateSystems/nix-installer-action@main
@@ -29,16 +27,14 @@ jobs:
           path: nix.conf
 
   setup-ssh-config:
-    permissions: {}
-
     runs-on: ubuntu-latest
     steps:
       - run: |
-          ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
-          mv ~/.ssh/{id_rsa.pub,authorized_keys}
+          ssh-keygen -t rsa -N '' -f id_rsa
+          mv id_rsa.pub authorized_keys
 
       - run: |
-          echo > ~/.ssh/config "
+          echo > config "
             Host *
               BatchMode yes
               StrictHostKeyChecking no
@@ -58,5 +54,4 @@ jobs:
       - uses: actions/upload-artifact@main
         with:
           name: .ssh
-          path: ~/.ssh
-          include-hidden-files: true
+          path: .

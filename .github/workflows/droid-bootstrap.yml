@@ -5,7 +5,6 @@ on:
 
 jobs:
   setup-arm-builder:
-    permissions: {}
     uses: ./.github/workflows/arm-builder.yml
 
   start-arm-builder:
@@ -16,7 +15,7 @@ jobs:
       - uses: actions/download-artifact@main
       - run: |
           chmod 400 .ssh/id_rsa
-          sudo cp -R .ssh /root
+          mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -30,9 +29,6 @@ jobs:
   build-bootstrap-zips:
     needs: setup-arm-builder
 
-    permissions:
-      contents: read
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@main
@@ -41,6 +37,7 @@ jobs:
           mv nix.conf ~/.config/nix
           chmod 400 .ssh/id_rsa
           sudo cp -R .ssh /root
+          mv .ssh ~
 
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -64,7 +61,7 @@ jobs:
       #     --print-build-logs --keep-going
 
       - if: always()
-        run: sudo ssh arm-builder -f killall ssh
+        run: ssh arm-builder -f killall ssh
 
       - uses: actions/upload-pages-artifact@main
         with:
