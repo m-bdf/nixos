@@ -21,7 +21,6 @@ jobs:
         with:
           action: actions/download-artifact@main
           with: 'name: .ssh'
-          pre_retry_command: echo test 1 2 1 2
           attempt_delay: 5000
           attempt_limit: 10
 
