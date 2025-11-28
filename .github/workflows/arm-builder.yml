@@ -26,8 +26,7 @@ jobs:
           "
 
       - run: |
-          mkdir ~/.config/nix
-          printf > ~/.config/nix/nix.conf "
+          printf > ~/nix.conf "
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
