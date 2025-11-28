@@ -3,6 +3,9 @@ on:
   workflow_call:
   workflow_dispatch:
 
+env:
+  ARM_BUILDER: arm-builder-${{ github.run_id }}
+
 jobs:
   setup-arm-builder:
     permissions: {}
@@ -50,7 +53,7 @@ jobs:
       #     --print-build-logs --keep-going
 
       - if: always()
-        run: sudo ssh arm-builder -f killall ssh
+        run: sudo ssh $ARM_BUILDER -f killall ssh
 
       - uses: actions/upload-pages-artifact@main
         with:

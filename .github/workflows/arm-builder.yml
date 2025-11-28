@@ -5,6 +5,7 @@ on:
 
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
+  ARM_BUILDER: arm-builder-${{ github.run_id }}
 
 jobs:
   setup-arm-builder:
@@ -22,12 +23,10 @@ jobs:
           printf > ~/.ssh/config "
             Host *
               BatchMode yes
-              StrictHostKeyChecking accept-new
+              StrictHostKeyChecking no
               PasswordAuthentication no
-              ExitOnForwardFailure yes
 
-            Host arm-builder
-              HostName ${{ github.run_id }}
+            Host $ARM_BUILDER
               ProxyJump $JUMP_PROXY
               User $USER
           "
@@ -37,7 +36,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
             $(nix config show --json | jq -r '
@@ -55,4 +54,4 @@ jobs:
       - run: |
           chmod 755 ~
           sudo chsh $USER -s /bin/bash
-          ssh $JUMP_PROXY -R arm-builder:22:localhost:22 -N
+          ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -N
