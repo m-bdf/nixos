@@ -6,7 +6,6 @@ on:
 env:
   JUMP_PROXY: ${{ github.repository }}@ssh-j.com
   ARM_BUILDER: arm-builder-${{ github.run_id }}
-  NIX_SSHOPTS: -vvv
 
 jobs:
   setup-arm-builder:
@@ -32,7 +31,7 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = %s %s $PWD/.ssh/id_rsa %s - %s
+            builders = %s %s - %s - %s
             builders-use-substitutes = true
           " \
             ssh-ng://$USER@$ARM_BUILDER \
