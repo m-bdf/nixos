@@ -36,20 +36,12 @@ jobs:
           mv nix.conf ~/.config/nix
 
       - run: |
-          nix build --impure --expr '
-            (import <nixpkgs> {
-              system = "x86_64-linux";
-            }).symlinkJoin {
-              name = "hello";
-              paths = [
-                ((import <nixpkgs> {
-                  system = "aarch64-linux";
-                }).hello.overrideAttrs {
-                  foo = "bar";
-                })
-              ];
-            }
-          ' --show-trace --print-build-logs
+          nix build --expr 'derivation {
+            name = "test";
+            system = "aarch64-linux";
+            builder = "/bin/sh";
+            args = [ "-c" "echo > $out" ];
+          }' --show-trace --print-build-logs
 
       - uses: cachix/cachix-action@master
         with:
