@@ -15,9 +15,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@main
       - run: |
-          ls -laR
-          chmod 400 id_rsa
-          sudo cp * /root/.ssh
+          chmod 400 .ssh/id_rsa
+          sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
@@ -40,8 +39,8 @@ jobs:
       - run: |
           mkdir ~/.config/nix
           mv nix.conf ~/.config/nix
-          chmod 400 id_rsa
-          sudo cp * /root/.ssh
+          chmod 400 .ssh/id_rsa
+          sudo cp -R .ssh /root
 
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: DeterminateSystems/nix-installer-action@main
