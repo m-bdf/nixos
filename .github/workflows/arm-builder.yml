@@ -54,5 +54,5 @@ jobs:
           sudo chown -R root:root /root
 
       - run: |
-          sudo chsh $USER -s $SHELL
+          sudo chsh $USER -s /bin/bash
           ssh $JUMP_PROXY -R $ARM_BUILDER:22:localhost:22 -Nvvv
