@@ -16,8 +16,6 @@ jobs:
           ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
 
-          ARM_BUILDER='arm-builder-${{ github.run_id }}'
-
           echo > ~/.ssh/config "
             Host *
               BatchMode yes
@@ -26,13 +24,12 @@ jobs:
 
             Host proxy-jump
               HostName ssh-j.com
-              User ${{ github.repository }}
-              RemoteForward $ARM_BUILDER:22 localhost:22
+              User ${{ github.repository }}/${{ github.run_id }}
+              RemoteForward arm-builder:22 localhost:22
               ExitOnForwardFailure yes
 
             Host arm-builder
               ProxyJump proxy-jump
-              HostName $ARM_BUILDER
               User $USER
           "
 
