@@ -21,8 +21,13 @@ jobs:
           mv ~/.ssh/{id_rsa.pub,authorized_keys}
 
           printf > ~/.ssh/config "
-            Host * \n StrictHostKeyChecking no
-            Host $ARM_BUILDER \n ProxyJump $JUMP_PROXY
+            Host *
+              StrictHostKeyChecking no
+              ExitOnForwardFailure yes
+
+            Host $ARM_BUILDER
+              ProxyJump $JUMP_PROXY
+              User $USER
           "
 
       - run: |
@@ -30,10 +35,9 @@ jobs:
             lazy-locks = true
             lazy-trees = true
             eval-cores = 0
-            builders = %s %s - %s - %s
+            builders = ssh-ng://$ARM_BUILDER %s - %s - %s
             builders-use-substitutes = true
           " \
-            ssh-ng://$USER@$ARM_BUILDER \
             $(nix config show --json | jq -r '
               (."system".value, ."max-jobs".value),
               (."system-features".value | join(","))
