@@ -17,7 +17,7 @@ runs:
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
           RemoteForward arm-builder:22 localhost:22
-          ExitOnForwardFailure
+          ExitOnForwardFailure yes
 
         Host arm-builder
           ProxyJump proxy-jump
