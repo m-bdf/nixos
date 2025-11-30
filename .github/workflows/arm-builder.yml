@@ -4,39 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-nix-config:
+  setup-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@main
-      - uses: ./.github/actions/install-detnix
-
       - run: |
-          printf > nix.conf "
-            lazy-locks = true
-            lazy-trees = true
-            eval-cores = 0
-            builders = ssh-ng://arm-builder %s - %s - %s
-            builders-use-substitutes = true
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
+          ssh-keygen -t rsa -N '' -f .ssh/id_rsa
+          mv .ssh/id_rsa.pub .ssh/authorized_keys
 
-      - uses: actions/upload-artifact@main
-        with:
-          name: nix
-          path: .
-
-  setup-ssh-config:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          ssh-keygen -t rsa -N '' -f id_rsa
-          mv id_rsa.pub authorized_keys
-
-      - run: |
-          echo > config "
+          printf > .ssh/config "
             BatchMode yes
             StrictHostKeyChecking no
             PasswordAuthentication no
@@ -51,7 +26,19 @@ jobs:
             ProxyJump proxy-jump
           "
 
+      - uses: actions/checkout@main
+      - uses: ./.github/actions/install-detnix
+      - run: |
+          printf > nix.conf "
+            builders = ssh-ng://arm-builder %s - %s - %s
+            builders-use-substitutes = true
+          " \
+            $(nix config show --json | jq -r '
+              (."system".value, ."max-jobs".value),
+              (."system-features".value | join(","))
+            ')
+
       - uses: actions/upload-artifact@main
         with:
-          name: .ssh
+          name: home
           path: .

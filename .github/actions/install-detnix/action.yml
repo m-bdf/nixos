@@ -20,3 +20,7 @@ runs:
     - uses: cachix/install-nix-action@master
       with:
         install_url: file:///tmp/nix-install
+        extra_nix_config: |
+          lazy-locks = true
+          lazy-trees = true
+          eval-cores = 0

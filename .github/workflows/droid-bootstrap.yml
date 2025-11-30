@@ -12,16 +12,13 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/download-artifact@main
-        with:
-          name: .ssh
-
-      - run: |
-          sudo cp -R . /root/.ssh
-
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
+
+      - uses: actions/download-artifact@main
+      - run: |
+          sudo cp -R .ssh /root
 
       - run: sudo ssh proxy-jump -N
 
@@ -30,18 +27,15 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@main
-        with:
-          pattern: '{nix,.ssh}'
-
-      - run: |
-          mv nix ~/.config
-          chmod 600 .ssh/id_rsa
-          sudo cp -R .ssh /root
-
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
+
+      - uses: actions/download-artifact@main
+      - run: |
+          mv nix.conf ~/.config/nix
+          chmod 600 .ssh/id_rsa
+          sudo cp -R .ssh /root
 
       - uses: cachix/cachix-action@master
         with:
@@ -64,6 +58,6 @@ jobs:
       - if: always()
         run: sudo ssh arm-builder -f killall ssh
 
-      - uses: actions/upload-pages-artifact@main
-        with:
-          path: result
+      # - uses: actions/upload-pages-artifact@main
+      #   with:
+      #     path: result
