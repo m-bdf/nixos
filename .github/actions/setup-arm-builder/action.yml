@@ -5,7 +5,7 @@ runs:
   steps:
     - shell: sudo bash -e {0}
       run: |
-        usermod --unlock --shell /bin/bash runner
+        usermod runner -p '*' -s /bin/bash
 
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
