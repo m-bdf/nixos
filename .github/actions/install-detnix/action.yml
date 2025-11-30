@@ -1,7 +1,7 @@
 name: Install Determinate Nix
 
 runs:
-  using: "composite"
+  using: composite
   steps:
     - shell: bash
       working-directory: /tmp
@@ -24,20 +24,3 @@ runs:
           lazy-locks = true
           lazy-trees = true
           eval-cores = 0
-
-    - shell: bash
-      run: |
-        printf > ~/.config/nix/nix.conf "
-          builders = ssh-ng://arm-builder %s - %s - %s
-          builders-use-substitutes = true
-        " \
-        $(nix config show --json | jq -r '
-          (."system".value, ."max-jobs".value),
-          (."system-features".value | join(","))
-        ')
-
-    - uses: actions/download-artifact@main
-    - shell: bash
-      run: |
-        chmod 600 id_rsa
-        sudo cp -R . /root/.ssh

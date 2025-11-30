@@ -1,0 +1,31 @@
+name: Setup ARM remote builder
+
+runs:
+  using: composite
+  steps:
+    - shell: sudo {0}
+      run: |
+        echo >> /etc/ssh/sshd_config \
+          PermitEmptyPasswords yes
+        systemctl restart sshd
+
+        echo >> /etc/ssh/ssh_config '
+          BatchMode yes
+          StrictHostKeyChecking no
+
+        Host proxy-jump
+          HostName ssh-j.com
+          User ${{ github.repository }}/${{ github.run_id }}
+          RemoteForward arm-builder:22 localhost:22
+          ExitOnForwardFailure
+
+        Host arm-builder
+          ProxyJump proxy-jump
+        '
+
+    - shell: bash
+      run: |
+        echo "NIX_CONFIG<<'
+          builders = ssh-ng://arm-builder aarch64-linux - $(nproc)
+          builders-use-substitutes = true
+        '" >> $GITHUB_ENV
