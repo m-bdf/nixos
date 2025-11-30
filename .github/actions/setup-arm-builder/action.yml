@@ -25,19 +25,11 @@ runs:
           User runner
         '
 
-        echo ${{ runner.arch }}
-        echo ${{ runner.arch == 'ARM' }}
-        echo ${{ runner.arch == 'arm' }}
-        echo ${{ runner.arch == 'ARM64' }}
-        echo ${{ runner.arch == 'arm64' }}
-        echo ${{ startsWith(runner.arch, 'ARM') }}
-        echo ${{ startsWith(runner.arch, 'arm') }}
-
-    - if: runner.arch == 'ARM'
+    - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
       run: ssh proxy-jump -N
 
-    - if: runner.arch != 'ARM'
+    - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
       with:
         run: echo >> $GITHUB_ENV NIX_CONFIG=builders = \
