@@ -24,6 +24,7 @@ runs:
           User $USER
         "
 
+        cat /etc/pam.d/sshd
         systemctl restart ssh
 
     - shell: bash
