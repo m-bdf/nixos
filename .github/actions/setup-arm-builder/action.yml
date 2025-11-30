@@ -24,6 +24,7 @@ runs:
           User runner
         '
 
+        sed -i '/pam_unix.so/ s/$/ nullok/' /etc/pam.d/*
         systemctl restart ssh
 
     - shell: bash
