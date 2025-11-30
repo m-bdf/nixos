@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-arm-builder:
-    runs-on: ubuntu-24.04-arm
+  setup-arm-builder-ssh:
+    runs-on: ubuntu-slim
     steps:
       - run: |
-          ssh-keygen -t rsa -N '' -f .ssh/id_rsa
-          mv .ssh/id_rsa.pub .ssh/authorized_keys
+          ssh-keygen -t rsa -N '' -f id_rsa
+          mv id_rsa.pub authorized_keys
 
-          printf > .ssh/config "
+          printf > config '
             BatchMode yes
             StrictHostKeyChecking no
             PasswordAuthentication no
@@ -24,21 +24,9 @@ jobs:
 
           Host arm-builder
             ProxyJump proxy-jump
-          "
-
-      - uses: actions/checkout@main
-      - uses: ./.github/actions/install-detnix
-      - run: |
-          printf > nix.conf "
-            builders = ssh-ng://arm-builder %s - %s - %s
-            builders-use-substitutes = true
-          " \
-            $(nix config show --json | jq -r '
-              (."system".value, ."max-jobs".value),
-              (."system-features".value | join(","))
-            ')
+          '
 
       - uses: actions/upload-artifact@main
         with:
-          name: home
+          name: .ssh
           path: .

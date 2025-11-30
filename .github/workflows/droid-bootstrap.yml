@@ -16,10 +16,6 @@ jobs:
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
-      - uses: actions/download-artifact@main
-      - run: |
-          sudo cp -R .ssh /root
-
       - run: sudo ssh proxy-jump -N
 
   build-bootstrap-zips:
@@ -30,12 +26,6 @@ jobs:
       # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
-
-      - uses: actions/download-artifact@main
-      - run: |
-          mv nix.conf ~/.config/nix
-          chmod 600 .ssh/id_rsa
-          sudo cp -R .ssh /root
 
       - uses: cachix/cachix-action@master
         with:

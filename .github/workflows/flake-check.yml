@@ -37,10 +37,6 @@ jobs:
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 
-      - uses: actions/download-artifact@main
-      - run: |
-          mv nix.conf ~/.config/nix
-
       - uses: cachix/cachix-action@master
         with:
           name: m-bdf
