@@ -3,11 +3,9 @@ name: Setup ARM remote builder
 runs:
   using: composite
   steps:
-    - shell: sudo bash -e {0}
+    - shell: sudo bash {0}
       run: |
-        cat /etc/passwd /etc/shadow
-        usermod runner -p '' -s /bin/bash
-        cat /etc/passwd /etc/shadow
+        usermod runner -p '' -s $SHELL
 
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
