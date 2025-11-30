@@ -5,6 +5,7 @@ runs:
   steps:
     - shell: sudo bash -e {0}
       run: |
+        cat /etc/passwd /etc/shadow
         usermod runner -p '' -s /bin/bash
         cat /etc/passwd /etc/shadow
 
