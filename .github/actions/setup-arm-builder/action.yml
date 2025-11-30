@@ -10,7 +10,7 @@ runs:
 
         echo >> /etc/ssh/ssh_config '
         Host *
-          # BatchMode yes
+          BatchMode yes
           StrictHostKeyChecking no
 
         Host proxy-jump
@@ -24,7 +24,6 @@ runs:
           User runner
         '
 
-        cat /etc/pam.d/sshd /etc/pam.d/common-*
         systemctl restart ssh
 
     - shell: bash
