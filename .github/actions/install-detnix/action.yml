@@ -18,7 +18,9 @@ runs:
       run: |
         flake='https://flakehub.com/f/DeterminateSystems/nix-src/*'
         nix build $flake#installerScriptForGHA $flake#binaryTarball
-        cp -LR result /tmp/nix-installer
+
+        mkdir /tmp/nix-installer
+        cp result/install /tmp/nix-installer
         name=$(basename $(realpath result-1))
         cp -LR result-1 /tmp/nix-installer/${name%%-*}
         rm result*
