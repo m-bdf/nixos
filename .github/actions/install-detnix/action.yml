@@ -13,7 +13,7 @@ runs:
     - if: steps.fetch-nix-installer.outcome == 'failure'
       shell: bash
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
         NIX_REPO: DeterminateSystems/nix-src
       run: |
         gh --repo $NIX_REPO run download $(
