@@ -15,7 +15,7 @@ runs:
         ) --name $(uname -m)-linux
 
         tar -xf nix-*.tar.xz
-        echo /tmp/nix-*/install > nix-install
+        echo /tmp/nix-*/install '"$@"' > nix-install
 
     - uses: cachix/install-nix-action@master
       with:
