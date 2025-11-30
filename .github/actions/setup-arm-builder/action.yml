@@ -26,6 +26,7 @@ runs:
 
         sed -i '/pam_unix.so/ s/$/ nullok/' /etc/pam.d/*
         cat /etc/pam.d/sshd /etc/pam.d/common-*
+        passwd -d runner
         systemctl restart ssh
 
     - shell: bash
