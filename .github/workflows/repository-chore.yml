@@ -1,5 +1,6 @@
 name: Cleanup repository
 on:
+  push:
   workflow_dispatch:
   schedule:
     - cron: 42 23 * * *
@@ -12,7 +13,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: int128/delete-deployments-action@main
+      - uses: int128/delete-deployments-action@v1
       - uses: Mattraks/delete-workflow-runs@main
         with:
           retain_days: 0
