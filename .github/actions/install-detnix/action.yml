@@ -19,7 +19,7 @@ runs:
         gh --repo $NIX_REPO run download $(
           gh --repo $NIX_REPO run list --event release \
             --json databaseId --jq '.[0].databaseId'
-        ) --name $(uname -m)-$(uname -s) --dir /tmp
+        ) --name $(uname -m)-linux --dir /tmp
 
         tar -xf /tmp/nix-*.tar.xz -C /tmp
         mv /tmp/nix-*/ /tmp/nix-installer
