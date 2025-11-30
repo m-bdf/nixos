@@ -5,7 +5,7 @@ runs:
   steps:
     - shell: sudo bash -e {0}
       run: |
-        usermod runner -p '*' -s /bin/bash
+        usermod runner -p '' -s /bin/bash
         cat /etc/passwd /etc/shadow
 
         echo >> /etc/ssh/sshd_config \
