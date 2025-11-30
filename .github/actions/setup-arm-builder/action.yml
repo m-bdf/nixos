@@ -8,7 +8,7 @@ runs:
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
 
-        echo >> /etc/ssh/ssh_config "
+        echo >> /etc/ssh/ssh_config '
         Host *
           # BatchMode yes
           StrictHostKeyChecking no
@@ -21,8 +21,8 @@ runs:
 
         Host arm-builder
           ProxyJump proxy-jump
-          User $USER
-        "
+          User runner
+        '
 
         cat /etc/pam.d/sshd /etc/pam.d/common-*
         systemctl restart ssh
