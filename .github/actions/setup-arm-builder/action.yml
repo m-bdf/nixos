@@ -32,10 +32,6 @@ runs:
     - if: runner.arch != 'ARM'
       uses: gacts/run-and-post-run@main
       with:
-        run: |
-          echo "NIX_CONFIG<<'
-            builders = ssh-ng://arm-builder aarch64-linux - $(nproc)
-            builders-use-substitutes = true
-          '" >> $GITHUB_ENV
-        post: |
-          ssh arm-builder -f killall ssh
+        run: echo >> $GITHUB_ENV NIX_CONFIG=builders = \
+          ssh-ng://arm-builder aarch64-linux - $(nproc)
+        post: ssh arm-builder -f killall ssh

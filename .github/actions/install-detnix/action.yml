@@ -25,3 +25,4 @@ runs:
           lazy-locks = true
           lazy-trees = true
           eval-cores = 0
+          builders-use-substitutes = true
