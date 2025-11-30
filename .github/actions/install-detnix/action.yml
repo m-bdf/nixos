@@ -8,13 +8,15 @@ runs:
         GH_TOKEN: ${{ github.token }}
         NIX_REPO: DeterminateSystems/nix-src
       run: |
+        cd /tmp
+
         gh --repo $NIX_REPO run download $(
           gh --repo $NIX_REPO run list --event release \
             --json databaseId --jq '.[0].databaseId'
-        ) --name $(uname -m)-linux --dir /tmp
+        ) --name $(uname -m)-linux
 
-        tar -xf /tmp/nix-*.tar.xz -C /tmp
-        ln -s /tmp/nix-*/install /tmp/nix-install
+        tar -xf nix-*.tar.xz
+        echo nix-*/install > nix-install
 
     - uses: cachix/install-nix-action@master
       with:
