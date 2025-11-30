@@ -11,19 +11,18 @@ runs:
       continue-on-error: true
 
     - if: steps.fetch-nix-installer.outcome == 'failure'
-      uses: DeterminateSystems/nix-installer-action@main
-
-    - if: steps.fetch-nix-installer.outcome == 'failure'
       shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NIX_REPO: DeterminateSystems/nix-src
       run: |
-        flake='https://flakehub.com/f/DeterminateSystems/nix-src/*'
-        nix build $flake#installerScriptForGHA $flake#binaryTarball
+        gh --repo $NIX_REPO run download $(
+          gh --repo $NIX_REPO run list --event release \
+            --json databaseId --jq '.[0].databaseId'
+        ) --name $(uname -m)-$(uname -s) --dir /tmp
 
-        mkdir /tmp/nix-installer
-        cp result/install /tmp/nix-installer
-        name=$(basename $(realpath result-1))
-        cp -LR result-1 /tmp/nix-installer/${name%%-*}
-        rm result*
+        tar -xf /tmp/nix-*.tar.xz -C /tmp
+        mv /tmp/nix-*/ /tmp/nix-installer
 
     - if: steps.fetch-nix-installer.outcome == 'failure'
       uses: actions/upload-artifact@main
@@ -32,11 +31,6 @@ runs:
         path: /tmp/nix-installer
         include-hidden-files: true
 
-    - if: steps.fetch-nix-installer.outcome == 'failure'
-      shell: bash
-      run: /nix/nix-installer uninstall --no-confirm
-
     - uses: cachix/install-nix-action@master
       with:
         install_url: file:///tmp/nix-installer/install
-        install_options: --tarball-url-prefix file:///tmp/nix-installer
