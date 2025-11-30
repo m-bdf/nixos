@@ -5,12 +5,13 @@ runs:
   steps:
     - shell: sudo bash -e {0}
       run: |
+        passwd -d runner
+
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
 
         echo >> /etc/ssh/ssh_config '
-        Host *
-          # BatchMode yes
+          BatchMode yes
           StrictHostKeyChecking no
 
         Host proxy-jump
@@ -23,11 +24,6 @@ runs:
           ProxyJump proxy-jump
           User runner
         '
-
-        sed -i '/pam_unix.so/ s/$/ nullok/' /etc/pam.d/*
-        cat /etc/pam.d/sshd /etc/pam.d/common-*
-        passwd -d runner
-        systemctl restart ssh
 
     - shell: bash
       run: |
