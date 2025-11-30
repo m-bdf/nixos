@@ -17,10 +17,11 @@ runs:
       shell: bash
       run: |
         flake='https://flakehub.com/f/DeterminateSystems/nix-src/*'
-        nix flake clone $flake --dest /tmp/nix-src
-        cd /tmp/nix-src
-        ci/gha/tests/prepare-installer-for-github-actions
-        mv out /tmp/nix-installer
+        nix build $flake#installerScriptForGHA $flake#binaryTarball
+        cp -LR result /tmp/nix-installer
+        name=$(basename $(realpath result-1))
+        cp -LR result-1 /tmp/nix-installer/${name%%-*}
+        rm result*
 
     - if: steps.fetch-nix-installer.outcome == 'failure'
       uses: actions/upload-artifact@main
@@ -36,5 +37,4 @@ runs:
     - uses: cachix/install-nix-action@master
       with:
         install_url: file:///tmp/nix-installer/install
-        install_options:
-          --tarball-url-prefix file:///tmp/nix-installer
+        install_options: --tarball-url-prefix file:///tmp/nix-installer
