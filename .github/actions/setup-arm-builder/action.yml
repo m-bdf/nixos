@@ -5,8 +5,6 @@ runs:
   steps:
     - shell: sudo bash -e {0}
       run: |
-        passwd -d runner
-
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
 
@@ -24,6 +22,9 @@ runs:
           ProxyJump proxy-jump
           User runner
         '
+
+        passwd -d runner
+        systemctl restart ssh
 
     - shell: bash
       run: |
