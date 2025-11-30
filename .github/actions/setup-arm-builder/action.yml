@@ -23,6 +23,8 @@ runs:
           ProxyJump proxy-jump
         '
 
+        systemctl restart ssh
+
     - shell: bash
       run: |
         echo "NIX_CONFIG<<'
