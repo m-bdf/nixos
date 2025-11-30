@@ -7,12 +7,10 @@ runs:
       run: |
         usermod runner -p '' -s $SHELL
 
-        cat /etc/ssh/sshd_config /etc/ssh/ssh_config
-
-        echo >> /etc/ssh/sshd_config \
+        echo > /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
 
-        echo >> /etc/ssh/ssh_config '
+        echo > /etc/ssh/ssh_config '
           BatchMode yes
           StrictHostKeyChecking no
 
