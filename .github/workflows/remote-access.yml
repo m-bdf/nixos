@@ -1,5 +1,6 @@
 name: Provide remote access for debugging
 on:
+  push:
   workflow_dispatch:
 
 jobs:
