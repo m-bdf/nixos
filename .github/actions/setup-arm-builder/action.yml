@@ -10,7 +10,7 @@ runs:
 
         echo >> /etc/ssh/ssh_config '
         Host *
-          BatchMode yes
+          # BatchMode yes
           StrictHostKeyChecking no
 
         Host proxy-jump
