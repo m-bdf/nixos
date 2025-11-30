@@ -3,15 +3,7 @@ name: Install Determinate Nix
 runs:
   using: "composite"
   steps:
-    - id: fetch-nix-installer
-      uses: actions/download-artifact@main
-      with:
-        name: nix-installer-${{ runner.arch }}
-        path: /tmp/nix-installer
-      continue-on-error: true
-
-    - if: steps.fetch-nix-installer.outcome == 'failure'
-      shell: bash
+    - shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
         NIX_REPO: DeterminateSystems/nix-src
@@ -21,16 +13,9 @@ runs:
             --json databaseId --jq '.[0].databaseId'
         ) --name $(uname -m)-linux --dir /tmp
 
-        tar -xf /tmp/nix-*.tar.xz -C /tmp
-        mv /tmp/nix-*/ /tmp/nix-installer
-
-    - if: steps.fetch-nix-installer.outcome == 'failure'
-      uses: actions/upload-artifact@main
-      with:
-        name: nix-installer-${{ runner.arch }}
-        path: /tmp/nix-installer
-        include-hidden-files: true
+        tar -C /tmp -xf nix-*.tar.xz
+        ln -s /tmp/nix-*/installer /tmp/nix-installer
 
     - uses: cachix/install-nix-action@master
       with:
-        install_url: file:///tmp/nix-installer/install
+        install_url: file:///tmp/nix-installer
