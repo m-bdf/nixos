@@ -7,10 +7,10 @@ runs:
       run: |
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
-        systemctl restart sshd
 
         echo >> /etc/ssh/ssh_config '
-          BatchMode yes
+        Host *
+          # BatchMode yes
           StrictHostKeyChecking no
 
         Host proxy-jump
@@ -22,6 +22,8 @@ runs:
         Host arm-builder
           ProxyJump proxy-jump
         '
+
+        systemctl restart sshd
 
     - shell: bash
       run: |
