@@ -1,6 +1,5 @@
 name: Cleanup repository
 on:
-  push:
   workflow_dispatch:
   schedule:
     - cron: 42 23 * * *
