@@ -14,8 +14,8 @@ runs:
         ) --name $(uname -m)-linux --dir /tmp
 
         tar -xf /tmp/nix-*.tar.xz -C /tmp
-        ln -s /tmp/nix-*/installer /tmp/nix-installer
+        ln -s /tmp/nix-*/install /tmp/nix-install
 
     - uses: cachix/install-nix-action@master
       with:
-        install_url: file:///tmp/nix-installer
+        install_url: file:///tmp/nix-install
