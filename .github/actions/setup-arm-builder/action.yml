@@ -25,11 +25,11 @@ runs:
           User runner
         '
 
-    - if: runner.arch == ARM
+    - if: runner.arch == 'ARM'
       shell: bash
       run: ssh proxy-jump -N
 
-    - if: runner.arch != ARM
+    - if: runner.arch != 'ARM'
       uses: gacts/run-and-post-run@main
       with:
         run: |
