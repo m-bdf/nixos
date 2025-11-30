@@ -3,7 +3,7 @@ name: Setup ARM remote builder
 runs:
   using: composite
   steps:
-    - shell: sudo bash {0}
+    - shell: sudo bash -e {0}
       run: |
         echo >> /etc/ssh/sshd_config \
           PermitEmptyPasswords yes
@@ -22,8 +22,6 @@ runs:
         Host arm-builder
           ProxyJump proxy-jump
         '
-
-        systemctl restart sshd
 
     - shell: bash
       run: |
