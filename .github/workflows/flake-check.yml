@@ -8,6 +8,7 @@ on:
 jobs:
   build-bootstrap-zips:
     uses: ./.github/workflows/droid-bootstrap.yml
+    secrets: inherit
 
   deploy-bootstrap-zips:
     needs: build-bootstrap-zips

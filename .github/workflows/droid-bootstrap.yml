@@ -23,20 +23,11 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: |
-          sleep 10
-          nix build --expr 'derivation {
-            name = "test";
-            system = "aarch64-linux";
-            builder = "/bin/sh";
-            args = [ "-c" "echo > $out" ];
-          }' --show-trace --print-build-logs
+      - run: nix build .#nixOnDroidBootstrapZips
+          --accept-flake-config
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
 
-      # - run: nix build .#nixOnDroidBootstrapZips
-      #     --accept-flake-config
-      #     --trace-verbose --show-trace
-      #     --print-build-logs --keep-going
-
-      # - uses: actions/upload-pages-artifact@main
-      #   with:
-      #     path: result
+      - uses: actions/upload-pages-artifact@main
+        with:
+          path: result
