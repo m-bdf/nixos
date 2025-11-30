@@ -13,7 +13,7 @@ runs:
             --json databaseId --jq '.[0].databaseId'
         ) --name $(uname -m)-linux --dir /tmp
 
-        tar -C /tmp -xf nix-*.tar.xz
+        tar -xf /tmp/nix-*.tar.xz -C /tmp
         ln -s /tmp/nix-*/installer /tmp/nix-installer
 
     - uses: cachix/install-nix-action@master
