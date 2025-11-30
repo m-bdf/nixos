@@ -25,9 +25,17 @@ runs:
           User runner
         '
 
-    - shell: bash
-      run: |
-        echo "NIX_CONFIG<<'
-          builders = ssh-ng://arm-builder aarch64-linux - $(nproc)
-          builders-use-substitutes = true
-        '" >> $GITHUB_ENV
+    - if: runner.arch == ARM
+      shell: bash
+      run: ssh proxy-jump -N
+
+    - if: runner.arch != ARM
+      uses: gacts/run-and-post-run@main
+      with:
+        run: |
+          echo "NIX_CONFIG<<'
+            builders = ssh-ng://arm-builder aarch64-linux - $(nproc)
+            builders-use-substitutes = true
+          '" >> $GITHUB_ENV
+        post: |
+          ssh arm-builder -f killall ssh

@@ -17,6 +17,7 @@ runs:
         tar -xf nix-*.tar.xz
         echo /tmp/nix-*/install '"$@"' > nix-install
 
+    - uses: wimpysworld/nothing-but-nix@main
     - uses: cachix/install-nix-action@master
       with:
         install_url: file:///tmp/nix-install

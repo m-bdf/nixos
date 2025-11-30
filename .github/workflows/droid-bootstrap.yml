@@ -7,17 +7,13 @@ jobs:
   start-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
       - uses: ./.github/actions/setup-arm-builder
 
-      - run: ssh proxy-jump -N
-
   build-bootstrap-zips:
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
       - uses: ./.github/actions/setup-arm-builder
@@ -40,9 +36,6 @@ jobs:
       #     --accept-flake-config
       #     --trace-verbose --show-trace
       #     --print-build-logs --keep-going
-
-      - if: always()
-        run: ssh arm-builder -f killall ssh
 
       # - uses: actions/upload-pages-artifact@main
       #   with:

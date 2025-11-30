@@ -33,7 +33,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
 

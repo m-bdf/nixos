@@ -6,17 +6,13 @@ jobs:
   start-arm-builder:
     runs-on: ubuntu-24.04-arm
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
       - uses: ./.github/actions/setup-arm-builder
 
-      - run: ssh proxy-jump -N
-
   setup-remote-access:
     runs-on: ubuntu-latest
     steps:
-      # - uses: wimpysworld/nothing-but-nix@main
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
       - uses: ./.github/actions/setup-arm-builder
@@ -27,6 +23,3 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - uses: owenthereal/action-upterm@main
-
-      - if: always()
-        run: ssh arm-builder -f killall ssh
