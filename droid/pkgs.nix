@@ -48,5 +48,8 @@ let
 in
 
 {
-  home.nix.registry.nixpkgs.flake = lib.mkForce nixpkgs;
+  home.nix = {
+    registry.nixpkgs.flake = lib.mkForce nixpkgs;
+    nixPath = lib.mkForce [ "nixpkgs=${nixpkgs}" ];
+  };
 }
