@@ -1,8 +1,6 @@
 {
   nixConfig = {
     flake-registry = "";
-    trace-import-from-derivation = true;
-
     extra-substituters = [
       "https://m-bdf.cachix.org"
       "https://install.determinate.systems"
