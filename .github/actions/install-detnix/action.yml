@@ -8,6 +8,7 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
         NIX_REPO: DeterminateSystems/nix-src
+
       run: |
         gh --repo $NIX_REPO run download $(
           gh --repo $NIX_REPO run list --event release \

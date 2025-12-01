@@ -31,3 +31,22 @@ jobs:
       - uses: actions/upload-pages-artifact@main
         with:
           path: result
+
+  deploy-bootstrap-zips:
+    needs: build-bootstrap-zips
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-slim
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@main

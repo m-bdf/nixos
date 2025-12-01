@@ -10,25 +10,6 @@ jobs:
     uses: ./.github/workflows/droid-bootstrap.yml
     secrets: inherit
 
-  deploy-bootstrap-zips:
-    needs: build-bootstrap-zips
-    concurrency:
-      group: ${{ github.workflow }}
-      cancel-in-progress: true
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@main
-
   nix-flake-check:
     needs: build-bootstrap-zips
 
@@ -46,3 +27,17 @@ jobs:
           --accept-flake-config
           --trace-verbose --show-trace
           --print-build-logs --keep-going
+
+  respository-chore:
+    needs: nix-flake-check
+
+    permissions:
+      actions: write
+      deployments: write
+
+    runs-on: ubuntu-slim
+    steps:
+      - uses: int128/delete-deployments-action@v1
+      - uses: Mattraks/delete-workflow-runs@main
+        with:
+          retain_days: 0
