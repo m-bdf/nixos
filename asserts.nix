@@ -8,7 +8,7 @@ let
   collectModules = lib.modules.collectModules "";
   collectedModules = (collectModules modules self).modules;
 
-  mkRedundantAssert = loc: value: def:
+  mkRedundantAssert = loc: optValue: file: defValue:
   let
     removeAttrByPath = path: set:
       mkMerge (forEach (pushDownProperties set) (set:
@@ -19,7 +19,7 @@ let
 
     systemWithoutDef = extendModules {
       modules = forEach collectedModules
-        (m: if m._file != def.file then m else {
+        (m: if m._file != file then m else {
           disabledModules = [m];
           inherit (m) _file options;
           config = removeAttrByPath (dropPrefix loc) m.config;
@@ -28,13 +28,13 @@ let
 
     optWithoutDef = getAttrFromPath (dropPrefix loc) systemWithoutDef.options;
 
-    prettyOpt = "option `${showOption loc}' defined in `${def.file}'";
-    prettyVal = generators.toPretty { multiline = false; } def.value;
+    prettyOpt = "option `${showOption loc}' defined in `${file}'";
+    prettyVal = generators.toPretty { multiline = false; } defValue;
   in
   {
     assertion = builtins.traceVerbose "Checking the ${prettyOpt}…"
       optWithoutDef.isDefined ->
-        !(builtins.tryEval (optWithoutDef.value == value)).value;
+        !(builtins.tryEval (optWithoutDef.value == optValue)).value;
 
     message = "The ${prettyOpt} is set to the redundant value `${prettyVal}'.";
   };
@@ -57,7 +57,7 @@ let
         (collectModules moduleType.getSubModules self).modules;
     };
 
-    collectAsserts = v: v._asserts or
+    collectAsserts = v: v.assertions or
       (concatMap collectAsserts (if isAttrs v then attrValues v else v));
   in
     concatMap (opt: optionals (
@@ -65,23 +65,22 @@ let
       !hasPrefix "Alias" opt.description or "" && #355488
       hasAttrByPath (dropPrefix opt.loc) freeform.config
     ) (
-      if opt.type.getSubModules == null then
-        map (mkRedundantAssert opt.loc opt.value)
-          (filterUserModules opt.definitionsWithLocations)
-      else
+      forEach (filterUserModules opt.definitionsWithLocations)
+        (def: mkRedundantAssert opt.loc opt.value def.file def.value)
+    ++
+      optionals (opt.type.getSubModules != null) (
         collectAsserts ((opt.type.substSubModules (
           opt.type.getSubModules ++ [ subModule __curPos.file ]
         )).merge opt.loc opt.definitionsWithLocations)
+      )
     ));
 in
 
 {
-  options._asserts = mkOption {
-    default = mkRedundantAsserts (collect isOption options);
-  };
-
-  config = optionalAttrs (options ? assertions) {
-    assertions = config._asserts ++ forEach config.warnings
-      (message: { assertion = false; inherit message; });
-  };
+  options.assertions = mkOption {};
+  config.assertions =
+    forEach config.warnings or [] (message:
+      { assertion = false; inherit message; }
+    ) ++
+      mkRedundantAsserts (collect isOption options);
 }
