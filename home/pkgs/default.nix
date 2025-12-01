@@ -34,7 +34,7 @@ in
   nix = {
     registry.nixpkgs.flake = nixpkgs;
     nixPath = [
-      "nixpkgs=flake:nixpkgs"
+      "nixpkgs=${nixpkgs}"
       "home-manager=${inputs.home-manager}"
     ];
     keepOldNixPath = false;
