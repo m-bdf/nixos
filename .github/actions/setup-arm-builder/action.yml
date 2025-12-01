@@ -11,6 +11,7 @@ runs:
           PermitEmptyPasswords yes
 
         echo > /etc/ssh/ssh_config '
+          BatchMode yes
           StrictHostKeyChecking no
 
         Host proxy-jump
@@ -31,6 +32,6 @@ runs:
     - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
       with:
-        run: echo >> $GITHUB_ENV NIX_CONFIG=builders = \
+        run: echo >> $GITHUB_ENV NIX_CONFIG=builders =
           ssh-ng://arm-builder aarch64-linux - $(nproc)
         post: ssh arm-builder -f killall ssh
