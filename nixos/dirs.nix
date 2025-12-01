@@ -1,12 +1,5 @@
 { inputs, config, lib, ... }:
 
-with lib;
-
-let
-  user = config.users.users.user.name;
-in
-
-rec
 {
   imports = [ inputs.preservation.nixosModules.preservation ];
 
@@ -20,13 +13,14 @@ rec
   environment.sessionVariables =
     config.home.systemd.user.sessionVariables;
 
-  systemd.tmpfiles.rules =
-    map (path: "d ${path} - ${user}") (attrValues home.xdg);
-
-  preservation.preserveAt.state.directories =
-    concatMap (f: optional f.persist {
+  preservation.preserveAt.state.directories = with lib;
+    concatMap (f: optional f.persist rec {
       directory = f.target;
-      inherit user;
-      mountOptions = optional (f.executable == true) "exec";
+      mountOptions = mkIf (f.executable == true) [ "exec" ];
+
+      user = config.users.users.user.name;
+      group = config.users.users.user.group;
+      parent = { inherit user group; };
+      configureParent = true;
     }) (attrValues config.home.home.file);
 }
