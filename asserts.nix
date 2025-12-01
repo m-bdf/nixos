@@ -26,15 +26,14 @@ let
         });
     };
 
-    optWithoutDef = getAttrFromPath (dropPrefix loc) systemWithoutDef.options;
+    valueWithoutDef = getAttrFromPath (dropPrefix loc) systemWithoutDef.config;
 
     prettyOpt = "option `${showOption loc}' defined in `${file}'";
     prettyVal = generators.toPretty { multiline = false; } defValue;
   in
   {
     assertion = builtins.traceVerbose "Checking the ${prettyOpt}…"
-      optWithoutDef.isDefined ->
-        !(builtins.tryEval (optWithoutDef.value == optValue)).value;
+      (!(builtins.tryEval (valueWithoutDef == optValue)).value);
 
     message = "The ${prettyOpt} is set to the redundant value `${prettyVal}'.";
   };
