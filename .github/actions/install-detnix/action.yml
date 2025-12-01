@@ -30,7 +30,8 @@ runs:
           eval-cores = 0
           builders-use-substitutes = true
 
-    - uses: cachix/cachix-action@master
+    - if: inputs.cachix-auth-token
+      uses: cachix/cachix-action@master
       with:
         name: ${{ github.repository_owner }}
         authToken: ${{ inputs.cachix-auth-token }}
