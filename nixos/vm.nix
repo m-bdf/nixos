@@ -19,7 +19,7 @@ in
         ];
 
         diskImage = null;
-        writableStore = false;
+        writableStoreUseTmpfs = false;
         msize = 500 * 1024;
       }
 
