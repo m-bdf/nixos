@@ -3,12 +3,12 @@ name: Install Determinate Nix
 runs:
   using: composite
   steps:
-    - shell: bash
-      working-directory: /tmp
+    - working-directory: /tmp
       env:
         GH_TOKEN: ${{ github.token }}
         NIX_REPO: DeterminateSystems/nix-src
 
+      shell: bash
       run: |
         gh --repo $NIX_REPO run download $(
           gh --repo $NIX_REPO run list --event release \
