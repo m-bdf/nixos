@@ -19,11 +19,10 @@ let
 
     systemWithoutDef = extendModules {
       modules = forEach collectedModules
-        (m: m // optionalAttrs (m._file == def.file) {
+        (m: if m._file != def.file then m else {
           disabledModules = [m];
-          key = "${m.key}:-${showOption loc}";
+          inherit (m) _file options;
           config = removeAttrByPath (dropPrefix loc) m.config;
-          imports = [];
         });
     };
 
@@ -63,12 +62,12 @@ let
   in
     concatMap (opt: optionals (
       !elem (last opt.loc) [ "assertions" "warnings" "stateVersion" ] && #176295
+      !hasPrefix "Alias" opt.description or "" && #355488
       hasAttrByPath (dropPrefix opt.loc) freeform.config
     ) (
       if opt.type.getSubModules == null then
         map (mkRedundantAssert opt.loc opt.value)
           (filterUserModules opt.definitionsWithLocations)
-      else if hasPrefix "Alias" opt.description then [] #355488
       else
         collectAsserts ((opt.type.substSubModules (
           opt.type.getSubModules ++ [ subModule __curPos.file ]
