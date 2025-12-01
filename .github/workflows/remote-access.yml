@@ -23,4 +23,5 @@ jobs:
           name: m-bdf
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
+      - run: echo ${{ github.token }} > gh_token
       - uses: owenthereal/action-upterm@main
