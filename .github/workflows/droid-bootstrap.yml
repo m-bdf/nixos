@@ -8,17 +8,20 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@main
-      - uses: ./.github/actions/setup-arm-builder
       - uses: ./.github/actions/install-detnix
+      - uses: ./.github/actions/setup-arm-builder
 
   build-bootstrap-zips:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - uses: ./.github/actions/setup-arm-builder
       - uses: ./.github/actions/install-detnix
+      - uses: ./.github/actions/setup-arm-builder
+
+      - uses: cachix/cachix-action@master
         with:
-          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: m-bdf
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
