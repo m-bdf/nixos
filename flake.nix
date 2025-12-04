@@ -142,6 +142,7 @@
           pkgs = pkgsFor platform;
           extraSpecialArgs.inputs = inputs;
           modules = attrValues self.nixOnDroidModules ++ [{
+            home-manager.extraSpecialArgs.inputs = inputs;
             home.imports = attrValues self.homeModules;
           }];
         }
@@ -153,6 +154,7 @@
       baseSystem = nixosSystem {
         specialArgs.inputs = inputs;
         modules = attrValues self.nixosModules ++ [{
+          home-manager.extraSpecialArgs.inputs = inputs;
           home.imports = attrValues self.homeModules;
         }];
       };
@@ -184,8 +186,8 @@
         nixOnDroidBootstrapZips =
           (pkgsFor platform).symlinkJoin {
             name = "nix-on-droid-bootstrap-zips";
-            paths = mapAttrsToList (targetPlatform: system:
-              (system.config.build.extendModules {
+            paths = mapAttrsToList (_: system:
+              (system.extendModules {
                 specialArgs = { inherit droidPkgs; };
               }).config.build.bootstrapZip
             ) self.nixOnDroidConfigurations;

@@ -1,11 +1,6 @@
 { inputs, lib, pkgs, ... }:
 
 {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-    (lib.mkAliasOptionModule [ "home" ] [ "home-manager" "users" "user" ])
-  ];
-
   users = {
     mutableUsers = false;
 
@@ -34,12 +29,6 @@
   programs.fish = {
     enable = true;
     useBabelfish = true;
-  };
-
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs.inputs = inputs;
   };
 
   home.xdg.stateFile.nixos.persist = true; # UIDs GIDs

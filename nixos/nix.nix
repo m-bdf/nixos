@@ -1,13 +1,28 @@
-{ config, lib, ... }:
+{ inputs, options, config, lib, ... }:
 
 {
-  nix = {
-    channel.enable = false;
-    inherit (config.home.nix) extraOptions;
+  imports = [ inputs.home-manager.nixosModules.home-manager ];
+
+  options.home = lib.mkOption {
+    type = options.home-manager.users.type.nestedTypes.elemType;
   };
 
-  system = {
-    disableInstallerTools = true;
-    stateVersion = lib.trivial.release;
+  config = {
+    nix = {
+      channel.enable = false;
+      inherit (config.home.nix) extraOptions;
+    };
+
+    system = {
+      disableInstallerTools = true;
+      stateVersion = lib.trivial.release;
+    };
+
+    home-manager = {
+      useGlobalPkgs = true;
+      useUserPackages = true;
+      extraSpecialArgs.name = "user";
+      users.user = lib.mkAliasDefinitions options.home;
+    };
   };
 }

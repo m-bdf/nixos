@@ -39,19 +39,16 @@ let
       environment.files.loginInner = initialLoginInner;
     };
   };
-
-  bootstrapZip = pkgs.runCommand "bootstrapZip-${arch}" {
-    bootstrap = droidPkgs."bootstrap-${arch}".override overrideBootstrap;
-  } ''
-    mkdir $out && ln -s ${initialLoginInner} $out/activate-${arch}.sh
-    cd $bootstrap && ${getExe pkgs.zip} -r9q $out/bootstrap-${arch} .
-  '';
 in
 
 {
-  options.build = {
-    bootstrapZip = mkOption { default = bootstrapZip; };
-    extendModules = mkOption { default = extendModules; };
+  options.build.bootstrapZip = mkOption {
+    default = pkgs.runCommand "bootstrapZip-${arch}" {
+      bootstrap = droidPkgs."bootstrap-${arch}".override overrideBootstrap;
+    } ''
+      mkdir $out && ln -s ${initialLoginInner} $out/activate-${arch}.sh
+      cd $bootstrap && ${getExe pkgs.zip} -r9q $out/bootstrap-${arch} .
+    '';
   };
 
   config.environment.packages = [

@@ -34,7 +34,7 @@ let
         ${head path} = removeAttrByPath (tail path) set.${head path} or {};
       };
 
-    noDefSystem = extendModules {
+    noDef = extendModules {
       modules = [{
         disabledModules = [def];
         options = removeAttrs def.options [ "_module" ];
@@ -43,7 +43,7 @@ let
       }];
     };
 
-    noDefVal = getAttrFromPath (dropPrefix opt.loc) noDefSystem.config;
+    noDefVal = getAttrFromPath (dropPrefix opt.loc) noDef.config;
     onlyDefVal = getAttrFromPath (dropPrefix opt.loc) def.config;
 
     prettyOpt = "option `${showOption opt.loc}' defined in `${def.file}'";
@@ -73,9 +73,11 @@ let
   in
     optionals (relevantModules != [] &&
       opt.loc != [ "system" "stateVersion" ] && #176295
-      !hasPrefix "Alias" opt.description or "" #355488
+      mkOverride opt.highestPrio {} != mkOptionDefault {}
     ) (
-      if opt.type.getSubModules == null then
+      if opt.visible or true == "shallow"
+      || opt.type.getSubModules == null
+      then
         forEach relevantModules (mkRedundantAssert opt)
       else
         collectAsserts ((opt.type.substSubModules (
@@ -90,5 +92,5 @@ in
     forEach config.warnings or []
       (message: { assertion = false; inherit message; }) ++
     concatMap mkRedundantAsserts
-      (collect isOption (removeAttrs options [ "assertions" ]));
+      (collect isOption (removeAttrs options [ "assertions" "warnings" ]));
 }

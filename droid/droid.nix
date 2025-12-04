@@ -5,11 +5,11 @@ let
 in
 
 {
-  imports = [
-    (lib.mkAliasOptionModule [ "home" ] [ "home-manager" "config" ])
-  ];
-
   options = {
+    home = lib.mkOption {
+      inherit (options.home-manager.config) type;
+    };
+
     build.activationPackage = config.home.lib.mkToplevelOption;
     environment.path = config.home.lib.mkPathOption;
 
@@ -32,15 +32,15 @@ in
 
     home-manager = {
       useGlobalPkgs = true;
-      extraSpecialArgs.inputs = inputs;
+      config = lib.mkAliasDefinitions options.home;
     };
 
-    home = lib.mapAttrsRecursive (_: lib.mkForce) {
+    home = {
       nix.settings = {
-        use-xdg-base-directories = false;
-        auto-optimise-store = false;
+        use-xdg-base-directories = lib.mkForce false;
+        auto-optimise-store = lib.mkForce false;
       };
-      programs.nh.enable = false;
+      programs.nh.enable = lib.mkForce false;
     };
 
     environment.sessionVariables =

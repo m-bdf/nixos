@@ -53,11 +53,11 @@ let
   droidTests =
     mapAttrsToList (platform: system: {
       ${platform}.droid-config =
-        (system.config.build.extendModules {
+        (system.extendModules {
           specialArgs.modules =
             attrValues self.nixOnDroidModules;
           modules = [ ./asserts.nix ];
-        }).config.build.activationPackage;
+        }).activationPackage;
     }) self.nixOnDroidConfigurations;
 
   nixosTests =
@@ -65,6 +65,8 @@ let
       ${system.pkgs.stdenv.system} = {
         "nixos-config-${name}" =
           (system.extendModules {
+            specialArgs.modules =
+              attrValues self.nixosModules;
             modules = [ ./asserts.nix ];
           }).config.system.build.toplevel;
       };
