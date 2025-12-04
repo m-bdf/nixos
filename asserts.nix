@@ -14,14 +14,15 @@ let
       }];
     };
 
-  collectModules =
-    zipListsWith (meta: module:
-      optional (elem module modules) {
-        inherit (meta) key file;
-        inherit (evalFreeform module) options config;
-      } ++
-        collectModules meta.imports module.imports or []
-    );
+  collectModules = zipListsWith (meta: module:
+    optional (elem module modules) {
+      inherit (meta) key file;
+      inherit (evalFreeform module) options config;
+      imports = catAttrs "file"
+        (filter (m: m.key == m.file) meta.imports);
+    } ++
+      collectModules meta.imports module.imports or []
+  );
 
   collectedModules = flatten
     (collectModules (extendModules {}).graph moduleType.getSubModules);
@@ -38,6 +39,7 @@ let
         disabledModules = [def];
         options = removeAttrs def.options [ "_module" ];
         config = removeAttrByPath (dropPrefix opt.loc) def.config;
+        inherit (def) imports;
       }];
     };
 
@@ -56,27 +58,30 @@ let
 
   mkRedundantAsserts = opt:
   let
-    subModule = file: { moduleType, ... }: {
-      _module.args.modules = filter (m: m._file or m == file)
-        (subtractLists opt.type.getSubModules moduleType.getSubModules);
+    relevantModules = filter (m:
+      hasAttrByPath (dropPrefix opt.loc) m.config && elem m.file opt.files
+    ) collectedModules;
+
+    modulesModule = { moduleType, ... }: {
+      _module.args.modules =
+        filter (m: any (m': m._file or m == m'.file) collectedModules)
+          (subtractLists opt.type.getSubModules moduleType.getSubModules);
     };
 
     collectAsserts = v: v.assertions or
-      (forEach (if isAttrs v then attrValues v else v) collectAsserts);
+      (concatMap collectAsserts (if isAttrs v then attrValues v else v));
   in
-    forEach collectedModules (m: optionals (
-      !elem (last opt.loc) [ "assertions" "warnings" "stateVersion" ] && #176295
-      !hasPrefix "Alias" opt.description or "" && #355488
-      hasAttrByPath (dropPrefix opt.loc) m.config &&
-      elem m.file opt.files
+    optionals (relevantModules != [] &&
+      opt.loc != [ "system" "stateVersion" ] && #176295
+      !hasPrefix "Alias" opt.description or "" #355488
     ) (
-      if opt.type.getSubModules != null then
-        collectAsserts ((opt.type.substSubModules (
-          opt.type.getSubModules ++ [ (subModule m.file) __curPos.file ]
-        )).merge opt.loc opt.definitionsWithLocations)
+      if opt.type.getSubModules == null then
+        forEach relevantModules (mkRedundantAssert opt)
       else
-        [ (mkRedundantAssert opt m) ]
-    ));
+        collectAsserts ((opt.type.substSubModules (
+          opt.type.getSubModules ++ [ modulesModule __curPos.file ]
+        )).merge opt.loc opt.definitionsWithLocations)
+    );
 in
 
 {
@@ -84,5 +89,6 @@ in
   config.assertions =
     forEach config.warnings or []
       (message: { assertion = false; inherit message; }) ++
-    flatten (forEach (collect isOption options) mkRedundantAsserts);
+    concatMap mkRedundantAsserts
+      (collect isOption (removeAttrs options [ "assertions" ]));
 }
