@@ -39,7 +39,7 @@
     };
 
     nix-on-droid = {
-      url = "github:nix-community/nix-on-droid";
+      url = "github:m-bdf/nix-on-droid";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";
