@@ -49,7 +49,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     rustyscript = {
-      url = "github:rscarson/rustyscript";
+      url = "github:Foorack/rustyscript/upgrade-deno";
       flake = false;
     };
 
