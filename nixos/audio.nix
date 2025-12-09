@@ -1,8 +1,10 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
+  nixpkgs.overlays = [ inputs.tidalcycles.overlays.default ];
+
   environment = {
-    systemPackages = with pkgs; [ sonic-pi ];
+    systemPackages = with pkgs; [ tidal ];
     variables.SONIC_PI_HOME = "$XDG_DATA_HOME/SonicPi";
   };
 

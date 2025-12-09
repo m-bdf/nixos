@@ -73,6 +73,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    tidalcycles = {
+      url = "github:mitchmindtree/tidalcycles.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
 
     dnshack = {
