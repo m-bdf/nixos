@@ -15,8 +15,7 @@ runs:
           StrictHostKeyChecking no
 
         Host proxy-jump
-          # ControlMaster auto
-          # ControlPath ${XDG_RUNTIME_DIR}/ssh-%C.sock
+          ControlPath ${XDG_RUNTIME_DIR}/ssh-%C.sock
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
           RemoteForward arm-builder:22 localhost:22
@@ -30,9 +29,9 @@ runs:
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
       run: |
-        ssh -MS $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -Nf
+        ssh proxy-jump -NfM
 
-        while ssh -S $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -O check 2> /dev/null; do
+        while ssh proxy-jump -O check 2> /dev/null; do
           drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
             grep -v "${drvs:-:}" | sed 's.^.building /nix/store/.' >&2
           ))
@@ -43,5 +42,4 @@ runs:
       with:
         run: echo >> $GITHUB_ENV NIX_CONFIG=builders =
           ssh-ng://arm-builder aarch64-linux - $(nproc)
-        post: ssh arm-builder
-          ssh -S $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -O exit
+        post: ssh arm-builder ssh proxy-jump -O exit
