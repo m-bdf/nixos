@@ -23,11 +23,6 @@ jobs:
       - uses: ./.github/actions/install-detnix
         with: ${{ secrets }}
 
-      - uses: cachix/cachix-action@master
-        with:
-          name: m-bdf
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
       - run: nix flake check
           --accept-flake-config
           --trace-verbose --show-trace
