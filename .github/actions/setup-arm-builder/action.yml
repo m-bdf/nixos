@@ -15,6 +15,8 @@ runs:
           StrictHostKeyChecking no
 
         Host proxy-jump
+          ControlMaster yes
+          ControlPath ${XDG_RUNTIME_DIR}/ssh-%C.sock
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
           RemoteForward arm-builder:22 localhost:22
@@ -27,14 +29,11 @@ runs:
 
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
-      run: |
-        ssh -MS /run/ssh-%C.sock proxy-jump -Nf
-        nix ps
+      run: ssh proxy-jump -Nf && nix ps
 
     - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
       with:
         run: echo >> $GITHUB_ENV NIX_CONFIG=builders =
           ssh-ng://arm-builder aarch64-linux - $(nproc)
-        post: ssh arm-builder
-          ssh -S /run/ssh-%C.sock proxy-jump -O exit
+        post: ssh arm-builder ssh proxy-jump -O exit
