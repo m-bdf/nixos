@@ -5,28 +5,6 @@ with lib;
 let
   dropPrefix = drop (length _prefix);
 
-  evalFreeform = module:
-    evalModules {
-      specialArgs = self;
-      modules = [ module rec {
-        freeformType = with types;
-          either (attrsOf freeformType) unspecified;
-      }];
-    };
-
-  collectModules = zipListsWith (meta: module:
-    optional (elem module modules) {
-      inherit (meta) key file;
-      inherit (evalFreeform module) options config;
-      imports = catAttrs "file"
-        (filter (m: m.key == m.file) meta.imports);
-    } ++
-      collectModules meta.imports module.imports or []
-  );
-
-  collectedModules = flatten
-    (collectModules (extendModules {}).graph moduleType.getSubModules);
-
   mkRedundantAssert = opt: def:
   let
     removeAttrByPath = path: set:
@@ -55,6 +33,29 @@ let
 
     message = "The ${prettyOpt} is set to the redundant value `${prettyVal}'.";
   };
+
+  collectedModules =
+  let
+    evalFreeform = module:
+      evalModules {
+        specialArgs = self;
+        modules = [ module rec {
+          freeformType = with types;
+            either (attrsOf freeformType) unspecified;
+        }];
+      };
+
+    collectModules = zipListsWith (meta: module:
+      optional (elem module modules) {
+        inherit (meta) key file;
+        inherit (evalFreeform module) options config;
+        imports = catAttrs "file"
+          (filter (m: m.key == m.file) meta.imports);
+      } ++
+        collectModules meta.imports module.imports or []
+    );
+  in
+    flatten (collectModules (extendModules {}).graph moduleType.getSubModules);
 
   mkRedundantAsserts = opt:
   let
