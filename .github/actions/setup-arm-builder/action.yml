@@ -17,7 +17,7 @@ runs:
         Host proxy-jump
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
-          ControlPath ${XDG_RUNTIME_DIR}/ssh-%C.sock
+          ControlPath /run/ssh-%C.sock
           RemoteForward arm-builder:22 localhost:22
           ExitOnForwardFailure yes
 
