@@ -28,9 +28,8 @@ runs:
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
       run: |
-        while true; do drvs=$(
-          nix ps --json | jq -r '.[].derivation' | tee \
-            >(grep -v ${drvs:-:} | sed 's.^.building /nix/store/.' >&2)
+        while :; do drvs=$(nix ps --json | jq -r '.[].derivation' |
+          tee >(grep -v "${drvs:-:}" | sed 's.^.building /nix/store/.' >&2)
         ); done & ssh proxy-jump -N
 
     - if: ${{ !startsWith(runner.arch, 'arm') }}
