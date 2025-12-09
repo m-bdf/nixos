@@ -19,7 +19,6 @@ runs:
           User ${{ github.repository }}/${{ github.run_id }}
           RemoteForward arm-builder:22 localhost:22
           ExitOnForwardFailure yes
-          ControlPath ${{ runner.temp }}/ssh-%C.sock
 
         Host arm-builder
           ProxyJump proxy-jump
@@ -29,17 +28,14 @@ runs:
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
       run: |
-        ssh proxy-jump -fNM
-
-        while ssh proxy-jump -O check 2> /dev/null; do
-          drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
-            grep -v ${drvs:-:} | sed 's.^.building /nix/store/.' >&2
-          ))
-        done
+        while true; do drvs=$(
+          nix ps --json | jq -r '.[].derivation' | tee \
+            >(grep -v ${drvs:-:} | sed 's.^.building /nix/store/.' >&2)
+        ); done & ssh proxy-jump -N
 
     - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
       with:
         run: echo >> $GITHUB_ENV NIX_CONFIG=builders =
           ssh-ng://arm-builder aarch64-linux - $(nproc)
-        post: ssh arm-builder ssh proxy-jump -O stop
+        post: ssh arm-builder -f killall ssh
