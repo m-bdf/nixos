@@ -15,7 +15,7 @@ runs:
           StrictHostKeyChecking no
 
         Host proxy-jump
-          ControlMaster yes
+          ControlMaster auto
           ControlPath ${XDG_RUNTIME_DIR}/ssh-%C.sock
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
