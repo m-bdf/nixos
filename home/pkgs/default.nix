@@ -40,5 +40,5 @@ in
     keepOldNixPath = false;
   };
 
-  home.packages = with pkgs; [ nixd nixfmt ];
+  home.packages = with pkgs; [ nixd nixfmt inputs.tidalcycles.packages.${stdenv.system}.tidal ];
 }
