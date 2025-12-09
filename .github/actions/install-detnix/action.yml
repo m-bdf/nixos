@@ -2,6 +2,7 @@ name: Install Determinate Nix
 
 inputs:
   CACHIX_AUTH_TOKEN:
+    required: true
 
 runs:
   using: composite
