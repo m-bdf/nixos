@@ -32,7 +32,7 @@ runs:
       run: |
         ssh -MS $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -Nf
 
-        while ssh -S $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -O check; do
+        while ssh -S $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -O check -q; do
           drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
             grep -v "$drvs" | sed 's.^.building /nix/store/.' >&2
           ))
