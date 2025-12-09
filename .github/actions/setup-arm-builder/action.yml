@@ -29,7 +29,9 @@ runs:
 
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
-      run: ssh proxy-jump -Nf && nix ps
+      run: |
+        ssh proxy-jump -Nf
+        while nix ps; do sleep 0; done
 
     - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
