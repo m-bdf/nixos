@@ -1,6 +1,8 @@
 name: Install Determinate Nix
 
 inputs:
+  GITHUB_TOKEN:
+    default: ${{ github.token }}
   CACHIX_AUTH_TOKEN:
     required: true
 
@@ -9,7 +11,7 @@ runs:
   steps:
     - working-directory: /tmp
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         NIX_REPO: DeterminateSystems/nix-src
 
       shell: bash
