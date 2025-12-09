@@ -31,7 +31,12 @@ runs:
       shell: bash
       run: |
         ssh -MS $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -Nf
-        while nix ps; do sleep 0; done
+
+        while ssh -S $XDG_RUNTIME_DIR/ssh-%C.sock proxy-jump -O check; do
+          drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
+            grep -v "$drvs" | sed 's.^.building /nix/store/.' >&2
+          ))
+        done
 
     - if: ${{ !startsWith(runner.arch, 'arm') }}
       uses: gacts/run-and-post-run@main
