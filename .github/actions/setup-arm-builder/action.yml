@@ -17,9 +17,10 @@ runs:
         Host proxy-jump
           HostName ssh-j.com
           User ${{ github.repository }}/${{ github.run_id }}
-          ControlPath /tmp/ssh-%C.sock
           RemoteForward arm-builder:22 localhost:22
           ExitOnForwardFailure yes
+          ControlMaster auto
+          ControlPath ${{ runner.temp }}/ssh-%C.sock
 
         Host arm-builder
           ProxyJump proxy-jump
@@ -28,12 +29,10 @@ runs:
 
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
-      run: |
-        ssh proxy-jump -MfN
-
-        while ssh proxy-jump -O check 2> /dev/null; do
+      run:
+        while ssh proxy-jump -fN > /dev/null; do
           drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
-            grep -v "${drvs:-:}" | sed 's.^.building /nix/store/.' >&2
+            grep -v ${drvs:-:} | sed 's.^.building /nix/store/.' >&2
           ))
         done
 
