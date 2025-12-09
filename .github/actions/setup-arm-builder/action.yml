@@ -19,7 +19,6 @@ runs:
           User ${{ github.repository }}/${{ github.run_id }}
           RemoteForward arm-builder:22 localhost:22
           ExitOnForwardFailure yes
-          ControlMaster auto
           ControlPath ${{ runner.temp }}/ssh-%C.sock
 
         Host arm-builder
@@ -30,7 +29,9 @@ runs:
     - if: ${{ startsWith(runner.arch, 'arm') }}
       shell: bash
       run: |
-        while ssh proxy-jump -fN > /dev/null; do
+        ssh proxy-jump -fNM
+
+        while ssh proxy-jump -O check 2> /dev/null; do
           drvs=$(nix ps --json | jq -r '.[].derivation' | tee >(
             grep -v ${drvs:-:} | sed 's.^.building /nix/store/.' >&2
           ))
