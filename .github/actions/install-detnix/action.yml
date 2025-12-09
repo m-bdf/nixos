@@ -1,5 +1,8 @@
 name: Install Determinate Nix
 
+inputs:
+  CACHIX_AUTH_TOKEN:
+
 runs:
   using: composite
   steps:
@@ -27,3 +30,8 @@ runs:
           lazy-trees = true
           eval-cores = 0
           builders-use-substitutes = true
+
+    - uses: cachix/cachix-action@master
+      with:
+        name: m-bdf
+        authToken: ${{ inputs.CACHIX_AUTH_TOKEN }}

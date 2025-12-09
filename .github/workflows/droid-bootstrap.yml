@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
+        with: ${{ secrets }}
       - uses: ./.github/actions/setup-arm-builder
 
   build-bootstrap-zips:
@@ -16,12 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - uses: ./.github/actions/install-detnix
+        with: ${{ secrets }}
       - uses: ./.github/actions/setup-arm-builder
-
-      - uses: cachix/cachix-action@master
-        with:
-          name: m-bdf
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix build .#nixOnDroidBootstrapZips
           --accept-flake-config
