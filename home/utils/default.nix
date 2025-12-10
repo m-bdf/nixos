@@ -13,9 +13,9 @@ let
   mkReplacement = old: new: rec {
     oldDependency = pkgs.${old};
     newDependency =
-      if oldDependency.name == new.name then new
+      if new.name == oldDependency.name then new
       else pkgs.symlinkJoin {
-        name = lib.substring 44 (-1) oldDependency;
+        inherit (oldDependency) name;
         paths = [new];
       };
   };
@@ -27,7 +27,7 @@ let
           sed -i '/weak_alias/d' sysdeps/posix/isatty.c
           cat ${./isatty.c} >> sysdeps/posix/isatty.c
         '';
-        makeFlags = prev.makeFlags or [] ++ [ "--silent" ];
+        makeFlags = prev.makeFlags ++ [ "--silent" ];
       });
 
       coreutils = uutils-coreutils-noprefix;
