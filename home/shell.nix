@@ -16,6 +16,11 @@
     };
 
     nix-index-database.comma.enable = true;
+
+    nix-your-shell = {
+      enable = true;
+      nix-output-monitor.enable = true;
+    };
   };
 
   home.sessionVariables.STARSHIP_CACHE =
