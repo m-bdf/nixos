@@ -1,18 +1,48 @@
-{ pkgs, ... }:
+{ inputs, config, pkgs, ... }:
+
+let
+  cfg = config.home.programs.vscode;
+in
 
 {
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  environment = {
-    systemPackages = with pkgs; [ vscode github-desktop ];
-    variables.VSCODE_PORTABLE = "$XDG_DATA_HOME/vscode"; #vscode/3884
-  };
+  environment.systemPackages = with pkgs; [ github-desktop ];
 
-  home.xdg = {
-    configFile."GitHub Desktop".persist = true;
-    dataFile = {
-      vscode.persist = true;
-      keyrings.persist = true;
+  nixpkgs.overlays = [ inputs.vscode-extensions.overlays.default ];
+
+  home = {
+    programs.vscode = {
+      enable = true;
+      package = pkgs.code-cursor;
+
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          github.github-vscode-theme
+          mkhl.direnv
+          jnoortheen.nix-ide
+        ];
+        userSettings = {
+          "update.mode" = "none";
+          "terminal.external.linuxExec" = "xdg-terminal-exec";
+          "terminal.integrated.cursorStyle" = "line";
+          "terminal.integrated.cursorBlinking" = true;
+          "terminal.integrated.fontLigatures.enabled" = true;
+          "editor.fontLigatures" = true;
+          "workbench.colorTheme" = "GitHub Dark Default";
+          "nix.enableLanguageServer" = true;
+          "nix.serverPath" = "nixd";
+        };
+      };
     };
+
+    xdg = {
+      configFile = {
+        "GitHub Desktop".persist = true;
+        ${cfg.nameShort}.persist = true;
+      };
+      dataFile.keyrings.persist = true;
+    };
+    home.file.${cfg.dataFolderName}.persist = true;
   };
 }
