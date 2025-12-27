@@ -39,7 +39,7 @@ in
     home = {
       activation = {
         unsetHome = hm.dag.entryBefore
-          [ "linkGeneration" ] "HOME=";
+          [ "linkGeneration" ] "HOME=/";
         resetHome = hm.dag.entryBetween
           [ "batCache" ] [ "linkGeneration" ]
           "HOME=${config.home.homeDirectory}";
