@@ -59,7 +59,7 @@
     };
 
     highlightjs = {
-      url = "https://esm.sh/highlight.js/esnext/highlight.bundle.mjs";
+      url = "https://esm.sh/highlight.js/node/highlight.bundle.mjs";
       flake = false;
     };
 

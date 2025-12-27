@@ -38,7 +38,6 @@ in
     enable = true;
     package = bat;
     config = {
-      pager = "builtin";
       style = "plain";
       theme = "GitHub Dark";
     };
