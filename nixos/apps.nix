@@ -25,7 +25,7 @@
         ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
       '';
     in
-      [ xdg-open xdg-terminal-exec nautilus brave ];
+      [ xdg-open xdg-terminal-exec nautilus ];
   };
 
   programs = {
@@ -43,9 +43,6 @@
 
   home.xdg = {
     cacheFile.walker.persist = true;
-    configFile = {
-      walker.persist = true;
-      "BraveSoftware/Brave-Browser".persist = true;
-    };
+    configFile.walker.persist = true;
   };
 }

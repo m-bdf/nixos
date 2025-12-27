@@ -1,6 +1,8 @@
-{ inputs, lib, ... }:
+{ inputs, config, lib, ... }:
 
 let
+  cfg = config.home.programs.zen-browser;
+
   settings = {
     "zen.welcome-screen.seen" = true;
     "startup.homepage_welcome_url" = "";
@@ -34,7 +36,7 @@ in
 
     programs.zen-browser = {
       enable = true;
-      profiles.profile = {
+      profiles.default = {
         settings = settings // {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         };
@@ -48,9 +50,9 @@ in
     };
 
     home.file = {
-      ".zen".persist = true;
-      ".zen/profile/prefs.js".text = "";
-      # ".zen/profile/storage-sync-v2.sqlite".text = "";
+      "${cfg.configPath}".persist = true;
+      "${cfg.profilesPath}/default/prefs.js".text = "";
+      # "${cfg.profilesPath}/default/storage-sync-v2.sqlite".text = "";
     };
   };
 }

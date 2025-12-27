@@ -32,7 +32,7 @@ in
         private_browsing = true;
       });
 
-    profiles.profile = {
+    profiles.default = {
       settings = {
         "extensions.webextensions.uuids" = mapAddons (addon: addon.outputHash);
         # "extensions.webextensions.restrictedDomains" = "";
