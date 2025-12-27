@@ -7,7 +7,7 @@ in
 {
   options = {
     home = lib.mkOption {
-      inherit (options.home-manager.config) type;
+      type = options.home-manager.config.type.nestedTypes.elemType;
     };
 
     build.activationPackage = config.home.lib.mkToplevelOption;
