@@ -15,17 +15,18 @@ let
     '';
 
     postInstall = ''
-      mkdir -p $out/share/{pixmaps,applications}
-      cp icons/app_icon.png $out/share/pixmaps/airgorah.png
-      substitute package/.desktop $out/share/applications/airgorah.desktop \
-        --replace-fail "pkexec " "" --replace-fail /usr $out
+      install -Dm644 icons/app_icon.png $out/share/pixmaps/airgorah.png
     '';
 
     preFixup = ''
+      substituteInPlace $out/share/applications/airgorah.desktop \
+        --replace-fail "pkexec " ""
+
       gappsWrapperArgs+=(
         --prefix XDG_DATA_DIRS : ${pkgs.adwaita-icon-theme}/share
-        --prefix PATH : ${with pkgs; lib.makeBinPath
-          [ iw xterm aircrack-ng wireshark-cli macchanger ]}
+        --prefix PATH : ${with pkgs; lib.makeBinPath [
+          libuuid iproute2 iw gawk xterm aircrack-ng tshark macchanger
+        ]}
       )
     '';
   };
@@ -37,6 +38,6 @@ in
     source = lib.getExe airgorah;
     owner = config.users.users.user.name;
     group = config.users.users.user.group;
-    capabilities = "cap_setuid,cap_dac_override=p";
+    capabilities = "cap_setuid=p";
   };
 }
