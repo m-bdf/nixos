@@ -101,7 +101,7 @@
     };
 
     airgorah = {
-      url = "github:m-bdf/airgorah";
+      url = "github:martin-olivier/airgorah";
       flake = false;
     };
   };
