@@ -18,7 +18,7 @@
 
     home = {
       home = {
-        packages = [ pkgs.wl-clipboard-rs ];
+        packages = with pkgs; [ wl-clipboard-rs ];
         sessionVariables.NIXOS_OZONE_WL = "1";
       };
 
