@@ -83,6 +83,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sylveon-garden = {
+      url = "https://weasyl.com/api/submissions/1182575/view";
+      flake = false;
+    };
+
     resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
 
     dnshack = {
