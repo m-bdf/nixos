@@ -5,11 +5,13 @@
       "https://m-bdf.cachix.org"
       "https://install.determinate.systems"
       "https://nix-on-droid.cachix.org"
+      "https://aster-nixos-dev.cachix.org"
     ];
     extra-trusted-public-keys = [
       "m-bdf.cachix.org-1:7Uae6pLA5GHDKSM1vvp0jX/8D5jRJOqXxL/dFIef55s="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "nix-on-droid.cachix.org-1:56snoMJTXmDRC1Ei24CmKoUqvHJ9XCp+nidK7qkMQrU="
+      "aster-nixos-dev.cachix.org-1:xrCbE2flfliFTQCY/2HeJoT2tCO+5kMTZeLIUH9lnIA="
     ];
   };
 
@@ -24,6 +26,11 @@
     nix = {
       url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
       inputs.git-hooks-nix.follows = "git-hooks";
+    };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
@@ -44,6 +51,16 @@
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";
       };
+    };
+
+    asterinas = {
+      url = "github:asterinas/asterinas";
+      flake = false;
+    };
+
+    linux-vdso = {
+      url = "github:asterinas/linux_vdso";
+      flake = false;
     };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
