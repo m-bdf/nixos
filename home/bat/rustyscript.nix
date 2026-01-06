@@ -2,7 +2,7 @@
 
 rustPlatform.buildRustPackage (final: {
   pname = "rustyscript";
-  version = "dev";
+  version = "git";
 
   src = inputs.rustyscript;
   cargoLock.lockFile = final.src + /Cargo.lock;

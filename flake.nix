@@ -114,6 +114,11 @@
 
     fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
 
+    wayvnc = {
+      url = "github:any1/wayvnc";
+      flake = false;
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs = {

@@ -1,13 +1,9 @@
-{ lib, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
 let
   wayvnc = pkgs.wayvnc.overrideAttrs {
-    patches = [
-      (pkgs.fetchpatch {
-        url = "https://github.com/any1/wayvnc/pull/396.patch";
-        hash = "sha256-IEfHVhWj075DQ+HRnGL8zhsVaj813UWEOiYnOUYS/50=";
-      })
-    ];
+    version = "git";
+    src = inputs.wayvnc;
   };
 in
 

@@ -4,16 +4,18 @@ let
   rustyscript = pkgs.callPackage ./rustyscript.nix { inherit inputs; };
 
   bat = pkgs.bat.overrideAttrs (prev: {
-    inherit (rustyscript) RUSTY_V8_ARCHIVE;
+    pname = prev.pname + "-highlight";
 
     cargoDeps = pkgs.symlinkJoin {
-      name = "bat-cargo-deps";
+      inherit (prev.cargoDeps) name;
       paths = [ prev.cargoDeps rustyscript.cargoDeps ];
     };
 
     configurePhase = ''
       cargo add --path ${rustyscript.src} --no-default-features
     '';
+
+    inherit (rustyscript) RUSTY_V8_ARCHIVE;
 
     patchPhase = ''
       sed -i 's/fn print_file(/pub(crate) &/' src/controller.rs

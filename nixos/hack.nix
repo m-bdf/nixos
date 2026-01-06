@@ -2,6 +2,7 @@
 
 let
   airgorah = pkgs.airgorah.overrideAttrs {
+    version = "git";
     src = inputs.airgorah;
 
     cargoDeps = pkgs.rustPlatform.importCargoLock {
