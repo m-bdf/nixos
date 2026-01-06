@@ -1,23 +1,32 @@
 { inputs, pkgs, ... }:
 
 let
-  rustyscript = pkgs.callPackage ./rustyscript.nix { inherit inputs; };
+  craneLib = inputs.crane.mkLib pkgs;
 
-  bat = pkgs.bat.overrideAttrs (prev: {
-    pname = prev.pname + "-highlight";
+  rustyscript = pkgs.callPackage ./rustyscript.nix
+    { inherit inputs craneLib; };
 
-    cargoDeps = pkgs.symlinkJoin {
-      inherit (prev.cargoDeps) name;
-      paths = [ prev.cargoDeps rustyscript.cargoDeps ];
-    };
+  bat = craneLib.buildPackage {
+    pname = "bat-highlight";
+    inherit (pkgs.bat) version src meta;
+    strictDeps = true;
 
-    configurePhase = ''
+    cargoArtifacts = rustyscript;
+    cargoVendorDir =
+      craneLib.vendorMultipleCargoDeps {
+        cargoLockList = [
+          (bat.src + /Cargo.lock)
+          (rustyscript.src + /Cargo.lock)
+        ];
+      };
+
+    postConfigure = ''
       cargo add --path ${rustyscript.src} --no-default-features
     '';
 
     inherit (rustyscript) RUSTY_V8_ARCHIVE;
 
-    patchPhase = ''
+    postPatch = ''
       sed -i 's/fn print_file(/pub(crate) &/' src/controller.rs
 
       sed -i "/append/ s/self.first_line/&.drain(..= \
@@ -32,7 +41,7 @@ let
     '';
 
     doCheck = false;
-  });
+  };
 in
 
 {
