@@ -29,13 +29,7 @@
     };
   };
 
-  boot = {
-    devSize = "0";
-    tmp = {
-      useTmpfs = true;
-      tmpfsSize = "100%";
-    };
-  };
+  boot.devSize = "0";
 
   swapDevices = [{ label = "swap"; }];
 }
