@@ -1,47 +1,40 @@
-{ inputs, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 
 let
-  craneLib = inputs.crane.mkLib pkgs;
+  languess = pkgs.writeScript "languess" ''
+    #!${lib.getExe pkgs.bun}
 
-  rustyscript = pkgs.callPackage ./rustyscript.nix
-    { inherit inputs craneLib; };
+    import hljs from '${inputs.highlightjs}';
 
-  bat = craneLib.buildPackage {
-    pname = "bat-highlight";
-    inherit (pkgs.bat) version src meta;
-    strictDeps = true;
+    const code = await Bun.stdin.text();
+    console.log(code);
 
-    cargoArtifacts = rustyscript;
-    cargoVendorDir =
-      craneLib.vendorMultipleCargoDeps {
-        cargoLockList = [
-          (bat.src + /Cargo.lock)
-          (rustyscript.src + /Cargo.lock)
-        ];
-      };
+    try {
+      JSON.parse(code);
+      console.warn('json');
+    }
 
-    postConfigure = ''
-      cargo add --path ${rustyscript.src} --no-default-features
+    catch {
+      const result = hljs.highlightAuto(code.substring(0, Buffer.poolSize));
+      const first = hljs.getLanguage(result.language);
+      const second = hljs.getLanguage(result.secondBest.language);
+
+      console.warn(first?.name ?? ''', ...first?.aliases ?? []);
+      console.warn(second?.name ?? ''', ...second?.aliases ?? []);
+    }
+  '';
+
+  bat = pkgs.bat.overrideAttrs (prev: {
+    pname = prev.pname + "-highlight";
+    patchPhase = ''
+      sed 's|{LANGUESS}|${languess}|' ${./highlight.rs} >> src/assets.rs
+
+      sed -i src/assets.rs -e '/\[unknown\]/ s/Err/ \
+        self.get_syntax_for_file_contents(\&mut input.reader)?.ok_or/'
+
+      sed -i src/controller.rs -e 's/fn print_file_ranges/pub(crate) &/'
     '';
-
-    inherit (rustyscript) RUSTY_V8_ARCHIVE;
-
-    postPatch = ''
-      sed -i 's/fn print_file(/pub(crate) &/' src/controller.rs
-
-      sed -i "/append/ s/self.first_line/&.drain(..= \
-        &.iter().position(|c| *c == b'\\\n').unwrap_or(&.len() - 1) \
-      ).collect()/" src/input.rs
-
-      sed -i '/get_first_line_syntax/ { s/fn /&_/
-        s/\..*/.get_syntax_for_file_contents(input)?/ }' src/assets.rs
-
-      sed 's|{HIGHLIGHTJS}|${inputs.highlightjs}|' \
-        ${./highlight.rs} >> src/assets.rs
-    '';
-
-    doCheck = false;
-  };
+  });
 in
 
 {

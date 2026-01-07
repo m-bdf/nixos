@@ -1,65 +1,51 @@
-use crate::{
-    controller::Controller,
-    printer::SimplePrinter,
-    output::OutputHandle,
-};
+use std::process::{Command, Stdio, ChildStdin};
 
 impl HighlightingAssets {
     fn get_syntax_for_file_contents(
         &self,
-        input: &mut OpenedInput,
+        reader: &mut InputReader,
     ) -> Result<Option<SyntaxReferenceInSet<'_>>> {
+        if reader.first_line.is_empty() || reader.first_line.contains(&b'\x1b') {
+            return Ok(None);
+        }
+
+        let mut child = Command::new("{LANGUESS}")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()?;
+
+        self.print_file_to_process(reader, &mut child.stdin.take().unwrap())?;
+        
+        let output = child.wait_with_output()?;
+        *reader = InputReader::new(std::io::Cursor::new(output.stdout));
+
+        for guess in String::from_utf8_lossy(&output.stderr).split_whitespace() {
+            if let Some(syntax) = self.find_syntax_by_token(&guess)? {
+                return Ok(Some(syntax));
+            }
+        }
+
+        Ok(None)
+    }
+
+    fn print_file_to_process(
+        &self,
+        reader: &mut InputReader,
+        stdin: &mut ChildStdin,
+    ) -> Result<()> {
+        use crate::{
+            controller::Controller,
+            printer::SimplePrinter,
+            output::OutputHandle,
+        };
+
         let config = Default::default();
         let controller = Controller::new(&config, &self);
         let mut printer = SimplePrinter::new(&config);
+        let mut output = OutputHandle::IoWrite(stdin);
+        let ranges = Default::default();
 
-        let mut contents = vec![];
-        let mut output = OutputHandle::IoWrite(&mut contents);
-        controller.print_file(&mut printer, &mut output, input, false, &None)?;
-        input.reader.first_line = contents;
-
-        if let Ok(contents) = str::from_utf8(&input.reader.first_line) {
-            if !contents.contains("\x1b[") {
-                if let Ok(guesses) = guess_language_by_contents(&contents) {
-                    for guess in guesses {
-                        if let Some(syntax) = self.find_syntax_by_token(&guess)? {
-                            return Ok(Some(syntax));
-                        }
-                    }
-                }
-            }
-        }
-        Ok(None)
+        controller.print_file_ranges(&mut printer, &mut output, reader, &ranges)
     }
-}
-
-fn guess_language_by_contents(contents: &str) -> Result<Vec<String>> {
-    use rustyscript::{module, Module, RuntimeOptions, Runtime};
-
-    const HIGHLIGHTJS: Module = module!("{HIGHLIGHTJS}");
-    const MODULE: Module = module!("guess.js", "
-        import hljs from '{HIGHLIGHTJS}';
-
-        export default code => {
-            try {
-                JSON.parse(code);
-                return [ 'json' ];
-            } catch {}
-
-            const result = hljs.highlightAuto(code);
-            const first = hljs.getLanguage(result.language);
-            const second = hljs.getLanguage(result.secondBest.language);
-            return [
-                first?.name ?? '', ...first?.aliases ?? [],
-                second?.name ?? '', ...second?.aliases ?? [],
-            ];
-        };
-    ");
-
-    let options = RuntimeOptions {
-        max_heap_size: Some(u32::MAX as usize),
-        ..Default::default()
-    };
-    Runtime::execute_module(&MODULE, vec![&HIGHLIGHTJS], options, &contents)
-        .map_err(|e| e.to_string().into())
 }
