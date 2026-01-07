@@ -67,16 +67,6 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
-    rustyscript = {
-      url = "github:Foorack/rustyscript/upgrade-deno";
-      flake = false;
-    };
-
-    rusty-v8-releases = {
-      url = "https://api.github.com/repos/denoland/rusty_v8/releases";
-      flake = false;
-    };
-
     highlightjs = {
       url = "https://esm.sh/highlight.js/node/highlight.bundle.mjs";
       flake = false;
