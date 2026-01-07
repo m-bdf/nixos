@@ -79,8 +79,8 @@ let
     installPhase = ''
       cp -R . $out
       mkdir -p $out/target/osdk/iso_root/boot
-      ln -s $out/target/osdk/aster-nix-osdk-bin.qemu_elf \
-        $out/target/osdk/iso_root/boot/aster-nix-osdk-bin
+      ln -s $out/target/osdk/aster-kernel-osdk-bin.qemu_elf \
+        $out/target/osdk/iso_root/boot/aster-kernel-osdk-bin
     '';
   });
 
