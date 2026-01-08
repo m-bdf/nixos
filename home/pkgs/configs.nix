@@ -26,12 +26,10 @@ let
       (c.pkgs.stdenv.system == currentSystem)
     ).value) customConfigs;
 
-  mergeConfigs =
-    zipAttrsWith (_: values:
-      if all isAttrs values
-      then mergeConfigs values
-      else head values
-    );
+  mergeConfigs = zipAttrsWith (_: values:
+    if any (v: !isAttrs v || v ? _type) values
+    then head values else mergeConfigs values
+  );
 in
 
 if configsForCurrentSystem == []
