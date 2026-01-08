@@ -40,7 +40,7 @@ let
     pname = "asterinas";
     version = "git";
 
-    src = addFromSource [ "*.toml" "tools" "kernel" ] cargo-osdk.src;
+    src = addFromSource [ "*.toml" "kernel" ] cargo-osdk.src;
 
     patchPhase = ''
       v=' *= *"[^"]+"'
@@ -84,25 +84,9 @@ let
     '';
   });
 
-  installer = (import
+  installer = import
     (addFromSource [ "distro" ] workspace +
-      /distro/aster_nixos_installer) {}
-  ).overrideAttrs (prev: {
-    buildCommand = prev.buildCommand + ''
-      chmod +w $out/etc_nixos/modules
-
-      sed -i 's|config.nixpkgs.overlays =|& \
-        let pkgs = import ${
-          toString initramfs-image.stdenv.setup
-        }/../../../.. {}; \
-        in map (o: final: prev: o final pkgs) \
-      |' $out/etc_nixos/aster_configuration.nix
-
-      sed -i '/systemd.extraConfig/,+3d
-        s|aster_systemd|& // { withNspawn = false; }|
-      ' $out/etc_nixos/modules/systemd.nix
-    '';
-  });
+      /distro/aster_nixos_installer) {};
 in
 
 {
