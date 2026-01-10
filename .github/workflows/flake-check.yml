@@ -24,7 +24,7 @@ jobs:
         with: ${{ secrets }}
 
       - run: nix flake check
-          --accept-flake-config
+          --accept-flake-config --impure
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
