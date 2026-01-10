@@ -3,12 +3,12 @@
 with lib;
 
 let
-  qemu = options.virtualisation.qemu or null;
-  interactive = qemu.package.value != pkgs.qemu_test;
+  virt = options.virtualisation;
+  interactive = virt.qemu.package.value != pkgs.qemu_test;
 in
 
 {
-  config = optionalAttrs (qemu != null) {
+  config = optionalAttrs (virt ? qemu) {
     virtualisation = mkMerge [
       {
         cores = 4;
@@ -18,7 +18,7 @@ in
           "-object memory-backend-memfd,id=mem,size=4G"
         ];
 
-        diskImage = null;
+        diskImage = mkIf virt.directBoot.enable.value null;
         writableStoreUseTmpfs = false;
         msize = 500 * 1024;
       }
@@ -36,7 +36,7 @@ in
             "-device virtio-vga-gl,blob=on,hostmem=4G,venus=on"
             "-serial vc -parallel none"
           ];
-          consoles = reverseList qemu.consoles.default;
+          consoles = reverseList virt.qemu.consoles.default;
         };
       })
     ];
