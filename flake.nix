@@ -17,6 +17,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-aster.url = "github:NixOS/nixpkgs/release-25.05";
 
     git-hooks = {
       url = "github:m-bdf/git-hooks.nix/no-config-file-symlink";
@@ -203,6 +204,11 @@
             hardware.framework.laptop13.audioEnhancement.enable = true;
           }
         ];
+      } // {
+        aster = (pkgsFor "x86_64-linux").nixos {
+          _module.args.inputs = inputs;
+          imports = [ ./aster ];
+        };
       };
 
     packages =

@@ -1,10 +1,6 @@
-{ inputs, lib, ... }:
+{ inputs, lib, pkgs, ... }:
 
 let
-  pkgs = import inputs.nixpkgs {
-    overlays = [ inputs.rust-overlay.overlays.default ];
-  };
-
   addFromSource = paths: src:
     lib.cleanSourceWith {
       src = pkgs.runCommandLocal "source" {
@@ -36,8 +32,8 @@ let
     doCheck = false;
   });
 
-  workspace = rustPlatform.buildRustPackage (final: rec {
-    pname = "asterinas";
+  aster-kernel = rustPlatform.buildRustPackage (final: rec {
+    pname = "aster-kernel";
     version = "git";
 
     src = addFromSource [ "*.toml" "kernel" ] cargo-osdk.src;
@@ -64,12 +60,12 @@ let
       ];
     };
 
-    nativeBuildInputs = [ cargo-osdk ];
+    nativeBuildInputs = with pkgs; [ cargo-osdk grub2 xorriso ];
     VDSO_LIBRARY_DIR = inputs.linux-vdso;
 
     buildPhase = ''
       cargo osdk build --release \
-        --boot-method=qemu-direct \
+        --grub-boot-protocol=linux \
         --initramfs=${initramfs-image}
     '';
 
@@ -77,20 +73,14 @@ let
     doCheck = false;
 
     installPhase = ''
-      cp -R . $out
-      mkdir -p $out/target/osdk/iso_root/boot
-      ln -s $out/target/osdk/aster-kernel-osdk-bin.qemu_elf \
-        $out/target/osdk/iso_root/boot/aster-kernel-osdk-bin
+      mkdir $out
+      cp -R --parents target/osdk $out
     '';
   });
-
-  installer = import
-    (addFromSource [ "distro" ] workspace +
-      /distro/aster_nixos_installer) {};
 in
 
-{
-  imports = [
-    (installer + /etc_nixos/aster_configuration.nix)
-  ];
-}
+import (
+  addFromSource [ "distro" ] aster-kernel
+    + /distro/aster_nixos_installer
+) {}
+  + /etc_nixos/aster_configuration.nix
