@@ -205,7 +205,7 @@
           }
         ];
       } // {
-        aster = (pkgsFor "x86_64-linux").nixos {
+        aster = (import nixpkgs {}).nixos {
           _module.args.inputs = inputs;
           imports = [ ./aster ];
         };
