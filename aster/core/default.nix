@@ -1,7 +1,9 @@
-{ inputs, rustPlatform, rust-bin, callPackage, runCommandLocal }:
+{ inputs, ... }:
 
 let
-  cargo-osdk = rustPlatform.buildRustPackage (final: {
+  pkgs = import inputs.nixpkgs {};
+
+  cargo-osdk = pkgs.rustPlatform.buildRustPackage (final: {
     pname = "cargo-osdk";
     version = "git";
 
@@ -17,13 +19,13 @@ let
     doCheck = false;
   });
 
-  rustToolchain = (
-    rust-bin.fromRustupToolchainFile (kernel.src + /rust-toolchain.toml)
+  rustToolchain = ((inputs.rust-overlay.lib.mkRustBin {} pkgs)
+    .fromRustupToolchainFile (kernel.src + /rust-toolchain.toml)
   ).overrideAttrs (prev: { paths = prev.paths ++ [ cargo-osdk ]; });
 
-  kernel = callPackage ./kernel.nix { inherit inputs rustToolchain; };
+  kernel = pkgs.callPackage ./kernel.nix { inherit inputs rustToolchain; };
 
-  installer = runCommandLocal "aster-installer" {} ''
+  installer = pkgs.runCommandLocal "aster-installer" {} ''
     cp -R --no-preserve=mode ${inputs.asterinas}/distro $out
 
     sed -i 's|\.\./.*/|${kernel}/|' \
@@ -39,5 +41,9 @@ let
   '';
 in
 
-import (installer + /aster_nixos_installer) {}
-  + /etc_nixos/aster_configuration.nix
+{
+  imports = [
+    (import (installer + /aster_nixos_installer) {}
+      + /etc_nixos/aster_configuration.nix)
+  ];
+}

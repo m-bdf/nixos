@@ -174,6 +174,7 @@
       ) nix-on-droid.packages;
 
     nixosModules = listDir ./nixos;
+    asterModules = listDir ./aster;
     nixosConfigurations =
     let
       baseSystem = nixosSystem {
@@ -208,11 +209,6 @@
       nixpkgs-patched = with builtins; getFlake
         (unsafeDiscardStringContext nixpkgs-patched-source);
 
-      asterCoreModule = (import nixpkgs {
-        overlays = [ inputs.rust-overlay.overlays.default ];
-      }).callPackage ./aster/core { inherit inputs; };
-
-      asterModules = listDir ./aster // { core = asterCoreModule; };
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -225,7 +221,7 @@
         aster = nixpkgs-patched.lib.nixosSystem {
           system = builtins.currentSystem;
           specialArgs.inputs = inputs;
-          modules = attrValues asterModules ++ [{
+          modules = attrValues self.asterModules ++ [{
             nixpkgs = {
               config = pkgsConfig;
               overlays = [ nixOverlay ];
