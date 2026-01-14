@@ -2,6 +2,10 @@
 
 with lib;
 
+let
+  inherit (config.system) build;
+in
+
 {
   boot.loader.systemd-boot.enable = false;
 
@@ -19,7 +23,7 @@ with lib;
 
     qemu = {
       drives = [{
-        file = with config.system.build.images.raw-efi;
+        file = with build.images.raw-efi;
           "${outPath}/${passthru.filePath}";
 
         driveExtraOpts = {
@@ -32,13 +36,9 @@ with lib;
         };
       }];
 
-      options = mkIf config.virtualisation.directBoot.enable (
-        mkAfter [''
-          -append "init=/bin/init $(< ${
-            config.system.build.toplevel
-          }/kernel-params)"
-        '']
-      );
+      options = mkIf config.virtualisation.directBoot.enable (mkAfter [
+        ''-append "init=/bin/init $(< ${build.toplevel}/kernel-params)"''
+      ]);
     };
   };
 }
