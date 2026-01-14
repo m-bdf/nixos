@@ -1,33 +1,34 @@
-{ config, lib, ... }:
+{ options, lib, ... }:
 
 {
-  virtualisation = {
-    useEFIBoot = lib.mkForce true;
-    efi.keepVariables = false;
+  virtualisation = lib.optionalAttrs (options.virtualisation ? qemu) {
+    cores = 4;
+    memorySize = 4 * 1024;
 
-    diskImage = null;
-    useDefaultFilesystems = false;
+    writableStoreUseTmpfs = false;
+    msize = 500 * 1024;
 
-    qemu = {
-      drives = [{
-        file = config.system.build.images.raw-efi + /nixos.img;
+    qemu.options =
+    let
+      onlyModern = "disable-legacy=on,disable-modern=off";
+    in
+    [
+      "-machine memory-backend=mem"
+      "-object memory-backend-memfd,id=mem,size=4G"
 
-        driveExtraOpts = {
-          readonly = "on";
-          werror = "ignore";
-        };
-        deviceExtraOpts = {
-          disable-legacy = "on";
-          disable-modern = "off";
-        };
-      }];
+      "-display gtk,show-tabs=on,grab-on-hover=on"
+      "-device virtio-vga,${onlyModern}"
 
-      options = [
-        "-display gtk,show-tabs=on,grab-on-hover=on -device virtio-vga"
-        "-chardev stdio,id=mux,mux=on -serial chardev:mux -parallel none"
-        "-device virtio-serial-pci -device virtconsole,chardev=mux"
-        "-device isa-debug-exit,iobase=0xf4,iosize=0x04"
-      ];
-    };
+      "-chardev stdio,id=mux,mux=on"
+      "-serial chardev:mux -parallel none"
+
+      "-device virtio-serial-pci,${onlyModern}"
+      "-device virtconsole,chardev=mux"
+
+      "-netdev user,id=net"
+      "-device virtio-net-pci,netdev=net,${onlyModern}"
+
+      "-device isa-debug-exit,iobase=0xf4,iosize=0x04"
+    ];
   };
 }

@@ -196,6 +196,23 @@
             }
           ];
         };
+
+      nixpkgs-patched-source =
+        (import nixpkgs {}).runCommand "source" {} ''
+          cp -R ${nixpkgs} $out && chmod +w $out/nixos/lib
+          sed -i $out/nixos/lib/make-disk-image.nix \
+            -e 's|fsType == "ext4"|lib.hasPrefix "ext" fsType|' \
+            -e 's|"ext4"|config.fileSystems."/".fsType or &|'
+        '';
+
+      nixpkgs-patched = with builtins; getFlake
+        (unsafeDiscardStringContext nixpkgs-patched-source);
+
+      asterCoreModule = (import nixpkgs {
+        overlays = [ inputs.rust-overlay.overlays.default ];
+      }).callPackage ./aster/core { inherit inputs; };
+
+      asterModules = listDir ./aster // { core = asterCoreModule; };
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -205,9 +222,15 @@
           }
         ];
       } // {
-        aster = (import nixpkgs {}).nixos {
-          _module.args.inputs = inputs;
-          imports = [ ./aster ];
+        aster = nixpkgs-patched.lib.nixosSystem {
+          system = builtins.currentSystem;
+          specialArgs.inputs = inputs;
+          modules = attrValues asterModules ++ [{
+            nixpkgs = {
+              config = pkgsConfig;
+              overlays = [ nixOverlay ];
+            };
+          }];
         };
       };
 
