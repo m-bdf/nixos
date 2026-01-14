@@ -208,7 +208,6 @@
 
       nixpkgs-patched = with builtins; getFlake
         (unsafeDiscardStringContext nixpkgs-patched-source);
-
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
