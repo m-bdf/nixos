@@ -39,8 +39,7 @@ let
   '';
 
   nixpkgs = pkgs.runCommandLocal "source" {} ''
-    mkdir $out
-    ln -s ${default}/* ${inputs.nixpkgs}/{lib,pkgs} $out
+    mkdir $out && ln -s ${default}/* ${inputs.nixpkgs}/{lib,pkgs} $out
   '';
 in
 
