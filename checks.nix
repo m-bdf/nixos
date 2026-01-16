@@ -62,7 +62,9 @@ let
 
   nixosTests =
     mapAttrsToList (name: system: {
-      ${system.pkgs.stdenv.system} = {
+      ${if name == "aster"
+      then builtins.currentSystem
+      else system.pkgs.stdenv.system} = {
         "nixos-config-${name}" =
           (system.extendModules {
             specialArgs.modules =

@@ -79,7 +79,7 @@
     };
 
     vscode-extensions = {
-      url = "github:nix-community/nix-vscode-extensions";
+      url = "github:ohbe1jacobi/nix-vscode-extensions/nix-dev-flake-path";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -200,14 +200,19 @@
 
       nixpkgs-patched-source =
         (import nixpkgs {}).runCommand "source" {} ''
-          cp -R ${nixpkgs} $out && chmod +w $out/nixos/lib
+          mkdir -p $out/nixos/lib
+          cp ${nixpkgs}/{default,flake}.nix $out
+          ln -s ${nixpkgs}/{doc,lib,modules,pkgs} $out
+          ln -s ${nixpkgs}/nixos/{doc,modules} $out/nixos
+          cp -R ${nixpkgs}/nixos/lib $out/nixos
+
           sed -i $out/nixos/lib/make-disk-image.nix \
             -e 's|fsType == "ext4"|lib.hasPrefix "ext" fsType|' \
             -e 's|"ext4"|config.fileSystems."/".fsType or &|'
         '';
 
-      nixpkgs-patched = with builtins; getFlake
-        (unsafeDiscardStringContext nixpkgs-patched-source);
+      nixpkgs-patched = with builtins; seq (import nixpkgs-patched-source)
+        getFlake (unsafeDiscardStringContext nixpkgs-patched-source);
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
