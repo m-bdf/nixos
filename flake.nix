@@ -202,7 +202,7 @@
         };
 
       nixpkgs-patched-source =
-        (import nixpkgs {}).runCommand "source" {} ''
+        (import nixpkgs {}).runCommandLocal "source" {} ''
           mkdir -p $out/nixos/lib
           cp ${nixpkgs}/{default,flake}.nix $out
           ln -s ${nixpkgs}/{doc,lib,modules,pkgs} $out
