@@ -43,7 +43,7 @@ in
 
 {
   imports = [
-    (import (installer + /aster_nixos_installer) {}
+    (import (installer + /aster_nixos_installer) { inherit pkgs; }
       + /etc_nixos/aster_configuration.nix)
   ];
 }
