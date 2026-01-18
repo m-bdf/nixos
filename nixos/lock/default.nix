@@ -1,7 +1,7 @@
 { inputs, lib, ... }:
 
 {
-  disabledModules = [ "security/pam.nix" ];
+  disabledModules = [ "security/pam.nix" "rename.nix" ];
   imports = [
     (inputs.fprintd + /nixos/modules/security/pam.nix)
   ];
