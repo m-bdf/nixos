@@ -79,11 +79,8 @@
     };
 
     vscode-extensions = {
-      url = "github:ohbe1jacobi/nix-vscode-extensions/nix-dev-flake-path";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        nix-dev.inputs.nixpkgs.follows = "vscode-extensions/nixpkgs";
-      };
+      url = "github:nix-community/nix-vscode-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     firefox-addons = {
