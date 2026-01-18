@@ -25,7 +25,7 @@ let
 
   kernel = pkgs.callPackage ./kernel.nix { inherit inputs rustToolchain; };
 
-  installer = pkgs.runCommandLocal "aster-installer" {} ''
+  distro = pkgs.runCommandLocal "aster-distro" {} ''
     cp -R --no-preserve=mode ${inputs.asterinas}/distro $out
 
     sed -i 's|\.\./.*/|${kernel}/|' \
@@ -39,11 +39,12 @@ let
       s|extraConfig =|settings.Manager = fromTOML|
     ' $out/etc_nixos/modules/systemd.nix
   '';
+
+  installer = import (distro + /aster_nixos_installer) { inherit pkgs; };
 in
 
 {
   imports = [
-    (import (installer + /aster_nixos_installer) { inherit pkgs; }
-      + /etc_nixos/aster_configuration.nix)
+    (installer + /etc_nixos/aster_configuration.nix)
   ];
 }
