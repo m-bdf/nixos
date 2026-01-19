@@ -203,9 +203,10 @@
           ${getExe nix} hash path $out > $narHash
         '';
 
-      nixpkgs-patched = with builtins; getFlake "${
-        unsafeDiscardStringContext nixpkgs-patched-source
-      }?narHash=${fileContents nixpkgs-patched-source.narHash}";
+      nixpkgs-patched = with builtins;
+        seq (import nixpkgs-patched-source) getFlake "${
+          unsafeDiscardStringContext nixpkgs-patched-source
+        }?narHash=${fileContents nixpkgs-patched-source.narHash}";
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
