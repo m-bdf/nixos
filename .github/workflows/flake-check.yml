@@ -23,8 +23,18 @@ jobs:
       - uses: ./.github/actions/install-detnix
         with: ${{ secrets }}
 
+      - run: nix build .#nixosConfigurations.fw13.config.system.build.toplevel
+          --accept-flake-config -j1
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
+
+      - run: nix build .#nixosConfigurations.aster.config.system.build.toplevel
+          --accept-flake-config -j1
+          --trace-verbose --show-trace
+          --print-build-logs --keep-going
+
       - run: nix flake check
-          --accept-flake-config
+          --accept-flake-config -j1
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
