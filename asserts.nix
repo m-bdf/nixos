@@ -93,5 +93,5 @@ in
     forEach config.warnings or []
       (message: { assertion = false; inherit message; }) ++
     concatMap mkRedundantAsserts
-      (collect isOption (removeAttrs options [ "assertions" "warnings" "meta" ])); # meta tmp
+      (collect isOption (removeAttrs options [ "assertions" "warnings" "meta" "virtualisation" ])); # meta & virtualisation tmp
 }
