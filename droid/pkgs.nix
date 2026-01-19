@@ -13,7 +13,7 @@ let
     } > $out
   '';
 
-  default = pkgs.writeTextDir "default.nix" ''
+  default = pkgs.writeText "default.nix" ''
     { config ? {}, ... }:
 
     import ./pkgs/top-level/impure.nix {
@@ -38,8 +38,12 @@ let
     }
   '';
 
-  nixpkgs = pkgs.runCommandLocal "source" {} ''
-    mkdir $out && ln -s ${default}/* ${inputs.nixpkgs}/{lib,pkgs} $out
+  nixpkgs = pkgs.runCommand "source" {} ''
+    mkdir -p $out/pkgs
+    cp ${default} $out/default.nix
+    cd ${inputs.nixpkgs}
+    cp --recursive --parents lib \
+      pkgs/{top-level,stdenv,build-support} $out
   '';
 in
 

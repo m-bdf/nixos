@@ -12,9 +12,10 @@ let
     })
   '';
 
-  nixpkgs = pkgs.runCommandLocal "source" {} ''
-    mkdir $out && ln -s ${default}/* ${inputs.nixpkgs}/* $out
-    rm $out/flake.nix && cp ${inputs.nixpkgs}/flake.nix $out
+  nixpkgs = pkgs.runCommand "source" {} ''
+    cp -R ${inputs.nixpkgs} $out
+    chmod +w $out/default.nix
+    cp ${default} $out/default.nix
   '';
 
   nixd = pkgs.writeShellScriptBin "nixd" ''
