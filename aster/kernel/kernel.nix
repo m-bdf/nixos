@@ -1,9 +1,4 @@
-{ inputs, rustToolchain, makeRustPlatform, grub2, xorriso }:
-
-let
-  rustPlatform = makeRustPlatform
-    { rustc = rustToolchain; cargo = rustToolchain; };
-in
+{ inputs, rustPlatform, grub2, xorriso }:
 
 rustPlatform.buildRustPackage (final: {
   pname = "aster-kernel";
