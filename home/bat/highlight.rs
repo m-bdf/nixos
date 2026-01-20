@@ -5,7 +5,8 @@ impl HighlightingAssets {
         &self,
         reader: &mut InputReader,
     ) -> Result<Option<SyntaxReferenceInSet<'_>>> {
-        if reader.first_line.is_empty() || reader.first_line.contains(&b'\x1b') {
+        if reader.first_line.is_empty()
+        || reader.first_line.iter().any(u8::is_ascii_control) {
             return Ok(None);
         }
 
