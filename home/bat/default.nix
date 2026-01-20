@@ -10,8 +10,10 @@ let
     console.log(code);
 
     try {
-      JSON.parse(code);
-      console.warn('json');
+      if (!code.includes('\x1B[')) {
+        JSON.parse(code);
+        console.warn('json');
+      }
     }
 
     catch {
