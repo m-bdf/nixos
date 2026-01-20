@@ -18,10 +18,22 @@ let
     cp ${default} $out/default.nix
   '';
 
+  nixd-without-asserts = pkgs.nixd.override (prev: {
+    nixVersions.nixComponents_2_30 =
+      prev.nixVersions.nixComponents_2_30
+        .overrideScope (final: prev: {
+          nix-flake = prev.nix-flake.overrideAttrs {
+            mesonFlags = [
+              (lib.mesonOption "b_ndebug" "if-release")
+            ];
+          };
+        });
+  });
+
   nixd = pkgs.writeShellScriptBin "nixd" ''
     configs='(import ${./configs.nix} ./.)'
 
-    while ! ${lib.getExe pkgs.nixd} "$@" \
+    while ! ${lib.getExe nixd-without-asserts} "$@" \
       --nixpkgs-expr="$configs.pkgs" \
       --nixos-options-expr="$configs.options"
     do
