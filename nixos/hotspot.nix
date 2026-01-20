@@ -3,16 +3,15 @@
 let
   ssid = "Maëlys' ${config.networking.hostName}";
 
-  configDir = pkgs.writeTextDir "${ssid}.ap"
-    (lib.generators.toINI {} {
-      General.Channel = 36; # 5GHz
-      Security.Passphrase = "Schmetterling";
-      IPv4 = rec {
-        Address = "192.168.250.1";
-        Gateway = Address;
-        DNSList = Address;
-      };
-    });
+  apConfig = lib.generators.toINI {} {
+    General.Channel = 36; # 5GHz
+    Security.Passphrase = "Schmetterling";
+    IPv4 = rec {
+      Address = "192.168.250.1";
+      Gateway = Address;
+      DNSList = Address;
+    };
+  };
 in
 
 {
@@ -20,6 +19,9 @@ in
     enable = true;
     internalInterfaces = [ "wlan0" ];
   };
+
+  systemd.services.iwd.serviceConfig.BindPaths =
+    "${pkgs.writeTextDir "${ssid}.ap" apConfig}:%S/iwd/ap";
 
   services.networkd-dispatcher = {
     enable = true;
@@ -30,20 +32,17 @@ in
 
         case "$IFACE-$STATE" in
           eth0-routable)
-            ln -Tsf "${configDir}" \
-              ${config.home.xdg.stateHome}/iwd/ap
-
             iwctl device wlan0 set-property Mode ap
             iwctl ap wlan0 start-profile "${ssid}"
-            ;;
+          ;;
 
           eth0-off)
             iwctl device wlan0 set-property Mode station
-            ;;
+          ;;
 
           wlan0-routable)
             networkctl reconfigure eth0
-            ;;
+          ;;
         esac
       '';
     };

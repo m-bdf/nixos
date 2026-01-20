@@ -16,41 +16,39 @@
       }} --mode fill";
     };
 
-    home = {
-      home = {
-        packages = with pkgs; [ wl-clipboard-rs ];
-        sessionVariables.NIXOS_OZONE_WL = "1";
-      };
-
-      xdg.configFile."niri/config.kdl".text = ''
-        input {
-          disable-power-key-handling
-          touchpad { natural-scroll; tap; }
-        }
-
-        output "eDP-1" { scale 1; }
-
-        layer-rule {
-          match namespace="^wallpaper$"
-          place-within-backdrop true
-        }
-
-        layout {
-          empty-workspace-above-first
-          preset-column-widths {
-            proportion 0.5
-            proportion 1.0
-          }
-
-          background-color "transparent"
-          focus-ring { off; }
-          shadow { on; }
-        }
-
-        ${lib.concatMapStringsSep "\n" (cmd:
-          ''spawn-sh-at-startup "${cmd}"''
-        ) config.programs.niri.startup}
-      '';
+    environment = {
+      systemPackages = with pkgs; [ wl-clipboard-rs ];
+      variables.NIXOS_OZONE_WL = "1";
     };
+
+    home.xdg.configFile."niri/config.kdl".text = ''
+      input {
+        disable-power-key-handling
+        touchpad { natural-scroll; tap; }
+      }
+
+      output "eDP-1" { scale 1; }
+
+      layer-rule {
+        match namespace="^wallpaper$"
+        place-within-backdrop true
+      }
+
+      layout {
+        empty-workspace-above-first
+        preset-column-widths {
+          proportion 0.5
+          proportion 1.0
+        }
+
+        background-color "transparent"
+        focus-ring { off; }
+        shadow { on; }
+      }
+
+      ${lib.concatMapStringsSep "\n" (cmd:
+        ''spawn-sh-at-startup "${cmd}"''
+      ) config.programs.niri.startup}
+    '';
   };
 }

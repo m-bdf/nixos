@@ -7,7 +7,10 @@
   };
 
   config = {
-    environment.corePackages = lib.mkForce [];
+    environment = {
+      corePackages = lib.mkForce [];
+      variables.SYSTEMD_PAGERSECURE = "1";
+    };
     programs = {
       less.enable = lib.mkForce false;
       nano.enable = false;

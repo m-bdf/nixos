@@ -7,11 +7,11 @@ in
 {
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  environment.systemPackages = with pkgs; [ github-desktop ];
-
   nixpkgs.overlays = [ inputs.vscode-extensions.overlays.default ];
 
   home = {
+    home.packages = with pkgs; [ github-desktop ];
+
     programs.vscode = {
       enable = true;
       package = pkgs.code-cursor;

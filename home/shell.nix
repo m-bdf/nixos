@@ -24,7 +24,7 @@
   };
 
   home.sessionVariables.STARSHIP_CACHE =
-    "${config.xdg.cacheHome}/starship"; #starship/896
+    "$XDG_CACHE_HOME/starship"; #starship/896
 
   xdg = {
     dataFile.fish.persist = true; # history

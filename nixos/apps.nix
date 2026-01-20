@@ -3,30 +3,19 @@
 {
   systemd.oomd.enableUserSlices = true;
 
-  home = {
-    programs.ghostty = {
-      enable = true;
-      settings = {
-        resize-overlay = "never";
-        app-notifications = false;
-        confirm-close-surface = false;
-      };
-    };
-
-    home.packages = with pkgs;
-    let
-      wrapSpawn = name: cmd: writeShellScriptBin name ''
-        niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
-      '';
-      xdg-open = wrapSpawn "xdg-open" ''
-        sleep 1 && ${glib}/bin/gio open "$@"
-      '';
-      xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
-        ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
-      '';
-    in
-      [ xdg-open xdg-terminal-exec nautilus ];
-  };
+  environment.systemPackages = with pkgs;
+  let
+    wrapSpawn = name: cmd: writeShellScriptBin name ''
+      niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
+    '';
+    xdg-open = wrapSpawn "xdg-open" ''
+      sleep 1 && ${glib}/bin/gio open "$@"
+    '';
+    xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
+      ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
+    '';
+  in
+    [ xdg-open xdg-terminal-exec nautilus ];
 
   programs = {
     niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
@@ -41,8 +30,19 @@
     }];
   };
 
-  home.xdg = {
-    cacheFile.walker.persist = true;
-    configFile.walker.persist = true;
+  home = {
+    programs.ghostty = {
+      enable = true;
+      settings = {
+        resize-overlay = "never";
+        app-notifications = false;
+        confirm-close-surface = false;
+      };
+    };
+
+    xdg = {
+      cacheFile.walker.persist = true;
+      configFile.walker.persist = true;
+    };
   };
 }
