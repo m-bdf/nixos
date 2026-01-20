@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ inputs, config, lib, ... }:
 
 with lib;
 
@@ -36,22 +36,19 @@ in
   config = {
     xdg.enable = true;
 
-    home = {
-      activation = {
-        unsetHome = hm.dag.entryBefore
-          [ "linkGeneration" ] "HOME=/";
-        resetHome = hm.dag.entryBetween
-          [ "batCache" ] [ "linkGeneration" ]
-          "HOME=${config.home.homeDirectory}";
-      };
+    lib.bash = mkForce {
+      initHomeManagerLib = ''
+        source ${inputs.home-manager}/lib/bash/*
+        test $(basename $0) = activate || HOME=/
+      '';
+    };
 
-      file = {
-        "Documents" = {
-          persist = true;
-          executable = true;
-        };
-        "Downloads".persist = true;
+    home.file = {
+      "Documents" = {
+        persist = true;
+        executable = true;
       };
+      "Downloads".persist = true;
     };
   };
 }
