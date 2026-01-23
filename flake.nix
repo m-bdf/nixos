@@ -56,6 +56,11 @@
       };
     };
 
+    termux-packages = {
+      url = "github:termux/termux-packages";
+      flake = false;
+    };
+
     asterinas = {
       url = "github:asterinas/asterinas";
       flake = false;
