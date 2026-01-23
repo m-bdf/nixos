@@ -1,22 +1,28 @@
-{ inputs, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 
 let
-  pkgsAndroid = inputs.nixpkgs.legacyPackages.aarch64-linux;
-  pkgsCross = pkgs.pkgsCross.aarch64-android.buildPackages;
+  pkgsCross = import inputs.nixpkgs
+    (with config.environment.files.prootStatic.stdenv; {
+      inherit (buildPlatform) system;
+      crossSystem = hostPlatform // {
+        androidSdkVersion = hostPlatform.sdkVer;
+      };
+      inherit (pkgs) config overlays;
+    });
 
-  cc = pkgsCross.androidndkPkgs.clang.override (prev: rec {
+  cc = pkgsCross.buildPackages.androidndkPkgs.clang.override (prev: rec {
     bintools = prev.bintools.override { inherit libc; };
 
     libc = prev.libc.overrideAttrs (prev: {
       buildCommand = prev.buildCommand + ''
-        ln -s ${pkgsAndroid.glibc}/lib/lib{pthread,rt}.so $out/lib
+        ln -s ${pkgs.glibc}/lib/lib{pthread,rt}.so $out/lib
       '';
     });
   });
 
   jack = pkgs.jack2.override {
     stdenv = pkgs.clangStdenv.override { inherit cc; };
-    inherit (pkgsAndroid) libsamplerate dbus libffado alsa-lib;
+    dbus = null;
   };
 
   jackWithOpenSLES = jack.overrideAttrs (prev: {
