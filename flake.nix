@@ -132,7 +132,7 @@
 
     pkgsConfig = {
       warnUndeclaredOptions = true;
-      allowAliases = false;
+      # allowAliases = false;
       allowUnfree = true;
       # checkMeta = true;
     };
