@@ -32,12 +32,7 @@ let
       });
 
       coreutils = uutils-coreutils-noprefix;
-      diffutils = uutils-diffutils.overrideAttrs {
-        postInstall = ''
-          ln -s diffutils $out/bin/diff
-          ln -s diffutils $out/bin/cmp
-        '';
-      };
+      diffutils = uutils-diffutils;
       findutils = uutils-findutils;
     };
 in
