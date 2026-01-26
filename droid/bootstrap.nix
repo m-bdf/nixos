@@ -43,7 +43,7 @@ in
 
 {
   options.build.bootstrapZip = mkOption {
-    default = pkgs.runCommand "bootstrapZip-${arch}" {
+    default = pkgs.runCommand "bootstrap-zip" {
       bootstrap = droidPkgs."bootstrap-${arch}".override overrideBootstrap;
     } ''
       mkdir $out && ln -s ${initialLoginInner} $out/activate-${arch}.sh
