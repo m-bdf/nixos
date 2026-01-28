@@ -20,12 +20,14 @@ let
     });
   });
 
-  jack = pkgs.jack2.override {
-    stdenv = pkgs.clangStdenv.override { inherit cc; };
+  jack = pkgs.jack2.override (prev: {
+    stdenv = pkgs.overrideCC prev.stdenv cc;
     dbus = null;
-  };
+  });
 
-  jackWithOpenSLES = jack.overrideAttrs (prev: {
+  jackOpenSL = jack.overrideAttrs (prev: {
+    pname = prev.pname + "-opensl";
+
     patches = prev.patches ++ [
       (inputs.termux-packages + /packages/jack2/0001-fix-android-build.patch)
       (inputs.termux-packages + /packages/jack2/0003-opensles-driver.patch)
@@ -39,5 +41,5 @@ let
 in
 
 {
-  environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackWithOpenSLES}/lib" ];
+  environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
 }
