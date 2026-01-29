@@ -6,7 +6,7 @@ let
   arch = removeSuffix "-linux" pkgs.stdenv.system;
 
   initialLoginInner = pkgs.writeText "login-inner" ''
-    NIX_CONFIG='${
+    export NIX_CONFIG='${
       concatMapAttrsStringSep "\n"
         (opt: val: "${opt} = ${toString val}")
         (import (inputs.self + /flake.nix)).nixConfig
