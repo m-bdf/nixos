@@ -44,6 +44,7 @@ let
     '';
 
     NIX_LDFLAGS = [ "-ldl" ];
+    dontPatchShebangs = true;
   });
 in
 
