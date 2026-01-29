@@ -49,7 +49,7 @@ in
 
   config.environment.packages = [
     (pkgs.writeScriptBin "nod-update" ''
-      ${getExe pkgs.xh} https://fw13.tail3a4624.ts.net/activate-${arch}.sh | sh
+      ${getExe pkgs.xh} https://m-bdf.github.io/nixos/activate-${arch}.sh | sh
     '')
   ];
 }
