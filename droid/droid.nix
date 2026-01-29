@@ -43,12 +43,12 @@ in
       programs.nh.enable = lib.mkForce false;
     };
 
-    environment.sessionVariables =
-    let
-      dnshack = pkgs.callPackage inputs.dnshack {};
-    in {
-      DNSHACK_RESOLVER_CMD = dnshack + /bin/dnshackresolver;
-      LD_PRELOAD = dnshack + /lib/libdnshackbridge.so;
-    };
+    # environment.sessionVariables =
+    # let
+    #   dnshack = pkgs.callPackage inputs.dnshack {};
+    # in {
+    #   DNSHACK_RESOLVER_CMD = dnshack + /bin/dnshackresolver;
+    #   LD_PRELOAD = dnshack + /lib/libdnshackbridge.so;
+    # };
   };
 }
