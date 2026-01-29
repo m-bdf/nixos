@@ -22,6 +22,7 @@ let
 
   jack = pkgs.jack2.override {
     stdenv = pkgs.overrideCC pkgsCross.stdenv cc;
+    inherit (pkgsCross.buildPackages.buildPackages) python3Packages;
     dbus = null;
   };
 
@@ -44,14 +45,6 @@ let
     '';
 
     NIX_LDFLAGS = [ "-ldl" ];
-
-    preConfigure = ''
-      mv waf wav.bak
-    '';
-
-    postConfigure = ''
-      mv wav.bak waf
-    '';
   });
 in
 
