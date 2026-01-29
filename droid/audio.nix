@@ -41,5 +41,5 @@ let
 in
 
 {
-  environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
+  # environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
 }
