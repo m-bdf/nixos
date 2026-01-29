@@ -20,10 +20,10 @@ let
     });
   });
 
-  jack = pkgs.jack2.override (prev: {
-    stdenv = pkgs.overrideCC prev.stdenv cc;
+  jack = pkgs.jack2.override {
+    stdenv = pkgs.overrideCC pkgsCross.stdenv cc;
     dbus = null;
-  });
+  };
 
   jackOpenSL = jack.overrideAttrs (prev: {
     pname = prev.pname + "-opensl";
@@ -42,6 +42,8 @@ let
     postInstall = prev.postInstall + ''
       find "$out" -type f -exec remove-references-to -t ${jack.stdenv.cc.cc} '{}' +
     '';
+
+    NIX_LDFLAGS = [ "-ldl" ];
   });
 in
 
