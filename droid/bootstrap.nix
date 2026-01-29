@@ -6,10 +6,7 @@ let
   arch = removeSuffix "-linux" pkgs.stdenv.system;
 
   initialLoginInner = pkgs.writeText "login-inner" ''
-    set -o allexport -o errexit
-    ${toShellVars config.environment.sessionVariables}
-    unset LD_PRELOAD
-
+    export GC_NPROCS=1
     export NIX_CONFIG='${
       concatMapAttrsStringSep "\n"
         (opt: val: "${opt} = ${toString val}")
