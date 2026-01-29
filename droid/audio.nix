@@ -44,7 +44,14 @@ let
     '';
 
     NIX_LDFLAGS = [ "-ldl" ];
-    dontPatchShebangs = true;
+
+    preConfigure = ''
+      mv waf wav.bak
+    '';
+
+    postConfigure = ''
+      mv wav.bak waf
+    '';
   });
 in
 
