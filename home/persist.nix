@@ -36,11 +36,12 @@ in
   config = {
     xdg.enable = true;
 
-    lib.bash = mkForce {
-      initHomeManagerLib = ''
-        source ${inputs.home-manager}/lib/bash/*
-        test $(basename $0) = activate || HOME=/
-      '';
+    home.activation = {
+      unsetHome = hm.dag.entryBefore
+        [ "linkGeneration" ] "HOME=/";
+      resetHome = hm.dag.entryBetween
+        [ "batCache" ] [ "linkGeneration" ]
+        "HOME=${config.home.homeDirectory}";
     };
 
     home.file = {
