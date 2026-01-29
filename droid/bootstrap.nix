@@ -6,6 +6,7 @@ let
   arch = removeSuffix "-linux" pkgs.stdenv.system;
 
   initialLoginInner = pkgs.writeText "login-inner" ''
+    export GC_NPROCS=1
     export NIX_CONFIG='${
       concatMapAttrsStringSep "\n"
         (opt: val: "${opt} = ${toString val}")
