@@ -37,9 +37,14 @@ let
     postPatch = ''
       sed -i '1i #include <string.h>' android/opensl_io.c
     '';
+
+    nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.removeReferencesTo ];
+    postInstall = prev.postInstall + ''
+      find "$out" -type f -exec remove-references-to -t ${jack.stdenv.cc.cc} '{}' +
+    '';
   });
 in
 
 {
-  # environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
+  environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
 }
