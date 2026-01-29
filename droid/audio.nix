@@ -42,12 +42,11 @@ let
       sed -i '1i #include <string.h>' android/opensl_io.c
     '';
 
-    nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.removeReferencesTo ];
-    postInstall = prev.postInstall + ''
-      find "$out" -type f -exec remove-references-to -t ${jack.stdenv.cc.cc} '{}' +
-    '';
-
     NIX_LDFLAGS = [ "-ldl" ];
+
+    postFixup = ''
+      ${lib.getExe pkgs.removeReferencesTo} -t ${cc.cc} $(find $out -type f)
+    '';
   });
 in
 
