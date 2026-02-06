@@ -5,18 +5,20 @@ let
     rustPlatform = prev.rustPlatform.overrideScope (_: prev: {
       buildRustPackage = args: with lib;
       let
-        default = prev.buildRustPackage args;
-        withLibc = default.overrideAttrs {
-          passthru.dev = default;
+        defaultPkg = prev.buildRustPackage args;
+        pkgWithLibc = defaultPkg.overrideAttrs {
+          passthru.dev = defaultPkg;
           NIX_RUSTFLAGS = "--cfg=rustix_use_libc";
         };
 
+        manifest = importTOML (defaultPkg.src + /Cargo.toml);
+        lock = importTOML (defaultPkg.src + /Cargo.lock);
+
         isCLI = elem "command-line-utilities"
-          (importTOML (default.src + /Cargo.toml)).package.categories or [];
-        usesRustix = any (d: d.name == "rustix")
-          (importTOML (default.src + /Cargo.lock)).package;
+          (manifest.workspace or manifest).package.categories or [];
+        usesRustix = any (d: d.name == "rustix") lock.package;
       in
-        if isCLI && usesRustix then withLibc else default;
+        if isCLI && usesRustix then pkgWithLibc else defaultPkg;
     });
   };
 in
