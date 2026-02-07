@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/setup-arm-builder
 
       - run: nix build .#nixOnDroidBootstrapZips
-          --accept-flake-config
+          --accept-flake-config -j1
           --trace-verbose --show-trace
           --print-build-logs --keep-going
 
