@@ -20,13 +20,9 @@ let
     });
   });
 
-  jack = pkgs.jack2.override {
+  jack = pkgs.libjack2.override {
     stdenv = pkgs.overrideCC pkgsCross.stdenv cc;
-    inherit (pkgsCross.buildPackages.buildPackages) python3Packages;
-
     dbus = null;
-    libffado = null;
-    alsa-lib = null;
   };
 
   jackOpenSL = jack.overrideAttrs (prev: {
@@ -44,12 +40,14 @@ let
 
     NIX_LDFLAGS = [ "-ldl" ];
 
-    postFixup = ''
-      ${lib.getExe pkgs.removeReferencesTo} -t ${cc.cc} $(find $out -type f)
+    preFixup = ''
+      patchelf $out/lib/libjack.so --set-rpath ${
+        lib.makeLibraryPath [ pkgs.libsamplerate cc.cc.out ]
+      }
     '';
   });
 in
 
 {
-  # environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
+  environment.sessionVariables.LD_LIBRARY_PATH = [ "${jackOpenSL}/lib" ];
 }
