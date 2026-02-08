@@ -22,6 +22,7 @@ let
 
   jack = pkgs.libjack2.override {
     stdenv = pkgs.overrideCC pkgsCross.stdenv cc;
+    inherit (pkgsCross.buildPackages) python3Packages;
     dbus = null;
   };
 
