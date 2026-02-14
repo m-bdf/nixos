@@ -13,9 +13,7 @@ let
 
   mkReplacement = oldName: newDep: rec {
     oldDependency =
-      pkgs.${oldName} or
-      pkgs."gnu${oldName}" or
-      pkgs.${newDep.meta.mainProgram};
+      pkgs.${oldName} or pkgs."gnu${oldName}";
 
     newDependency = pkgs.symlinkJoin {
       inherit (oldDependency) name;
@@ -37,7 +35,7 @@ let
       uutils-coreutils = "coreutils-prefixed";
       uutils-coreutils-noprefix = "coreutils";
     }.${n} or (removePrefix "uutils-" n))
-      (filterAttrs (n: _: hasPrefix "uutils-" n) pkgs);
+      (filterAttrs (n: pkg: hasPrefix "uutils-" n && !hasInfix "-unstable-" pkg.version) pkgs);
 in
 
 {
