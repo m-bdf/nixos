@@ -12,6 +12,7 @@ let
     "privacy.userContext.enabled" = false;
     "zen.workspaces.separate-essentials" = false;
     "zen.workspaces.continue-where-left-off" = true;
+    "zen.window-sync.enabled" = false;
 
     "zen.view.use-single-toolbar" = false;
     "zen.tabs.show-newtab-vertical" = false;
@@ -22,6 +23,12 @@ let
     "browser.search.suggest.enabled" = true;
     "browser.search.suggest.enabled.private" = true;
     "browser.urlbar.showSearchSuggestionsFirst" = false;
+
+    "signon.rememberSignons" = false;
+    "extensions.formautofill.addresses.enabled" = false;
+    "extensions.formautofill.creditCards.enabled" = false;
+
+    "findbar.highlightAll" = true;
   };
 in
 
