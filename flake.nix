@@ -199,19 +199,12 @@
         };
 
       nixpkgs-patched-source = with pkgsFor "x86_64-linux";
-        runCommand "source" { outputs = [ "out" "narHash" ]; } ''
+        runCommand "source" {} ''
           cp -R ${path} $out && chmod +w $out/nixos/lib
           sed -i $out/nixos/lib/make-disk-image.nix \
             -e 's|fsType == "ext4"|lib.hasPrefix "ext" fsType|' \
             -e 's|"ext4"|config.fileSystems."/".fsType or &|'
-
-          ${getExe nix} hash path $out > $narHash
         '';
-
-      nixpkgs-patched = with builtins;
-        seq (import nixpkgs-patched-source) getFlake "${
-          unsafeDiscardStringContext nixpkgs-patched-source
-        }?narHash=${fileContents nixpkgs-patched-source.narHash}";
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -221,7 +214,7 @@
           }
         ];
       } // {
-        aster = nixpkgs-patched.lib.nixosSystem {
+        aster = (getFlake nixpkgs-patched-source).lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs.inputs = inputs;
           modules = attrValues self.asterModules ++ [{
