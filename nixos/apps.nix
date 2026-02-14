@@ -1,8 +1,6 @@
 { lib, pkgs, ... }:
 
 {
-  systemd.oomd.enableUserSlices = true;
-
   environment.systemPackages = with pkgs;
   let
     wrapSpawn = name: cmd: writeShellScriptBin name ''
@@ -11,11 +9,17 @@
     xdg-open = wrapSpawn "xdg-open" ''
       sleep 1 && ${glib}/bin/gio open "$@"
     '';
-    xdg-terminal-exec = wrapSpawn "xdg-terminal-exec" ''
-      ${lib.getExe xdg-terminal-exec-mkhl} "''${@:-$SHELL}"
+    xdg-term = wrapSpawn "xdg-terminal-exec" ''
+      ${lib.getExe xdg-terminal-exec} "''${@:-$SHELL}"
     '';
   in
-    [ xdg-open xdg-terminal-exec nautilus ];
+    [ xdg-open xdg-term nautilus ];
+
+  systemd = {
+    oomd.enableUserSlices = true;
+    user.services.elephant.path = lib.mkForce [];
+  };
+  services.elephant.enable = true;
 
   programs = {
     niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
