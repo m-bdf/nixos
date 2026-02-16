@@ -11,8 +11,8 @@ let
       syncSitesFixes = true;
     };
 
-    ublock-origin.userSettings.prefetchingDisabled = false;
-    bitwarden.global_extensionInitialInstall_extensionInstalled = true;
+    ublock-origin = {};
+    bitwarden = {};
   };
 
   addons = inputs.firefox-addons.packages.${pkgs.stdenv.system};
