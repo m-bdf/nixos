@@ -17,18 +17,11 @@ let
 
     newDependency = pkgs.symlinkJoin {
       inherit (oldDependency) name;
-      paths = [newDep];
+      paths = [ newDep oldDependency ];
     };
   };
 
-  glibcIsatty = pkgs.glibc.overrideAttrs (prev: {
-    pname = prev.pname + "-isatty";
-    prePatch = ''
-      sed -i '/weak_alias/d' sysdeps/posix/isatty.c
-      cat ${./isatty.c} >> sysdeps/posix/isatty.c
-    '';
-    makeFlags = prev.makeFlags ++ [ "--silent" ];
-  });
+  glibcIsattyPager = pkgs.callPackage ./glibc.nix {};
 
   uutilsReplacements =
     mapAttrs' (n: nameValuePair {
@@ -45,12 +38,12 @@ in
     apply = drv:
       pkgs.replaceDependencies.override {
         inherit replaceDirectDependencies;
-      } {
+      } rec {
         inherit drv;
         replacements = mapAttrsToList mkReplacement
-          ({ glibc = glibcIsatty; } // uutilsReplacements);
-        cutoffPackages = optional (nixosConfig != null)
-          nixosConfig.system.build.initialRamdisk;
+          ({ glibc = glibcIsattyPager; } // uutilsReplacements);
+        cutoffPackages = catAttrs "newDependency" replacements ++
+          [ nixosConfig.system.build.initialRamdisk or "" ];
         verbose = false;
       };
   };
