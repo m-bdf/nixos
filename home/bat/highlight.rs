@@ -1,26 +1,22 @@
-use std::process::{Command, Stdio, ChildStdin};
-
 impl HighlightingAssets {
-    fn get_syntax_for_file_contents(
+    fn get_contents_syntax(
         &self,
         reader: &mut InputReader,
     ) -> Result<Option<SyntaxReferenceInSet<'_>>> {
-        if reader.first_line.is_empty() {
+        if reader.first_line.is_empty()
+        || reader.first_line.contains(&b'\x1B') {
             return Ok(None);
         }
 
-        let mut child = Command::new("{LANGUESS}")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()?;
+        if let Some(syntax) = self.get_first_line_syntax(reader)? {
+            return Ok(Some(syntax));
+        }
 
-        self.print_file_to_process(reader, &mut child.stdin.take().unwrap())?;
-        
-        let output = child.wait_with_output()?;
-        *reader = InputReader::new(std::io::Cursor::new(output.stdout));
+        let Ok(guesses) = guess_syntax_by_contents(reader) else {
+            return Ok(None);
+        };
 
-        for guess in String::from_utf8_lossy(&output.stderr).split_whitespace() {
+        for guess in guesses.split_whitespace() {
             if let Some(syntax) = self.find_syntax_by_token(&guess)? {
                 return Ok(Some(syntax));
             }
@@ -28,24 +24,23 @@ impl HighlightingAssets {
 
         Ok(None)
     }
+}
 
-    fn print_file_to_process(
-        &self,
-        reader: &mut InputReader,
-        stdin: &mut ChildStdin,
-    ) -> Result<()> {
-        use crate::{
-            controller::Controller,
-            printer::SimplePrinter,
-            output::OutputHandle,
-        };
+fn guess_syntax_by_contents(reader: &mut InputReader) -> Result<String> {
+    use std::io::{copy, Cursor, Read};
+    use std::process::{Command, Stdio};
 
-        let config = Default::default();
-        let controller = Controller::new(&config, &self);
-        let mut printer = SimplePrinter::new(&config);
-        let mut output = OutputHandle::IoWrite(stdin);
-        let ranges = Default::default();
+    let child = Command::new("{LANGUESS}")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
 
-        controller.print_file_ranges(&mut printer, &mut output, reader, &ranges)
-    }
+    let mut contents = reader.first_line.chain(&mut reader.inner);
+    copy(&mut contents, &mut child.stdin.as_ref().unwrap())?;
+
+    let output = child.wait_with_output()?;
+    *reader = InputReader::new(Cursor::new(output.stdout));
+
+    Ok(String::from_utf8_lossy(&output.stderr).to_string())
 }

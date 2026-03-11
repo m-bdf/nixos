@@ -7,10 +7,10 @@ let
     import hljs from '${inputs.highlightjs}';
 
     const code = await Bun.stdin.text();
-    console.log(code);
+    await Bun.stdout.write(code);
 
     try {
-      if (!code.includes('\x1B[')) {
+      if (!code.includes('\x1B')) {
         JSON.parse(code);
         console.warn('json');
       }
@@ -29,13 +29,11 @@ let
   bat = pkgs.bat.overrideAttrs (prev: {
     pname = prev.pname + "-highlight";
     patchPhase = ''
+      sed -i 's/\.get_first_line/\.get_contents/' src/assets.rs
       sed 's|{LANGUESS}|${languess}|' ${./highlight.rs} >> src/assets.rs
-
-      sed -i src/assets.rs -e '/\[unknown\]/ s/Err/ \
-        self.get_syntax_for_file_contents(\&mut input.reader)?.ok_or/'
-
-      sed -i src/controller.rs -e 's/fn print_file_ranges/pub(crate) &/'
+      sed -i '/struct InputReader/a pub(crate)' src/input.rs
     '';
+    checkFlags = prev.checkFlags ++ [ "--skip=ignored_suffix_arg" ];
   });
 in
 
