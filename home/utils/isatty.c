@@ -3,11 +3,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <dlfcn.h>
 #include <sys/stat.h>
 #include <glob.h>
 
-static int ispager(int len;
-  char procpath[len], int len)
+static int ispager(char procpath[], int len)
 {
   const char *pager = getenv("PAGER");
   if (!pager || !pager[0]) return 0;
@@ -35,7 +35,10 @@ static int ispager(int len;
 
 int isatty(int fd)
 {
-  if (__isatty(fd)) return 1;
+  static typeof(isatty) *next;
+  if (!next) next = dlsym(RTLD_NEXT, "isatty");
+
+  if (next && next(fd)) return 1;
   if (fd != 1) return 0;
 
   static struct stat statbuf;

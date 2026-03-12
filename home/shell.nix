@@ -21,12 +21,31 @@
       enable = true;
       nix-output-monitor.enable = true;
     };
+
+    eza = {
+      enable = true;
+      extraOptions = [
+        "--header"
+        "--icons"
+        "--hyperlink"
+        "--classify"
+        "--mounts"
+      ];
+    };
+
+    fd.enable = true;
+    ripgrep.enable = true;
+
+    man.generateCaches = false;
   };
 
   home.sessionVariables.STARSHIP_CACHE =
     "${config.xdg.cacheHome}/starship"; #starship/896
 
   xdg = {
+    configFile."eza/theme.yml".source =
+      inputs.eza-themes + /themes/dracula.yml;
+
     dataFile.fish.persist = true; # history
     stateFile.comma.persist = true; # choices
   };

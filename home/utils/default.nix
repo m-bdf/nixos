@@ -1,27 +1,17 @@
-{ config, nixosConfig, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
 let
-  replaceDirectDependencies = args:
-    pkgs.replaceDirectDependencies (args // {
-      replacements = map (r: r // {
-        oldDependency = substring 0 43 r.oldDependency +
-          strings.replicate (stringLength r.newDependency - 43) ".";
-      }) args.replacements;
-    });
-
   mkReplacement = oldName: newDep: rec {
     oldDependency =
       pkgs.${oldName} or pkgs."gnu${oldName}";
 
     newDependency = pkgs.symlinkJoin {
       inherit (oldDependency) name;
-      paths = [ newDep oldDependency ];
+      paths = [newDep];
     };
   };
-
-  glibcIsattyPager = pkgs.callPackage ./glibc.nix {};
 
   uutilsReplacements =
     mapAttrs' (n: nameValuePair {
@@ -32,19 +22,36 @@ let
 in
 
 {
-  options.home.activationPackage = config.lib.mkToplevelOption;
+  options.home = {
+    activationPackage = config.lib.mkToplevelOption;
+    path = config.lib.mkPathOption;
+  };
 
-  config.lib.mkToplevelOption = mkOption {
-    apply = drv:
-      pkgs.replaceDependencies.override {
-        inherit replaceDirectDependencies;
-      } rec {
-        inherit drv;
-        replacements = mapAttrsToList mkReplacement
-          ({ glibc = glibcIsattyPager; } // uutilsReplacements);
-        cutoffPackages = catAttrs "newDependency" replacements ++
-          [ nixosConfig.system.build.initialRamdisk or "" ];
-        verbose = false;
+  config = {
+    lib = {
+      mkToplevelOption = mkOption {
+        apply = drv:
+          pkgs.replaceDependencies {
+            inherit drv;
+            replacements = mapAttrsToList mkReplacement uutilsReplacements;
+            verbose = false;
+          };
+      };
+
+      mkPathOption = mkOption {
+        apply = drv: drv.override (prev: {
+          paths = prev.paths ++ concatLists
+            (catAttrs "propagatedBuildInputs" prev.paths);
+        });
+      };
+    };
+
+    home.sessionVariables.LD_PRELOAD =
+      pkgs.zigStdenv.mkDerivation {
+        name = "isatty_pager.so";
+        buildCommand = ''
+          $CC ${./isatty.c} -Os -shared -o $out
+        '';
       };
   };
 }
