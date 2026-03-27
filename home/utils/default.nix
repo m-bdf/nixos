@@ -6,11 +6,8 @@ let
   mkReplacement = oldName: newDep: rec {
     oldDependency =
       pkgs.${oldName} or pkgs."gnu${oldName}";
-
-    newDependency = pkgs.symlinkJoin {
-      inherit (oldDependency) name;
-      paths = [newDep];
-    };
+    newDependency = pkgs.runCommandLocal
+      oldDependency.name {} "ln -s ${newDep} $out";
   };
 
   uutilsReplacements =
@@ -19,6 +16,27 @@ let
       uutils-coreutils-noprefix = "coreutils";
     }.${n} or (removePrefix "uutils-" n))
       (filterAttrs (n: pkg: hasPrefix "uutils-" n && !hasInfix "-unstable-" pkg.version) pkgs);
+
+  replacements = mapAttrsToList mkReplacement uutilsReplacements;
+  oldDeps = concatLines (catAttrs "oldDependency" replacements);
+
+  replaceDirectDependencies = args:
+  let
+    drv = pkgs.replaceDirectDependencies args;
+
+    leftover = pkgs.runCommandLocal "leftover" {
+      inherit oldDeps;
+      passAsFile = [ "oldDeps" ];
+      exportReferencesGraph = [ "graph" drv ];
+    } ''
+      grep -f $oldDepsPath graph > $out || true
+    '';
+  in
+    if readFile leftover == "" then drv
+    else drv.overrideAttrs {
+      __structuredAttrs = true;
+      unsafeDiscardReferences.out = true;
+    };
 in
 
 {
@@ -31,9 +49,10 @@ in
     lib = {
       mkToplevelOption = mkOption {
         apply = drv:
-          pkgs.replaceDependencies {
-            inherit drv;
-            replacements = mapAttrsToList mkReplacement uutilsReplacements;
+          pkgs.replaceDependencies.override {
+            inherit replaceDirectDependencies;
+          } {
+            inherit drv replacements;
             verbose = false;
           };
       };
