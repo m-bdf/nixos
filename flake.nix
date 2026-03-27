@@ -73,8 +73,13 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
+    eza-themes = {
+      url = "github:eza-community/eza-themes";
+      flake = false;
+    };
+
     highlightjs = {
-      url = "https://esm.sh/highlight.js/node/highlight.bundle.mjs";
+      url = "https://esm.sh/v135/highlight.js/node/highlight.bundle.mjs";
       flake = false;
     };
 

@@ -33,14 +33,15 @@
       ];
     };
 
-    fd.enable = true;
-    ripgrep.enable = true;
-
     man.generateCaches = false;
   };
 
-  home.sessionVariables.STARSHIP_CACHE =
-    "${config.xdg.cacheHome}/starship"; #starship/896
+  home = {
+    sessionVariables.STARSHIP_CACHE =
+      "${config.xdg.cacheHome}/starship"; #starship/896
+
+    packages = with pkgs; [ fd ripgrep sd ];
+  };
 
   xdg = {
     configFile."eza/theme.yml".source =
