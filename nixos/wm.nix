@@ -7,8 +7,12 @@
   };
 
   config = {
+    nixpkgs.overlays = [ inputs.niri.overlays.default ];
+
     programs.niri = {
       enable = true;
+      package = pkgs.niri;
+
       startup = "${lib.getExe pkgs.swaybg} --image ${pkgs.fetchurl rec {
         passthru.submission = lib.importJSON inputs.sylveon-garden;
         inherit (lib.head passthru.submission.media.submission) url;

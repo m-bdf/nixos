@@ -29,6 +29,11 @@
       inputs.git-hooks-nix.follows = "git-hooks";
     };
 
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -94,6 +99,14 @@
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    niri = {
+      url = "github:m-bdf/niri";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
     };
 
     sylveon-garden = {
@@ -203,11 +216,13 @@
 
       nixpkgs-patched-source = with pkgsFor "x86_64-linux";
         runCommand "source" {} ''
-          cp -R ${path} $out && chmod +w $out/nixos/lib
+          cp -R ${nixpkgs} $out && chmod +w $out/nixos/lib
           sed -i $out/nixos/lib/make-disk-image.nix \
             -e 's|fsType == "ext4"|lib.hasPrefix "ext" fsType|' \
             -e 's|"ext4"|config.fileSystems."/".fsType or &|'
         '';
+
+      nixpkgs-patched = builtins.getFlake nixpkgs-patched-source.outPath;
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -217,8 +232,8 @@
           }
         ];
       } // {
-        aster = (getFlake nixpkgs-patched-source).lib.nixosSystem {
-          system = "x86_64-linux";
+        aster = nixpkgs-patched.lib.nixosSystem {
+          inherit (nixpkgs-patched-source) system;
           specialArgs.inputs = inputs;
           modules = attrValues self.asterModules ++ [{
             nixpkgs = {
