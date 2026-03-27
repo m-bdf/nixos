@@ -30,7 +30,10 @@
       enable = true;
       settings.default_session = {
         user = config.users.users.user.name;
-        command = "niri-session";
+        command =
+          "env MANAGERPID=$PPID ${lib.getExe pkgs.uwsm} aux exec ${
+            config.services.displayManager.sessionData.autologinSession
+          }.desktop";
       };
     };
 
@@ -40,4 +43,7 @@
     };
     upower.enable = true;
   };
+
+  powerManagement.enable = false;
+  users.manageLingering = false;
 }
