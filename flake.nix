@@ -34,8 +34,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    crane.url = "github:ipetkov/crane";
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
