@@ -20,7 +20,7 @@ in
   };
 
   programs.niri = {
-      startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
+    startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
     keybinds = {
       "Win+Space" = "${pkgs.uutils-procps}/bin/pkill wvkbd -RTMIN";
 
