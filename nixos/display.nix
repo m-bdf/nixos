@@ -19,17 +19,18 @@ in
     kmscon.useXkbConfig = true;
   };
 
-  programs = {
-    niri = {
+  programs.niri = {
       startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
-      keybinds."Win+Space" = "pkill wvkbd -RTMIN";
-    };
+    keybinds = {
+      "Win+Space" = "${pkgs.uutils-procps}/bin/pkill wvkbd -RTMIN";
 
-    light = {
-      enable = true;
-      brightnessKeys.enable = true;
+      XF86MonBrightnessUp = "xbacklight -inc 5";
+      XF86MonBrightnessDown = "xbacklight -dec 5";
     };
   };
+
+  hardware.acpilight.enable = true;
+  users.users.user.extraGroups = [ "video" ];
 
   home.services.gammastep = {
     enable = true;
