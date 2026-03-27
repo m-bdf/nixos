@@ -6,7 +6,6 @@
 
     settings = {
       use-xdg-base-directories = true;
-      flake-registry = "";
       lazy-locks = true;
       lazy-trees = true;
       eval-cores = 0;
