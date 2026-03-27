@@ -7,10 +7,8 @@ let
 
   initialLoginInner = pkgs.writeText "login-inner" ''
     export GC_NPROCS=1
-    export NIX_CONFIG='${
-      concatMapAttrsStringSep "\n"
-        (opt: val: "${opt} = ${toString val}")
-        (import (inputs.self + /flake.nix)).nixConfig
+    export NIX_CONFIG='import ${
+      config.home.xdg.configFile."nix/nix.conf".source
     }'
 
     PATH+=:${pkgs.nix}/bin

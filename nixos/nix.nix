@@ -10,7 +10,7 @@
   config = {
     nix = {
       channel.enable = false;
-      inherit (config.home.nix) extraOptions;
+      inherit (config.home.nix) settings extraOptions;
     };
 
     system = {
