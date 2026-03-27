@@ -233,7 +233,7 @@
         ];
       } // {
         aster = nixpkgs-patched.lib.nixosSystem {
-          inherit (nixpkgs-patched-source) system;
+          system = "x86_64-linux";
           specialArgs.inputs = inputs;
           modules = attrValues self.asterModules ++ [{
             nixpkgs = {
