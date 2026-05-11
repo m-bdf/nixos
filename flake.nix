@@ -114,8 +114,6 @@
       flake = false;
     };
 
-    resolved.url = "github:Rua/nixpkgs/systemd-resolved-mdns";
-
     dnshack = {
       url = "github:ettom/dnshack";
       flake = false;
