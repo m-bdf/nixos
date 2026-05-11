@@ -11,6 +11,7 @@
 
     "/boot" = {
       label = "BOOT";
+      fsType = "vfat";
       inherit options;
     };
 
