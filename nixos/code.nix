@@ -1,8 +1,4 @@
-{ inputs, config, pkgs, ... }:
-
-let
-  cfg = config.home.programs.vscode;
-in
+{ inputs, pkgs, ... }:
 
 {
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
@@ -12,9 +8,9 @@ in
   home = {
     home.packages = with pkgs; [ github-desktop ];
 
-    programs.vscode = {
+    programs.cursor = {
       enable = true;
-      package = pkgs.code-cursor;
+      mutableExtensionsDir = false;
 
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
@@ -39,10 +35,10 @@ in
     xdg = {
       configFile = {
         "GitHub Desktop".persist = true;
-        ${cfg.nameShort}.persist = true;
+        "Cursor".persist = true;
       };
       dataFile.keyrings.persist = true;
     };
-    home.file.${cfg.dataFolderName}.persist = true;
+    home.file.".cursor".persist = true;
   };
 }
