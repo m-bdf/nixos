@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 
 {
   imports = [ inputs.nix-index-database.homeModules.nix-index ];
@@ -11,8 +11,8 @@
 
     starship = {
       enable = true;
-      settings = { command_timeout = 2500; } // lib.importTOML
-        (pkgs.starship.src + /docs/public/presets/toml/nerd-font-symbols.toml);
+      presets = [ "nerd-font-symbols" ];
+      settings.command_timeout = 2500;
     };
 
     nix-index-database.comma.enable = true;
