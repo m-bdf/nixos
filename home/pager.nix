@@ -37,10 +37,10 @@ let
 
   moor = pkgs.moor.overrideAttrs {
     patchPhase = ''
-      sed -i '/"os"/a "os/exec"
+      sed -i '/import/a "os/exec"
         /No lexer/{ r ${exec-languess}
           a }\n if options.Lexer == nil {
-        }' internal/reader/reader.go
+        }' internal/reader/highlight.go
     '';
   };
 in

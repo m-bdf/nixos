@@ -1,9 +1,7 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-
-  nixpkgs.overlays = [ inputs.vscode-extensions.overlays.default ];
 
   home = {
     home.packages = with pkgs; [ github-desktop ];
@@ -20,14 +18,13 @@
         ];
         userSettings = {
           "update.mode" = "none";
+          "workbench.colorTheme" = "GitHub Dark Default";
           "terminal.external.linuxExec" = "xdg-terminal-exec";
           "terminal.integrated.cursorStyle" = "line";
           "terminal.integrated.cursorBlinking" = true;
           "terminal.integrated.fontLigatures.enabled" = true;
           "editor.fontLigatures" = true;
-          "workbench.colorTheme" = "GitHub Dark Default";
           "nix.enableLanguageServer" = true;
-          "nix.serverPath" = "nixd";
         };
       };
     };

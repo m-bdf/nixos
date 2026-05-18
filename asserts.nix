@@ -1,4 +1,4 @@
-{ _prefix, options, config, lib, modules, moduleType, extendModules, ... }@ self:
+{ _prefix, options, config, lib, modules, moduleType, extendModules, ... }@ args:
 
 with lib;
 
@@ -38,7 +38,7 @@ let
   let
     evalFreeform = module:
       evalModules {
-        specialArgs = self;
+        specialArgs = args;
         modules = [ module rec {
           freeformType = with types;
             either (attrsOf freeformType) unspecified;

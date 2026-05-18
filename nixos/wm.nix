@@ -11,7 +11,6 @@
 
     programs.niri = {
       enable = true;
-      package = pkgs.niri;
 
       startup = "${lib.getExe pkgs.swaybg} --image ${pkgs.fetchurl rec {
         passthru.submission = lib.importJSON inputs.sylveon-garden;
