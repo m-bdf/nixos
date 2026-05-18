@@ -3,12 +3,11 @@
 let
   pickLatest = pkgs.writeShellScript "pick-latest" ''
     while read pkg; do
-      nix derivation show nixpkgs#"$pkg" |
-      ${lib.getExe pkgs.jq} --arg pkg "$pkg" -r '
-        .derivations[] | .structuredAttrs // .env |
-        select(.name == .pname + "-" + .version) |
-        [$pkg, .version] | @tsv
-      '
+      nix derivation show nixpkgs#"$pkg" 2>/dev/null |
+      ${lib.getExe pkgs.jaq} --arg pkg "$pkg" \
+        '.derivations[] | .structuredAttrs // .env
+        | select(.name == .pname + "-" + .version)
+        | [$pkg, .version]' --to tsv &
     done | sort -k2Vr | head -1 | cut -f1
   '';
 in
