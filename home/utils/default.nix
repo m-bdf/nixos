@@ -69,7 +69,7 @@ in
       pkgs.zigStdenv.mkDerivation {
         name = "isatty_pager.so";
         buildCommand = ''
-          $CC ${./isatty.c} -Os -shared -o $out
+          $CC ${./isatty.c} -Os -static -shared -o $out
         '';
       };
   };
