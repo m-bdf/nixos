@@ -16,7 +16,7 @@ let
     nixComponents = inputs.nix.packages.${pkgs.stdenv.system};
   }).overrideAttrs (prev: {
     prePatch = ''
-      sed -i 's/type(true)/type() - 1/' \
+      sed -i 's/type<true>()/type()/' \
         nixd/lib/Eval/AttrSetProvider.cpp
 
       echo '${devirtualizeFile}' >> \
@@ -25,7 +25,7 @@ let
       sed -i '/explicit URIForFile/ s/ :.*/;/' \
         nixd/lspserver/include/lspserver/Protocol.h
 
-      mesonFlags='--default-library=static'
+      mesonFlags='--default-library=static -Db_asneeded=false'
     '';
 
     postPatch = ''
