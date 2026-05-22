@@ -13,6 +13,14 @@ let
 in
 
 {
+  programs.bash.interactiveShellInit = ''
+    if [ -n "$CURSOR_AGENT" ]; then
+      command_not_found_handle() {
+        comma --picker ${pickLatest} "$@"
+      }
+    fi
+  '';
+
   home.home.file = lib.concatMapAttrs (n: v: {
     ".cursor/${n}.json".text = lib.toJSON v;
   }) {
@@ -24,16 +32,5 @@ in
       nixos.command = lib.getExe pkgs.mcp-nixos;
     };
     permissions.mcpAllowlist = [ "*:*" ];
-
-    hooks = {
-      version = 1;
-      hooks.beforeShellExecution = [{
-        command = ''
-          command_not_found_handle() {
-            comma --picker ${pickLatest} "$@"
-          }
-        '';
-      }];
-    };
   };
 }
