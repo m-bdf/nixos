@@ -12,7 +12,7 @@ let
     }
   '';
 
-  nixd = (pkgs.callPackage inputs.nixd {
+  nixd = (pkgs.callPackage pkgs.nixd.src {
     nixComponents = inputs.nix.packages.${pkgs.stdenv.system};
   }).overrideAttrs (prev: {
     prePatch = ''
