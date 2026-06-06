@@ -14,15 +14,13 @@
       includeUserConf = false;
       allowBitmaps = false;
       defaultFonts =
-      let
-        fonts = [ "FiraCode Nerd Font" "Noto Color Emoji" ];
-      in
-      {
-        sansSerif = [ "Noto Sans" ] ++ fonts;
-        serif = [ "Noto Serif" ] ++ fonts;
-        monospace = fonts;
-        emoji = fonts;
-      };
+        let fonts = [ "FiraCode Nerd Font" "Noto Color Emoji" ];
+        in {
+          sansSerif = [ "Noto Sans" ] ++ fonts;
+          serif = [ "Noto Serif" ] ++ fonts;
+          monospace = fonts;
+          emoji = fonts;
+        };
     };
   };
 
