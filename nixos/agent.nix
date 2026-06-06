@@ -3,34 +3,46 @@
 let
   pickLatest = pkgs.writeShellScript "pick-latest" ''
     while read pkg; do
-      nix derivation show nixpkgs#"$pkg" 2>/dev/null |
+      nix derivation show nixpkgs#"$pkg" |
       ${lib.getExe pkgs.jaq} --arg pkg "$pkg" \
         '.derivations[] | .structuredAttrs // .env
         | select(.name == .pname + "-" + .version)
         | [$pkg, .version]' --to tsv &
-    done | sort -k2Vr | head -1 | cut -f1
+    done 2>/dev/null |
+    sort -k2Vr | head -1 | cut -f1
+  '';
+
+  runCmdline = pkgs.writeShellScript "run-cmdline" ''
+    command_not_found_handle() {
+      comma --picker ${pickLatest} "$@"
+    }
+
+    remove_absolute_path() {
+      for w; do
+        [[ $w =~ ^/[/[:alnum:]+]+$ ]] &&
+        eval "$w() { command ''${w##*/}" '"$@"; }'
+      done
+    }
+
+    set -T && trap '
+      eval remove_absolute_path "$BASH_COMMAND"
+    ' DEBUG && eval "$1"
   '';
 in
 
 {
-  programs.bash.interactiveShellInit = ''
-    if [ -n "$CURSOR_AGENT" ]; then
-      command_not_found_handle() {
-        comma --picker ${pickLatest} "$@"
-      }
-    fi
+  home.programs.fish.shellInit = ''
+    set -q CURSOR_AGENT && exec ${runCmdline} \
+      (string split0 -f3 </proc/$fish_pid/cmdline)
   '';
 
-  home.home.file = lib.concatMapAttrs (n: v: {
-    ".cursor/${n}.json".text = lib.toJSON v;
-  }) {
-    mcp.mcpServers = {
+  home.home.file.".cursor/mcp.json".text = lib.toJSON {
+    mcpServers = {
       nix = {
         command = lib.getExe pkgs.mcp-language-server;
         args = [ "--workspace" "\${workspaceFolder}" "--lsp" "nixd" ];
       };
       nixos.command = lib.getExe pkgs.mcp-nixos;
     };
-    permissions.mcpAllowlist = [ "*:*" ];
   };
 }
