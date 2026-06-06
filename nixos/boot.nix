@@ -1,49 +1,38 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, modulesPath, ... }:
 
 {
-  console.enable = false;
+  imports = [ /${modulesPath}/profiles/perlless.nix ];
+  system = {
+    forbiddenDependenciesRegexes = lib.mkForce [];
+    nixos-init.enable = true;
+  };
+
   boot = {
-    kernelParams = [ "quiet" "fbcon=map:null" ];
+    loader = {
+      efi.canTouchEfiVariables = true;
 
-    plymouth = {
-      enable = true;
-      theme = "blahaj";
-      themePackages = [ pkgs.plymouth-blahaj-theme ];
-    };
-
-    initrd.services.udev.packages = [
-      (pkgs.writeTextDir "/etc/udev/rules.d/90-vconsole.rules" "")
-    ];
-  };
-
-  services = {
-    udev.packages = [
-      (pkgs.writeTextDir "/etc/udev/rules.d/90-vconsole.rules" "")
-    ];
-
-    kmscon = {
-      enable = true;
-      hwRender = true;
-    };
-
-    greetd = {
-      enable = true;
-      settings.default_session = {
-        user = config.users.users.user.name;
-        command =
-          "env MANAGERPID=$PPID ${lib.getExe pkgs.uwsm} aux exec ${
-            config.services.displayManager.sessionData.autologinSession
-          }.desktop";
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 10;
       };
+      timeout = null;
     };
 
-    logind.settings.Login = {
-      HandleLidSwitch = "ignore";
-      HandlePowerKey = "hybrid-sleep";
+    kernelPackages = pkgs.linuxPackages_zen;
+
+    initrd = {
+      includeDefaultModules = false;
+      systemd.emergencyAccess = true;
     };
-    upower.enable = true;
   };
 
-  powerManagement.enable = false;
-  users.manageLingering = false;
+  home.xdg.stateFile = {
+    nixos = {
+      persist = true;
+      force = true;
+    };
+    systemd.persist = true;
+  };
+
+  preservation.preserveAt.state.directories = [ "/var/log" ];
 }

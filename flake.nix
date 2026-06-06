@@ -74,7 +74,10 @@
       flake = false;
     };
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     eza-themes = {
       url = "github:eza-community/eza-themes";

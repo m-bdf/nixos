@@ -13,6 +13,7 @@
       home = "/home";
       createHome = false;
       shell = pkgs.fish;
+      ignoreShellProgramCheck = true;
     };
   };
 
@@ -25,11 +26,4 @@
   };
 
   nix.settings.trusted-users = [ "@wheel" ];
-
-  programs.fish = {
-    enable = true;
-    useBabelfish = true;
-  };
-
-  home.xdg.stateFile.nixos.persist = true; # UIDs GIDs
 }

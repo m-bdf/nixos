@@ -41,7 +41,7 @@ in
       })
     ];
 
-    system.nixos-init.enable = mkForce false;
+    system.etc.overlay.mutable = mkForce true;
     console.enable = mkForce true;
     boot.kernelParams = [
       "plymouth.ignore-serial-consoles"

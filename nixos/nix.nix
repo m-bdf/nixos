@@ -21,8 +21,15 @@
     home-manager = {
       useGlobalPkgs = true;
       useUserPackages = true;
+      startAsUserService = true;
       extraSpecialArgs.name = "user";
       users.user = lib.mkAliasDefinitions options.home;
+    };
+
+    systemd.user.services.home-manager = {
+      unitConfig.DefaultDependencies = false;
+      wantedBy = [ "basic.target" ];
+      before = [ "basic.target" ];
     };
   };
 }

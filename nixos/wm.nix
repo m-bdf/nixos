@@ -21,7 +21,7 @@
 
     environment = {
       systemPackages = with pkgs; [ wl-clipboard-rs ];
-      variables.NIXOS_OZONE_WL = "1";
+      sessionVariables.NIXOS_OZONE_WL = "1";
     };
 
     home.xdg.configFile."niri/config.kdl".text = ''

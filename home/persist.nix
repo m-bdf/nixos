@@ -5,7 +5,7 @@ with lib;
 let
   persistableFileModule = { config, ... }: {
     options.persist = mkEnableOption "persisting this directory";
-    config.enable = mkDefault (!config.persist);
+    config.enable = mkIf config.persist false;
   };
 
   persistableFilesOption = mkOption {

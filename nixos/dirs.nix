@@ -16,6 +16,7 @@
   preservation.preserveAt.state.directories = with lib;
     concatMap (f: optional f.persist rec {
       directory = f.target;
+      inInitrd = mkIf f.force true;
       mountOptions = mkIf (f.executable == true) [ "exec" ];
 
       user = config.users.users.user.name;

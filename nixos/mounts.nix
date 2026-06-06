@@ -1,3 +1,5 @@
+{ config, ... }:
+
 {
   fileSystems =
   let
@@ -6,7 +8,7 @@
   {
     "/" = {
       fsType = "tmpfs";
-      options = options ++ [ "size=1G" "mode=0755" ];
+      options = options ++ [ "mode=755" ];
     };
 
     "/boot" = {
@@ -18,17 +20,23 @@
     "/nix" = {
       label = "nixos";
       fsType = "ext4";
-      options = options ++ [ "exec" ];
+      inherit options;
+    };
+
+    ${config.home.xdg.configHome} = {
+      fsType = "tmpfs";
+      inherit options;
     };
   };
 
+  boot.nixStoreMountOpts = [ "exec" ];
+
   preservation = {
     enable = true;
-    preserveAt.state = {
-      persistentStoragePath = "/nix";
-      commonMountOptions = [ "noexec" ];
-    };
+    preserveAt.state.persistentStoragePath = "/nix";
   };
+
+  system.etc.overlay.mutable = false;
 
   swapDevices = [{ label = "swap"; }];
 }
