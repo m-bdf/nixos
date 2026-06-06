@@ -95,7 +95,7 @@
     };
 
     niri = {
-      url = "github:m-bdf/niri";
+      url = "github:m-bdf/niri/spawn-wait-scope-before-exec";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         rust-overlay.follows = "rust-overlay";
