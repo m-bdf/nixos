@@ -19,12 +19,11 @@
     let
       features = with pkgs;
         runCommandLocal "features.conf" {
-          nativeBuildInputs = [ nixVersions.latest jaq ];
+          nativeBuildInputs = [ nix jaq ];
         } ''
-          { { nix __dump-xp-features && ${lib.getExe nix} __dump-xp-features
-            } | jaq -sr '"experimental-features = \(add | keys | join(" "))"'
-            ${lib.getExe nix} --offline config show | grep system-features
-          } > $out
+          nix --offline --experimental-features "$(
+            nix __dump-xp-features | jaq -r 'keys[]'
+          )" config show | grep features > $out
         '';
     in
       "include ${features}";
