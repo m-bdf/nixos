@@ -11,7 +11,6 @@ in
     };
 
     build.activationPackage = config.home.lib.mkToplevelOption;
-    environment.path = config.home.lib.mkPathOption;
 
     environment.files.prootStatic = lib.mkOption {
       apply = _: droidPkgs."prootTermux-${arch}";
@@ -44,11 +43,10 @@ in
     };
 
     environment.sessionVariables =
-    let
-      dnshack = pkgs.callPackage inputs.dnshack {};
-    in {
-      DNSHACK_RESOLVER_CMD = dnshack + /bin/dnshackresolver;
-      LD_PRELOAD = dnshack + /lib/libdnshackbridge.so;
-    };
+      let dnshack = pkgs.callPackage inputs.dnshack {};
+      in {
+        DNSHACK_RESOLVER_CMD = dnshack + /bin/dnshackresolver;
+        LD_PRELOAD = dnshack + /lib/libdnshackbridge.so;
+      };
   };
 }

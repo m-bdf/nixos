@@ -33,11 +33,6 @@
       "org/gnome/desktop/wm/preferences".button-layout = "";
     };
 
-    qt = {
-      enable = true;
-      platformTheme.name = "gtk3";
-    };
-
     xdg.configFile."niri/config.kdl".text = ''
       cursor { xcursor-theme "phinger-cursors-dark"; }
       prefer-no-csd
