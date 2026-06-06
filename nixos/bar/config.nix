@@ -1,8 +1,9 @@
 pkgs:
 
+with pkgs;
+
 let
-  spawn = pkg:
-    "niri msg action spawn -- ${pkgs.lib.getExe pkgs.${pkg}}";
+  spawn = pkg: "elephant activate 'runner;generic;run;${lib.getExe pkg};'";
 in
 
 {
@@ -17,7 +18,7 @@ in
     interval = 1;
     format = "{:%A %d %B %Y %X}";
     tooltip = false;
-    on-click = spawn "walker";
+    on-click = spawn walker;
   };
 
   network = {
@@ -26,28 +27,29 @@ in
     format-wifi = "{icon}  {essid}";
     format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
     tooltip-format = "{ipaddr}";
-    on-click = spawn "iwgtk";
-    on-click-right = spawn "trayscale";
+    on-click = spawn iwgtk;
+    on-click-right = spawn trayscale;
   };
 
   bluetooth = {
     format = "󰂲  Disconnected";
     format-connected = "󰂱  {device_alias}";
-    on-click = spawn "overskride";
+    tooltip-format = "{device_alias}";
+    on-click = spawn overskride;
   };
 
   wireplumber = {
     format-muted = "󰝟  {volume}%";
     format = "{icon}  {volume}%";
     format-icons = [ "󰕿" "󰖀" "󰕾" ];
-    on-click = spawn "pwvucontrol";
-    on-click-right = spawn "helvum";
+    on-click = spawn pwvucontrol;
+    on-click-right = spawn crosspipe;
   };
 
   battery = {
     format = "{icon}  {capacity}%";
     format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
     states.critical = 5;
-    on-click = spawn "hyprlock";
+    on-click = spawn hyprlock;
   };
 }

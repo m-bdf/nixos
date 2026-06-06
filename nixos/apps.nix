@@ -1,42 +1,66 @@
 { lib, pkgs, ... }:
 
+let
+  ghostty = pkgs.applyPatches {
+    src = pkgs.ghostty;
+    patchPhase = ''
+      sed -i 's/--gtk-single-instance=true/+new-window/' \
+        share/applications/*
+    '';
+  };
+
+  xdg-terminal-exec = pkgs.xdg-terminal-exec.overrideAttrs (prev: {
+    postFixup = ''
+      ${lib.trim prev.postFixup} --prefix PATH : ${
+        with pkgs; lib.makeBinPath [ findutils gawk ]
+      }
+    '';
+  });
+in
+
 {
-  environment.systemPackages = with pkgs;
-  let
-    wrapSpawn = name: cmd: writeShellScriptBin name ''
-      niri msg action spawn -- sh -c 'cd "$0" && ${cmd}' "$PWD" "$@"
-    '';
-    xdg-open = wrapSpawn "xdg-open" ''
-      sleep 1 && ${glib}/bin/gio open "$@"
-    '';
-    xdg-term = wrapSpawn "xdg-terminal-exec" ''
-      ${lib.getExe xdg-terminal-exec} "''${@:-$SHELL}"
-    '';
-  in
-    [ xdg-open xdg-term nautilus ];
+  systemd.oomd.enableUserSlices = true;
 
-  systemd = {
-    oomd.enableUserSlices = true;
-    user.services.elephant.path = lib.mkForce [];
-  };
-  services.elephant.enable = true;
+  nixpkgs.overlays = [
+    (final: prev: {
+      xdg-utils = final.writeShellScriptBin "xdg-open" ''
+        cmd="cd ''${PWD@Q} && ${final.glib}/bin/gio open ''${@@Q}"
+        elephant activate "runner;generic;run;sh;-c ''${cmd@Q}"
+      '';
+    })
+  ];
 
-  programs = {
-    niri.keybinds."Mod+Return" = lib.getExe pkgs.walker;
-
-    nautilus-open-any-terminal.enable = true;
-    dconf.profiles.user.databases = [{
-      settings."com.github.stunkymonkey.nautilus-open-any-terminal" = {
-        terminal = "custom";
-        custom-local-command = "xdg-terminal-exec";
-      };
-      lockAll = true;
-    }];
+  environment = {
+    systemPackages = with pkgs; [
+      (symlinkJoin {
+        inherit (nautilus) name meta;
+        paths = [ nautilus nautilus-python ];
+      })
+    ];
+    pathsToLink = [ "/share/nautilus-python/extensions" ];
   };
 
+  programs.niri.keybinds."Mod+Return" = "walker";
   home = {
+    services = {
+      walker.enable = true;
+      elephant = {
+        enable = true;
+        package = pkgs.elephant.override {
+          enabledProviders = [
+            "desktopapplications" "runner"
+            "files" "clipboard" "websearch"
+          ];
+        };
+      };
+    };
+    systemd.user.services.elephant = {
+      Unit.After = [ "graphical-session.target" ];
+    };
+
     programs.ghostty = {
       enable = true;
+      package = ghostty;
       settings = {
         resize-overlay = "never";
         app-notifications = false;
@@ -45,8 +69,12 @@
     };
 
     xdg = {
-      cacheFile.walker.persist = true;
-      configFile.walker.persist = true;
+      terminal-exec = {
+        enable = true;
+        package = xdg-terminal-exec;
+      };
+
+      cacheFile.elephant.persist = true;
     };
   };
 }

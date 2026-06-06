@@ -22,7 +22,7 @@ in
   programs.niri = {
     startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
     keybinds = {
-      "Win+Space" = "${pkgs.uutils-procps}/bin/pkill wvkbd -RTMIN";
+      "Win+Space" = "pkill wvkbd -RTMIN";
 
       XF86MonBrightnessUp = "xbacklight -inc 5";
       XF86MonBrightnessDown = "xbacklight -dec 5";

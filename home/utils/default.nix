@@ -3,74 +3,43 @@
 with lib;
 
 let
-  mkReplacement = oldName: newDep: rec {
+  uutils = attrValues (filterAttrs (n: pkg: hasPrefix "uutils-" n) pkgs);
+  uutilsStable = reverseList (filter (pkg: !hasInfix "-unstable-" pkg) uutils);
+
+  mkReplacement = pkg: rec {
     oldDependency =
-      pkgs.${oldName} or pkgs."gnu${oldName}";
-    newDependency = pkgs.runCommandLocal
-      oldDependency.name {} "ln -s ${newDep} $out";
+      let oldName = removePrefix "uutils-" pkg.pname;
+      in getDev pkgs.${oldName} or pkgs."gnu${oldName}" or pkg;
+
+    newDependency =
+      let newName = substring 44 (-1) oldDependency;
+      in pkgs.runCommandLocal newName {} "ln -s ${pkg} $out";
   };
-
-  uutilsReplacements =
-    mapAttrs' (n: nameValuePair {
-      uutils-coreutils = "coreutils-prefixed";
-      uutils-coreutils-noprefix = "coreutils";
-    }.${n} or (removePrefix "uutils-" n))
-      (filterAttrs (n: pkg: hasPrefix "uutils-" n && !hasInfix "-unstable-" pkg.version) pkgs);
-
-  replacements = mapAttrsToList mkReplacement uutilsReplacements;
-  oldDeps = concatLines (catAttrs "oldDependency" replacements);
-
-  replaceDirectDependencies = args:
-  let
-    drv = pkgs.replaceDirectDependencies args;
-
-    leftover = pkgs.runCommandLocal "leftover" {
-      inherit oldDeps;
-      passAsFile = [ "oldDeps" ];
-      exportReferencesGraph = [ "graph" drv ];
-    } ''
-      grep -f $oldDepsPath graph > $out || true
-    '';
-  in
-    if readFile leftover == "" then drv
-    else drv.overrideAttrs {
-      __structuredAttrs = true;
-      unsafeDiscardReferences.out = true;
-    };
 in
 
 {
-  options.home = {
-    activationPackage = config.lib.mkToplevelOption;
-    path = config.lib.mkPathOption;
-  };
+  options.home.activationPackage = config.lib.mkToplevelOption;
 
   config = {
-    lib = {
-      mkToplevelOption = mkOption {
-        apply = drv:
-          pkgs.replaceDependencies.override {
-            inherit replaceDirectDependencies;
-          } {
-            inherit drv replacements;
-            verbose = false;
-          };
-      };
-
-      mkPathOption = mkOption {
-        apply = drv: drv.override (prev: {
-          paths = prev.paths ++ concatLists
-            (catAttrs "propagatedBuildInputs" prev.paths);
-        });
-      };
+    lib.mkToplevelOption = mkOption {
+      apply = drv:
+        pkgs.replaceDependencies {
+          inherit drv;
+          replacements = map mkReplacement uutilsStable;
+          verbose = false;
+        };
     };
 
-    home.sessionVariables.LD_PRELOAD =
-      pkgs.zigStdenv.mkDerivation {
-        name = "isatty_pager.so";
-        buildCommand = ''
-          $CC ${./isatty.c} -Os -static -shared -o $out
-        '';
-      };
+    home = {
+      packages = catAttrs "oldDependency" (map mkReplacement uutils);
+
+      sessionVariables.LD_PRELOAD =
+        pkgs.zigStdenv.mkDerivation {
+          name = "isatty_pager.so";
+          buildCommand = ''
+            $CC ${./isatty.c} -Os -static -shared -o $out
+          '';
+        };
+    };
   };
 }
