@@ -19,10 +19,5 @@
       };
       corePackages = lib.mkForce [];
     };
-
-    documentation.man.cache = {
-      enable = false;
-      generateAtRuntime = false;
-    };
   };
 }
