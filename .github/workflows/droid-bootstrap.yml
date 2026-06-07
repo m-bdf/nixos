@@ -20,7 +20,7 @@ jobs:
         with: ${{ secrets }}
       - uses: ./.github/actions/setup-arm-builder
 
-      - run: nix build .#nixOnDroidBootstrapZips
+      - run: nix build .#nixOnDroidBootstrapZips -L
       - uses: actions/upload-pages-artifact@main
         with:
           path: result
