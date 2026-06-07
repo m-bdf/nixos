@@ -29,9 +29,12 @@ runs:
       with:
         install_url: file:///tmp/nix-install
         extra_nix_config: |
+          accept-flake-config = true
           lazy-locks = true
           lazy-trees = true
+          eval-cores = 0
           builders-use-substitutes = true
+          keep-going = true
 
     - uses: cachix/cachix-action@master
       with:
