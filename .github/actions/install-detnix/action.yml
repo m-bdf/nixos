@@ -31,7 +31,6 @@ runs:
         extra_nix_config: |
           lazy-locks = true
           lazy-trees = true
-          eval-cores = 0
           builders-use-substitutes = true
 
     - uses: cachix/cachix-action@master
