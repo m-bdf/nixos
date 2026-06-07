@@ -112,7 +112,7 @@
       flake = false;
     };
 
-    fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
+    # fprintd.url = "github:adisbladis/nixpkgs/security.pam.fprintd";
 
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
@@ -210,7 +210,7 @@
           ];
         };
 
-      nixpkgs-patched-source = with pkgsFor "x86_64-linux";
+      nixpkgs-aster-source = with pkgsFor "x86_64-linux";
         runCommand "source" {} ''
           cp -R ${nixpkgs} $out && chmod +w $out/nixos/lib
           sed -i $out/nixos/lib/make-disk-image.nix \
@@ -218,7 +218,7 @@
             -e 's|"ext4"|config.fileSystems."/".fsType or &|'
         '';
 
-      nixpkgs-patched = builtins.getFlake nixpkgs-patched-source.outPath;
+      nixpkgs-aster = builtins.getFlake nixpkgs-aster-source.outPath;
     in
       with inputs.nixos-hardware.nixosModules;
       mapAttrs mkSystem {
@@ -227,8 +227,8 @@
             hardware.framework.laptop13.audioEnhancement.enable = true;
           }
         ];
-      } // {
-        aster = nixpkgs-patched.lib.nixosSystem {
+      } // optionalAttrs (!inPureEvalMode) {
+        aster = nixpkgs-aster.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs.inputs = inputs;
           modules = attrValues self.asterModules ++ [{
