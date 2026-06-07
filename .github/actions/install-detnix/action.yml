@@ -33,6 +33,7 @@ runs:
           lazy-locks = true
           lazy-trees = true
           eval-cores = 0
+          max-jobs = 1
           builders-use-substitutes = true
           keep-going = true
 
