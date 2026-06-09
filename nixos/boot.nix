@@ -28,12 +28,12 @@
 
   home = {
     xdg.stateFile = {
-    nixos = {
-      persist = true;
-      force = true;
+      nixos = {
+        persist = true;
+        force = true;
+      };
+      systemd.persist = true;
     };
-    systemd.persist = true;
-  };
     home.file."/var/log".persist = true;
   };
 }
