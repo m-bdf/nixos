@@ -23,7 +23,7 @@ jobs:
       - uses: ./.github/actions/install-detnix
         with: ${{ secrets }}
 
-      - run: nix flake check -L
+      - run: nix flake check -j1 -L
 
   respository-chore:
     needs: nix-flake-check
