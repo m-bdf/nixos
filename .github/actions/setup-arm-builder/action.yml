@@ -37,5 +37,5 @@ runs:
       uses: gacts/run-and-post-run@main
       with:
         run: echo >> $GITHUB_ENV NIX_CONFIG=
-          builders = ssh-ng://arm-builder aarch64-linux
+          builders = arm-builder aarch64-linux
         post: ssh arm-builder -f killall ssh
