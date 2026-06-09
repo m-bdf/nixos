@@ -1,11 +1,11 @@
-{ config, ... }:
+{ config, lib, ... }:
+
+let
+  options = [ "nosuid" "nodev" "noexec" "noatime" ];
+in
 
 {
-  fileSystems =
-  let
-    options = [ "nosuid" "nodev" "noexec" "noatime" ];
-  in
-  {
+  fileSystems = {
     "/" = {
       fsType = "tmpfs";
       options = options ++ [ "mode=755" ];
@@ -23,9 +23,9 @@
       inherit options;
     };
 
-    ${config.home.xdg.configHome} = {
+    "/nix/var/nix/builds" = {
       fsType = "tmpfs";
-      inherit options;
+      options = options ++ [ "exec" ];
     };
   };
 
@@ -37,6 +37,13 @@
   };
 
   system.etc.overlay.mutable = false;
+
+  systemd.mounts = [{
+    where = config.home.xdg.configHome;
+    what = "tmpfs";
+    type = "tmpfs";
+    options = lib.mkMerge options;
+  }];
 
   swapDevices = [{ label = "swap"; }];
 }

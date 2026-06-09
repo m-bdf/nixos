@@ -17,7 +17,6 @@
       pulseSupport = false;
       sndioSupport = false;
       traySupport = false;
-      # udevSupport = false;
       upowerSupport = false;
     };
 

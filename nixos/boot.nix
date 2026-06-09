@@ -26,13 +26,14 @@
     };
   };
 
-  home.xdg.stateFile = {
+  home = {
+    xdg.stateFile = {
     nixos = {
       persist = true;
       force = true;
     };
     systemd.persist = true;
   };
-
-  preservation.preserveAt.state.directories = [ "/var/log" ];
+    home.file."/var/log".persist = true;
+  };
 }
