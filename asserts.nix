@@ -5,6 +5,15 @@ with lib;
 let
   dropPrefix = drop (length _prefix);
 
+  disabledModules = genAttrs' collectedModules (m:
+    nameValuePair m.key (extendModules {
+      modules = [{
+        disabledModules = [m];
+        options = removeAttrs m.options [ "_module" ];
+        inherit (m) imports;
+      }];
+    }));
+
   mkRedundantAssert = opt: def:
   let
     removeAttrByPath = path: set:
@@ -12,26 +21,18 @@ let
         ${head path} = removeAttrByPath (tail path) set.${head path} or {};
       };
 
-    noDef = extendModules {
+    noDef = disabledModules.${def.key}.extendModules {
       modules = [{
-        disabledModules = [def];
-        options = removeAttrs def.options [ "_module" ];
         config = removeAttrByPath (dropPrefix opt.loc) def.config;
-        inherit (def) imports;
       }];
     };
 
-    noDefVal = getAttrFromPath (dropPrefix opt.loc) noDef.config;
-    onlyDefVal = getAttrFromPath (dropPrefix opt.loc) def.config;
-
-    prettyOpt = "option `${showOption opt.loc}' defined in `${def.file}'";
-    prettyVal = generators.toPretty { multiline = false; } onlyDefVal;
+    getVal = m: getAttrFromPath (dropPrefix opt.loc) m.config;
+    prettyVal = generators.toPretty { multiline = false; } (getVal def);
   in
   {
-    assertion = builtins.traceVerbose "Checking the ${prettyOpt}…"
-      (!(builtins.tryEval (noDefVal == opt.value)).value);
-
-    message = "The ${prettyOpt} is set to the redundant value `${prettyVal}'.";
+    assertion = !(builtins.tryEval (getVal disabledModules.${def.key} == opt.value && getVal noDef == opt.value)).value;
+    message = "The option `${showOption opt.loc}' is defined in `${def.file}' to the redundant value `${prettyVal}'.";
   };
 
   collectedModules =
@@ -88,10 +89,13 @@ let
 in
 
 {
-  options.assertions = mkOption {};
+  options.assertions = mkOption {
+    apply = v: builtins.parallel (catAttrs "assertion" v) v;
+  };
+
   config.assertions =
     forEach config.warnings or []
       (message: { assertion = false; inherit message; }) ++
     concatMap mkRedundantAsserts
-      (collect isOption (removeAttrs options [ "assertions" "warnings" "meta" ])); # meta tmp
+      (collect isOption (removeAttrs options [ "assertions" ]));
 }
