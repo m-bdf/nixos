@@ -34,5 +34,13 @@
     ln -s $(${pkgs.fontconfig}/bin/fc-match monospace -f %{file}) $out
   '';
 
-  home.programs.ghostty.settings.font-family = [ "monospace" "emoji" ];
+  home.programs = {
+    ghostty.settings.font-family = [ "monospace" "emoji" ];
+
+    zed-editor.userSettings = {
+      ui_font_family = "Noto Sans";
+      buffer_font_family = "FiraCode Nerd Font";
+      buffer_line_height = "standard";
+    };
+  };
 }

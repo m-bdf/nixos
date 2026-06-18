@@ -1,41 +1,56 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  programs.nix-ld.enable = true;
 
   home = {
     home.packages = with pkgs; [ github-desktop ];
 
-    programs.cursor = {
+    programs.zed-editor = {
       enable = true;
-      mutableExtensionsDir = false;
+      extensions = [ "nix" "toml" ];
 
-      profiles.default = {
-        extensions = with pkgs.vscode-extensions; [
-          github.github-vscode-theme
-          mkhl.direnv
-          jnoortheen.nix-ide
-        ];
-        userSettings = {
-          "update.mode" = "none";
-          "workbench.colorTheme" = "GitHub Dark Default";
-          "terminal.external.linuxExec" = "xdg-terminal-exec";
-          "terminal.integrated.cursorStyle" = "line";
-          "terminal.integrated.cursorBlinking" = true;
-          "terminal.integrated.fontLigatures.enabled" = true;
-          "editor.fontLigatures" = true;
-          "nix.enableLanguageServer" = true;
+      mutableUserSettings = false;
+      mutableUserKeymaps = false;
+      mutableUserTasks = false;
+      mutableUserDebug = false;
+
+      userSettings = {
+        project_panel.dock = "left";
+        outline_panel.button = false;
+        collaboration_panel.button = false;
+        git_panel.dock = "left";
+
+        agent = {
+          dock = "right";
+          sidebar_side = "right";
         };
+        close_panel_on_toggle = true;
+
+        debugger.button = false;
+        terminal = {
+          button = false;
+          shell.program = "xdg-terminal-exec";
+        };
+
+        code_lens = "on";
+        inlay_hints.enabled = true;
+        diagnostics.inline.enabled = true;
+        session.trust_all_worktrees = true;
+        languages.Nix.language_servers = [ "nixd" ];
       };
     };
 
     xdg = {
-      configFile = {
-        "GitHub Desktop".persist = true;
-        "Cursor".persist = true;
+      configFile."GitHub Desktop".persist = true;
+      dataFile = {
+        keyrings.persist = true;
+        zed = {
+          persist = true;
+          executable = true;
+        };
       };
-      dataFile.keyrings.persist = true;
     };
-    home.file.".cursor".persist = true;
   };
 }
