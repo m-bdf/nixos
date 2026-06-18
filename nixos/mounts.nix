@@ -2,6 +2,7 @@
 
 let
   options = [ "nosuid" "nodev" "noexec" "noatime" ];
+  buildDir = config.nix.settings.build-dir or "/nix/var/nix/builds";
 in
 
 {
@@ -23,13 +24,17 @@ in
       inherit options;
     };
 
-    "/nix/var/nix/builds" = {
-      fsType = "tmpfs";
-      options = options ++ [ "exec" ];
+    ${buildDir} = {
+      device = buildDir;
+      fsType = "none";
+      options = [ "bind" "exec" ];
     };
   };
 
-  boot.nixStoreMountOpts = [ "exec" ];
+  boot = {
+    nixStoreMountOpts = [ "ro" "exec" ];
+    tmp.useTmpfs = true;
+  };
 
   preservation = {
     enable = true;
