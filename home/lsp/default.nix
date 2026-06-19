@@ -41,7 +41,7 @@ let
       ' nixd/include/nixd/Controller/Configuration.h
 
       sed -Ei 's/.+\*(.+), (.+).expr/(\1->Nixpkgs = *\2.value/
-        /::fetchConfig/,$d' nixd/lib/Controller/Configuration.cpp
+        /::fetch/,$d; /fetch/d' nixd/lib/Controller/Configuration.cpp
 
       sed -Ei 's/ (In|Out)/& = nullptr/; / State/i public: \
         static inline' nixd/include/nixd/Eval/AttrSetProvider.h
