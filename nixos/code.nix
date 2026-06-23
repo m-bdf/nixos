@@ -39,6 +39,7 @@
         diagnostics.inline.enabled = true;
         session.trust_all_worktrees = true;
         languages.Nix.language_servers = [ "nixd" ];
+        format_on_save = "off";
       };
     };
 
