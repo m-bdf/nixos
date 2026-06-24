@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   imports = [ inputs.nix-index-database.homeModules.nix-index ];
@@ -6,7 +6,9 @@
   programs = {
     fish = {
       enable = true;
+      package = pkgs.fishMinimal;
       interactiveShellInit = "set fish_greeting";
+      preferAbbrs = true;
     };
 
     starship = {
@@ -25,11 +27,8 @@
     eza = {
       enable = true;
       extraOptions = [
-        "--header"
-        "--icons"
-        "--hyperlink"
-        "--classify"
-        "--mounts"
+        "--header" "--icons" "--hyperlink"
+        "--smart-group" "--git" "--mounts"
       ];
     };
 
@@ -38,7 +37,7 @@
 
   home = {
     sessionVariables.STARSHIP_CACHE =
-      "${config.xdg.cacheHome}/starship"; #starship/896
+      "$XDG_CACHE_HOME/starship"; #starship/896
 
     packages = with pkgs; [ fd ripgrep sd ];
   };
