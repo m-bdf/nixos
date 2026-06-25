@@ -40,10 +40,13 @@ in
     pathsToLink = [ "/share/nautilus-python/extensions" ];
   };
 
-  programs.niri.keybinds."Mod+Return" = "walker";
   home = {
+    wayland.keybinds."Mod+Return" = "walker";
     services = {
-      walker.enable = true;
+      walker = {
+        enable = true;
+        systemd.enable = true;
+      };
       elephant = {
         enable = true;
         package = pkgs.elephant.override {
@@ -53,9 +56,6 @@ in
           ];
         };
       };
-    };
-    systemd.user.services.elephant = {
-      Unit.After = [ "graphical-session.target" ];
     };
 
     programs.ghostty = {
