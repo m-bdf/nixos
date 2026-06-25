@@ -90,7 +90,7 @@ in
 
 {
   options.assertions = mkOption {
-    apply = v: builtins.parallel (catAttrs "assertion" v) v;
+    # apply = v: builtins.parallel (catAttrs "assertion" v) v;
   };
 
   config.assertions =
