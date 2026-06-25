@@ -5,7 +5,7 @@ with lib;
 let
   arch = removeSuffix "-linux" pkgs.stdenv.system;
 
-  initialLoginInner = pkgs.writeText "login-inner" ''
+  initialLoginInner = pkgs.writeShellScript "login-inner" ''
     export GC_NPROCS=1
     export NIX_CONFIG='import ${
       config.home.xdg.configFile."nix/nix.conf".source
@@ -47,7 +47,7 @@ in
   };
 
   config.environment.packages = [
-    (pkgs.writeScriptBin "nod-update" ''
+    (pkgs.writeShellScriptBin "nod-update" ''
       ${getExe pkgs.xh} https://m-bdf.github.io/nixos/activate-${arch}.sh | sh
     '')
   ];
