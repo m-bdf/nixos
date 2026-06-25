@@ -21,10 +21,14 @@ let
       src =
         let release = inputs.nix.packages."${arch}-linux".binaryTarball;
         in release + /nix-${getVersion release}-${arch}-linux.tar.xz;
+
+      postUnpack = ''
+        find -path '*/bin/sh' -execdir ln -s sh bash ';'
+      '';
     };
 
     initialPackageInfo =
-      import (nixDirectory + /nix-support/package-info.nix) // prev;
+      import (nixDirectory + /nix-support/package-info.nix);
 
     config = recursiveUpdate (extendModules {
       modules = [{
