@@ -29,16 +29,18 @@ let
 in
 
 {
-  options.programs.niri.keybinds = lib.mkOption {
-    type = with lib.types; attrsOf nonEmptyStr;
-    apply = lib.mapAttrs (keys: cmd: ''spawn-sh "${cmd}"'');
-  };
+  home-manager.sharedModules = [{
+    options.wayland.keybinds = lib.mkOption {
+      type = with lib.types; attrsOf nonEmptyStr;
+      apply = lib.mapAttrs (keys: cmd: ''spawn-sh "${cmd}"'');
+    };
+  }];
 
-  config.home.xdg.configFile."niri/config.kdl".text = ''
+  home.xdg.configFile."niri/config.kdl".text = ''
     binds {
       ${lib.concatMapAttrsStringSep "\n  "
         (keys: action: "${keys} { ${action}; }")
-        (actions // config.programs.niri.keybinds)}
+        (actions // config.home.wayland.keybinds)}
     }
 
     hotkey-overlay { skip-at-startup; }

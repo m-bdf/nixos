@@ -31,7 +31,14 @@
       settings.default_session = {
         user = config.users.users.user.name;
         command =
-          "env MANAGERPID=$PPID ${lib.getExe pkgs.uwsm} aux exec ${
+        let
+          uwsm = pkgs.uwsm.override {
+            fumonSupport = false;
+            uuctlSupport = false;
+            uwsmAppSupport = false;
+          };
+        in
+          "env MANAGERPID=$PPID ${lib.getExe uwsm} aux exec ${
             config.services.displayManager.sessionData.autologinSession
           }.desktop";
       };

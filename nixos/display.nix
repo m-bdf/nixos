@@ -1,15 +1,24 @@
 { lib, pkgs, ... }:
 
-let
-  wvkbd = pkgs.wvkbd.overrideAttrs {
-    patchPhase = ''
-      sed -i 's/NumLayouts - 1/NumLayouts/' main.c keyboard.c
-    '';
-  };
-in
-
 {
-  i18n.defaultLocale = "en_IE.UTF-8";
+  hardware.acpilight.enable = true;
+  users.users.user.extraGroups = [ "video" ];
+  home = {
+    wayland.keybinds = {
+      XF86MonBrightnessUp = "xbacklight -inc 5";
+      XF86MonBrightnessDown = "xbacklight -dec 5";
+    };
+
+    services.gammastep = {
+      enable = true;
+      provider = "geoclue2";
+    };
+  };
+  services = {
+    geoclue2.submitData = true;
+    automatic-timezoned.enable = true;
+  };
+  time.timeZone = lib.mkForce "UTC";
 
   systemd = {
     services.systemd-timedated = {
@@ -26,32 +35,5 @@ in
       ExecStartPre = "-umount %E/%J";
       ExecStart = "mount %S/%P %E/%J -Bro X-mount.nocanonicalize";
     };
-  };
-
-  time.timeZone = lib.mkForce "UTC";
-  services = {
-    automatic-timezoned.enable = true;
-    geoclue2.submitData = true;
-
-    xserver.xkb.layout = "eu";
-    kmscon.useXkbConfig = true;
-  };
-
-  programs.niri = {
-    startup = "${lib.getExe wvkbd} -L 250 --hidden --landscape-layers index";
-    keybinds = {
-      "Win+Space" = "pkill wvkbd -RTMIN";
-
-      XF86MonBrightnessUp = "xbacklight -inc 5";
-      XF86MonBrightnessDown = "xbacklight -dec 5";
-    };
-  };
-
-  hardware.acpilight.enable = true;
-  users.users.user.extraGroups = [ "video" ];
-
-  home.services.gammastep = {
-    enable = true;
-    provider = "geoclue2";
   };
 }
