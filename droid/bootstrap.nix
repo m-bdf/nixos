@@ -24,7 +24,7 @@ let
     };
 
     initialPackageInfo =
-      import (nixDirectory + /nix-support/package-info.nix);
+      import (nixDirectory + /nix-support/package-info.nix) // prev;
 
     config = recursiveUpdate (extendModules {
       modules = [{
