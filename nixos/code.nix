@@ -64,7 +64,6 @@ in
     xdg = {
       configFile."GitHub Desktop".persist = true;
       dataFile.keyrings.persist = true;
-
       stateFile.zed = {
         persist = true;
         executable = true;

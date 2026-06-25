@@ -1,8 +1,7 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
-  languess = pkgs.writeScript "languess.js" ''
-    #!${lib.getExe pkgs.bun}
+  languess = pkgs.writers.writeJS "languess.js" {} ''
     import hljs from '${inputs.highlightjs}';
 
     const result = hljs.highlightAuto(await Bun.stdin.text());

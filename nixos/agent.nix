@@ -27,7 +27,17 @@ in
     zed-editor = {
       enableMcpIntegration = true;
       extensions = [ "mcp-server-sequential-thinking" ];
-      userSettings.agent.tool_permissions.default = "allow";
+
+      userSettings = {
+        language_models.opencode.show_zen_models = false;
+        agent = {
+          default_model = {
+            provider = "opencode";
+            model = "go/deepseek-v4-flash";
+          };
+          tool_permissions.default = "allow";
+        };
+      };
     };
 
     mcp = {
