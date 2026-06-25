@@ -26,6 +26,13 @@
     };
   };
 
+  systemd.suppressedSystemUnits = [
+    "systemd-machine-id-commit.service"
+  ];
+  preservation.preserveAt.state.files = [
+    { file = "/etc/machine-id"; inInitrd = true; }
+  ];
+
   home = {
     xdg.stateFile = {
       nixos = {
@@ -34,6 +41,9 @@
       };
       systemd.persist = true;
     };
-    home.file."/var/log".persist = true;
+    home.file."/var/log" = {
+      persist = true;
+      force = true;
+    };
   };
 }
