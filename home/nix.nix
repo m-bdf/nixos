@@ -26,7 +26,7 @@
           )" config show | grep features > $out
         '';
     in
-      "include ${features}";
+      "!include ${features}";
   };
 
   programs.nh.enable = true;
