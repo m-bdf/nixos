@@ -7,11 +7,11 @@ let
 
   initialLoginInner = pkgs.writeShellScript "login-inner" ''
     export GC_NPROCS=1
-    export NIX_CONFIG='import ${
-      config.home.xdg.configFile."nix/nix.conf".source
+    export NIX_CONFIG='${
+      config.home.xdg.configFile."nix/nix.conf".source.text
     }'
 
-    PATH+=:${pkgs.nix}/bin
+    PATH="''${PATH:+$PATH:}${pkgs.nix}/bin"
     nix build --refresh --no-link ${config.build.activationPackage}
     exec ${config.build.activationPackage}/activate
   '';
