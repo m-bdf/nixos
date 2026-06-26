@@ -26,7 +26,7 @@
           )" config show | grep features > $out
         '';
     in
-      "!include ${features}";
+      lib.readFile features;
   };
 
   programs.nh.enable = true;
