@@ -1,4 +1,4 @@
-{ inputs, config, lib, ... }:
+{ config, lib, ... }:
 
 with lib;
 
@@ -24,24 +24,17 @@ in
     };
 
     home.file = persistableFilesOption // {
-      apply = mapAttrs (name: cfg: cfg //
-        optionalAttrs (!hasPrefix "/" cfg.target) {
-          target = removePrefix "/" # make `force` work
-            "${config.home.homeDirectory}/${cfg.target}";
-        }
-      );
+      apply = mapAttrs (name: cfg: cfg // {
+        target = removePrefix "/" ( # make `force` work
+          if hasPrefix "/" cfg.target then cfg.target
+          else "${config.home.homeDirectory}/${cfg.target}"
+        );
+      });
     };
   };
 
   config = {
     xdg.enable = true;
-
-    lib.bash = mkForce {
-      initHomeManagerLib = ''
-        source ${inputs.home-manager}/lib/bash/*
-        test $(basename $0) = activate || HOME=/
-      '';
-    };
 
     home.file = {
       "Documents" = {

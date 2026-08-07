@@ -26,10 +26,14 @@
       users.user = lib.mkAliasDefinitions options.home;
     };
 
-    systemd.user.services.home-manager = {
-      unitConfig.DefaultDependencies = false;
-      wantedBy = [ "basic.target" ];
-      before = [ "basic.target" ];
+    systemd.user.services = {
+      home-manager.unitConfig = {
+        DefaultDependencies = false;
+      };
+      nixos-activation.unitConfig = {
+        DefaultDependencies = false;
+        Before = [ "dbus.socket" ];
+      };
     };
   };
 }

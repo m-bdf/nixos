@@ -24,26 +24,12 @@
       includeDefaultModules = false;
       systemd.emergencyAccess = true;
     };
+
+    kernelParams = [ "systemd.machine_id=firmware" ];
   };
 
-  systemd.suppressedSystemUnits = [
-    "systemd-machine-id-commit.service"
-  ];
-  preservation.preserveAt.state.files = [
-    { file = "/etc/machine-id"; inInitrd = true; }
-  ];
-
   home = {
-    xdg.stateFile = {
-      nixos = {
-        persist = true;
-        force = true;
-      };
-      systemd.persist = true;
-    };
-    home.file."/var/log" = {
-      persist = true;
-      force = true;
-    };
+    xdg.stateFile.systemd.persist = true;
+    home.file."/var/log/journal".persist = true;
   };
 }
