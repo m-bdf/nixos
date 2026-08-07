@@ -1,27 +1,22 @@
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 
 {
   nixpkgs.overlays = [
     (final: prev: {
-      zen-beta = inputs.zen-browser.packages.${final.stdenv.system}.zen-browser;
+      inherit (inputs.zen-browser.packages.${final.stdenv.system}) zen-browser;
     })
   ];
 
   home = {
-    imports = [
-      (lib.setDefaultModuleLocation
-        (inputs.zen-browser-hm + /hm-module.nix)
-        inputs.zen-browser-hm.homeModules.beta
-      )
-    ];
+    imports = [ inputs.zen-browser-hm.homeModules.default ];
 
     programs.zen-browser = {
       enable = true;
       setAsDefaultBrowser = true;
 
-      package = pkgs.wrapFirefox pkgs.zen-beta.unwrapped {
+      package = pkgs.wrapFirefox pkgs.zen-browser.unwrapped {
+        inherit (config.home.programs.zen-browser) extraPrefs extraPrefsFiles;
         extraAutoConfig = "pref('general.config.sandbox_enabled', false);";
-        inherit (config.home.programs.zen-browser) extraPrefs;
       };
 
       extraPrefs = ''
@@ -68,7 +63,10 @@
 
     xdg.configFile = {
       "zen".persist = true;
-      "zen/default/prefs.js".text = "";
+      "zen/default/prefs.js" = {
+        text = "";
+        force = true;
+      };
     };
   };
 }
