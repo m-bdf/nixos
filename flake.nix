@@ -17,7 +17,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-aster.url = "github:NixOS/nixpkgs/release-25.05";
 
     git-hooks = {
       url = "github:m-bdf/git-hooks.nix/no-config-file-symlink";
@@ -27,11 +26,6 @@
     nix = {
       url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
       inputs.git-hooks-nix.follows = "git-hooks";
-    };
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
@@ -64,6 +58,11 @@
       flake = false;
     };
 
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     linux-vdso = {
       url = "github:asterinas/linux_vdso";
       flake = false;
@@ -76,16 +75,6 @@
 
     eza-themes = {
       url = "github:eza-community/eza-themes";
-      flake = false;
-    };
-
-    highlightjs = {
-      url = "https://esm.sh/v135/highlight.js/node/highlight.bundle.mjs";
-      flake = false;
-    };
-
-    github-textmate-theme = {
-      url = "github:primer/github-textmate-theme";
       flake = false;
     };
 
@@ -141,9 +130,9 @@
 
     pkgsConfig = {
       warnUndeclaredOptions = true;
-      # allowAliases = false;
+      allowAliases = false;
       allowUnfree = true;
-      # checkMeta = true;
+      checkMeta = true;
     };
 
     nixOverlay = final: prev: {
