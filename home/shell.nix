@@ -39,7 +39,7 @@
     sessionVariables.STARSHIP_CACHE =
       "$XDG_CACHE_HOME/starship"; #starship/896
 
-    packages = with pkgs; [ fd ripgrep sd ];
+    packages = with pkgs; [ fd ripgrep sd jaq ];
   };
 
   xdg = {
@@ -47,6 +47,5 @@
       inputs.eza-themes + /themes/dracula.yml;
 
     dataFile.fish.persist = true; # history
-    stateFile.comma.persist = true; # choices
   };
 }
