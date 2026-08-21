@@ -1,4 +1,4 @@
-{ self, nixpkgs, git-hooks, ... }:
+{ self, nixpkgs, git-hooks, nixcov, ... }:
 
 with nixpkgs.lib;
 
@@ -22,7 +22,7 @@ let
       stages = [ "pre-push" ];
       pass_filenames = false;
       entry = ''
-        /bin/sh -c '
+        sh -c '
           ! echo %H %{a,c}{n,e,d} |
           git log --format="$(cat)" |
           grep -Po "^.{40}(?!(.+)\1)"
@@ -40,23 +40,37 @@ let
       };
     }) git-hooks.lib;
 
+  assertsTests = mapAttrs (platform: pkgs: {
+    asserts-coverage = seq
+      (pkgs.callPackage ./asserts/tests.nix {})
+      (pkgs.callPackage ./asserts/coverage.nix {
+        inherit (nixcov.packages.${platform}) nixcov;
+      });
+
+    asserts-mutation = seq
+      (pkgs.callPackage ./asserts/tests.nix {})
+      (pkgs.callPackage ./asserts/mutation.nix {
+        inherit (nixcov.packages.${platform}) nixcov;
+      });
+  }) nixpkgs.legacyPackages;
+
   homeTests =
-    mapAttrsToList (platform: system: {
-      ${platform}.home-config =
+    mapAttrs (platform: system: {
+      home-config =
         (system.extendModules {
           specialArgs.modules =
             attrValues self.homeModules;
-          modules = [ ./asserts.nix ];
+          modules = [ ./asserts ];
         }).activationPackage;
     }) self.homeConfigurations;
 
   droidTests =
-    mapAttrsToList (platform: system: {
-      ${platform}.droid-config =
+    mapAttrs (platform: system: {
+      droid-config =
         (system.extendModules {
           specialArgs.modules =
             attrValues self.nixOnDroidModules;
-          modules = [ ./asserts.nix ];
+          modules = [ ./asserts ];
         }).activationPackage;
     }) self.nixOnDroidConfigurations;
 
@@ -68,11 +82,11 @@ let
           (system.extendModules {
             specialArgs.modules =
               attrValues self.nixosModules;
-            modules = [ ./asserts.nix ];
+            modules = [ ./asserts ];
           }).config.system.build.toplevel;
       };
     }) self.nixosConfigurations;
 in
 
 foldl' recursiveUpdate gitHooks
-  (homeTests ++ droidTests ++ nixosTests)
+  ([ assertsTests homeTests droidTests ] ++ nixosTests)
