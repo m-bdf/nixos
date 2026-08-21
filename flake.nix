@@ -28,6 +28,11 @@
       inputs.git-hooks-nix.follows = "git-hooks";
     };
 
+    nixcov = {
+      url = "github:FlorianNAdam/nixcov";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -126,7 +131,7 @@
   let
     listDir = dir: concatMapAttrs (entry: type: {
       ${removeSuffix ".nix" entry} = /${dir}/${entry};
-    }) (builtins.readDir dir);
+    }) (readDir dir);
 
     pkgsConfig = {
       warnUndeclaredOptions = true;
