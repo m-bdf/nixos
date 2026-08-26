@@ -1,51 +1,56 @@
-{ writeShellApplication, path, lib, stdenv, writers, runCommand, nix, nixcov, gawk }:
+{ path, stdenv, nix, nixcov }:
 
-let
-  module = "asserts/default.nix";
-
-  nixcovAnyNix = nixcov.overrideAttrs {
-    postInstall = ''
-      wrapProgram $out/bin/$pname \
-        --set NIXCOV_INSTRUMENT_BIN $out/bin/nixcov-instrument
-    '';
-  };
-in
-
-writeShellApplication rec {
+stdenv.mkDerivation {
   name = "asserts-coverage";
+  src = ./.;
+  module = "default.nix";
 
-  runtimeInputs = [ nixcovAnyNix gawk ];
-  runtimeEnv.NIX_CONFIG = ''
-    lazy-trees = false
-    sandbox = false
+  requiredSystemFeatures = [ "recursive-nix" ];
+  nativeBuildInputs = [ nix nixcov ];
+
+  patchPhase = ''
+    echo "{
+      outputs = { self, nixpkgs }: {
+        checks.$system.$name =
+          assert (import ./tests.nix {
+            inherit (nixpkgs) lib;
+          }) == null; self.outPath;
+      };
+    }" > flake.nix
   '';
 
-  text = ''
-    lcov=$(mktemp --tmpdir asserts.lcov-XXX)
-    trap 'rm $lcov' EXIT
+  configurePhase = ''
+    export NIX_CACHE_HOME=$TMPDIR
+    export NIX_CONFIG_HOME=$TMPDIR
+    export NIX_CONFIG="
+      experimental-features = nix-command flakes
+      flake-registry = $NIX_CONFIG_HOME/registry.json
+    "
+    nix --offline registry add nixpkgs ${path}
+    nix --offline flake lock
+  '';
 
-    nixcov --summary none --lcov "$lcov" \
-      flake-build .#checks.${nixcov.system}.${name} --dry-run
+  buildPhase = ''
+    nixcov check --summary none --lcov $out
 
-    if [[ ! $(< "$lcov") =~ SF:${module} ]]; then
-      echo 'FAIL: no coverage record for ${module},' \
-        'did the test suite evaluate the module?' >&2
+    if ! grep -xq SF:$module $out; then
+      echo FAIL: no coverage record for $module, \
+        did the test suite evaluate the module? >&2
       exit 1
     fi
+  '';
 
+  installPhase = ''
     uncovered=$(awk -F'[,:]' '
-      $1 == "SF" && $2 == "${module}" { in_file = 1; next }
-      in_file && $1 == "end_of_record" { in_file = 0; next }
-      in_file && $1 == "DA" && $3 == 0 { print $2 }
-    ' "$lcov" | sort -nu)
+      $1 == "SF" && $2 == "'$module'" { in_mod = 1 }
+      in_mod && $1 == "end_of_record" { in_mod = 0 }
+      in_mod && $1 == "DA" && $3 == 0 { print $2 }
+    ' $out | sort -nu)
 
-    if [[ -n "$uncovered" ]]; then
-      # shellcheck disable=SC2086
-      echo 'FAIL: ${module} has uncovered branches,' \
-        'missing tests for lines:' $uncovered >&2
+    if [[ $uncovered ]]; then
+      echo FAIL: $module has uncovered branches, \
+        missing tests for lines: $uncovered >&2
       exit 1
     fi
-
-    echo "${module} fully covered by the test suite"
   '';
 }
