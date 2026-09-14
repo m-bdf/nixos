@@ -36,7 +36,7 @@ with types;
 
   # Definitions from modules imported by a user module are attributed to the
   # imported module's `_file`, not the user's, so they are not checked. The
-  # imported module is a real file so that `asserts.nix`'s re-evaluations
+  # imported module is a real file so that `futility.nix`'s re-evaluations
   # (which re-import the user module's imports) can load it.
   testImportedDefinitionsNotChecked = {
     expr = runAsserts {
@@ -58,7 +58,7 @@ with types;
   # user module for the re-evaluation re-declares those options twice (once
   # from the module's own `options`, which already include the imported
   # declarations, and once from re-importing the imports), so the
-  # re-evaluation fails inside `asserts.nix`'s `tryEval` and the definition
+  # re-evaluation fails inside `futility.nix`'s `tryEval` and the definition
   # is silently never flagged. Locks in that behavior.
   testImportsKeptInReeval = {
     expr = runAsserts {
@@ -99,7 +99,7 @@ with types;
   };
 
   # A path module whose function takes an argument the module system doesn't
-  # pass directly: the module is evaluated by `asserts.nix` with the same
+  # pass directly: the module is evaluated by `futility.nix` with the same
   # arguments the module system would use, so `extra` resolves from
   # `_module.args`.
   testPathModuleModuleArgs = {
@@ -121,7 +121,7 @@ with types;
 
   # A path module that uses its `extra` argument (provided via `_module.args`)
   # as a dynamic attribute name: building the config forces it, so
-  # `asserts.nix` resolves the `extra` argument.
+  # `futility.nix` resolves the `extra` argument.
   testPathModuleArgKey = let
     m = unsafeDiscardStringContext (
       toFile "path-module-arg-key.nix" ''

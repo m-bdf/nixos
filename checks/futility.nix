@@ -27,8 +27,9 @@ let
   mkAssertion = opt: m:
   let
     removeAttrByPath = path: set:
-      if length path == 1 then removeAttrs set path
-      else set // { ${head path} = removeAttrByPath (tail path) set.${head path}; };
+      if length path == 1 then removeAttrs set path else set // {
+        ${head path} = removeAttrByPath (tail path) set.${head path};
+      };
 
     noDef = extendModules {
       modules = [{
@@ -80,9 +81,6 @@ in
 
 {
   options.assertions = mkOption {};
-  config.assertions =
-    forEach config.warnings or []
-      (message: { assertion = false; inherit message; }) ++
-    concatMap assertionsFor
-      (collect isOption (removeAttrs options [ "assertions" ]));
+  config.assertions = concatMap assertionsFor
+    (collect isOption (removeAttrs options [ "assertions" ]));
 }

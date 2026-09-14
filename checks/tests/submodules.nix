@@ -1,6 +1,6 @@
 # Submodule recursion: options whose type embeds submodules (`submodule`,
 # `attrsOf`, `listOf`, ...) are checked recursively at the right depth.
-# `asserts.nix` re-includes itself in the submodule evaluations, so the
+# `futility.nix` re-includes itself in the submodule evaluations, so the
 # sub-options are checked by a nested instance. Sub-options that can't be
 # evaluated (throwing defaults) are skipped, not crashed on.
 

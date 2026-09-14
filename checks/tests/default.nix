@@ -1,4 +1,4 @@
-{ assertsModule ? ./., lib }:
+{ futility ? ../futility.nix, lib }:
 
 with lib;
 
@@ -15,10 +15,15 @@ let
       generators.toPretty { multiline = false; } value
     }'.";
 
-  runAsserts = { options ? { }, userModules ? [ ], extraModules ? [ ], warnings ? [ ] }:
+  runAsserts = {
+    options ? {},
+    userModules ? [],
+    extraModules ? [],
+    warnings ? [],
+  }:
     let
       warningsModule =
-        optional (warnings != [ ]) {
+        optional (warnings != []) {
           options.warnings = with types;
             mkOption { type = listOf str; };
           config = { inherit warnings; };
@@ -29,16 +34,16 @@ let
 
         modules = [{ inherit options; }]
           ++ userModules ++ extraModules
-          ++ warningsModule ++ [ assertsModule ];
+          ++ warningsModule ++ [ futility ];
       };
     in
-    sort (a: b: a < b)
-      (catAttrs "message" (filter (a: !a.assertion) eval.config.assertions));
+      sort (a: b: a < b) (concatMap (a:
+        optional (!a.assertion) a.message
+      ) eval.config.assertions);
 
-  tests = foldlAttrs (acc: n: _:
-    acc // import ./tests/${n} {
-      inherit lib userModule redundant runAsserts;
-    }) {} (readDir ./tests);
+  tests = foldlAttrs (acc: n: _: acc // import ./${n} {
+    inherit lib userModule redundant runAsserts;
+  }) {} (removeAttrs (readDir ./.) [ "default.nix" ]);
 in
 
 debug.throwTestFailures {

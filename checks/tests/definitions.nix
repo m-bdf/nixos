@@ -81,7 +81,7 @@ with types;
 
   # `mkDefault` to the default value is redundant; to a real value it is
   # not: removing the definition leaves the option without a value, which
-  # fails inside `asserts.nix`'s `tryEval`.
+  # fails inside `futility.nix`'s `tryEval`.
   testMkDefault = let
     m = userModule "mk-default" {
       config = {
@@ -202,7 +202,7 @@ with types;
   };
 
   # A definition whose only priority is the option default's own
-  # (`mkOptionDefault`, priority 1001) is skipped entirely: `asserts.nix`
+  # (`mkOptionDefault`, priority 1001) is skipped entirely: `futility.nix`
   # cannot tell it apart from the default itself, so it is never flagged.
   # Exercises the `mkOverride opt.highestPrio {} != mkOptionDefault {}` guard.
   testMkOptionDefaultOnly = {
@@ -221,7 +221,7 @@ with types;
   # submodules (`getSubModules == null`) is checked directly like any leaf
   # option; the re-evaluation without the module uses the real merge
   # machinery. (A v1 type that also declares `getSubModules` would make
-  # `asserts.nix` recurse into a non-submodule merge and crash; this locks in
+  # `futility.nix` recurse into a non-submodule merge and crash; this locks in
   # the supported shape.)
   testV1MergeType = let
     v1Merge = mkOptionType {

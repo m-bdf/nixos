@@ -244,7 +244,9 @@
           };
       }) nix-on-droid.packages;
 
-    checks = import ./checks.nix inputs;
+    checks = recursiveUpdate
+      (import ./checks inputs)
+      (import ./hooks.nix inputs);
 
     devShells =
       mapAttrs (platform: checks: {
